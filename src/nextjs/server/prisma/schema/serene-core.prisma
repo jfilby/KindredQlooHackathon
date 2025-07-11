@@ -1,0 +1,238 @@
+// Serene Core: User Management (non-NextAuth)
+model ExternalUserIntegration {
+  id                         String          @id @default(cuid())
+  userProfileId              String          @map("user_profile_id")
+  userProfile                UserProfile     @relation(fields: [userProfileId], references: [id])
+  externalIntegrationUserId  String          @map("external_integration_user_id")
+  externalIntegration        String          @map("external_integration")
+
+  @@index([userProfileId])
+  @@unique([externalIntegrationUserId, externalIntegration])
+  @@map("external_user_integration")
+  @@schema("public")
+}
+
+model UserGroup {
+  id                        String          @id @default(cuid())
+  ownerUserProfileId        String          @map("owner_user_profile_id")
+  ownerUserProfile          UserProfile     @relation(fields: [ownerUserProfileId], references: [id])
+  name                      String          @unique
+  created                   DateTime        @default(now())
+  updated                   DateTime        @updatedAt
+
+  ofUserGroupMembers           UserGroupMember[]
+
+  @@unique([ownerUserProfileId, name], name: "user_group_uq")
+  @@map("user_group")
+  @@schema("public")
+}
+
+model UserGroupMember {
+  id                        String          @id @default(cuid())
+  userGroupId               String          @map("user_group_id")
+  userGroup                 UserGroup       @relation(fields: [userGroupId], references: [id])
+  userProfileId             String          @map("user_profile_id")
+  userProfile               UserProfile     @relation(fields: [userProfileId], references: [id])
+  isGroupAdmin              Boolean         @map("is_group_admin")
+  created                   DateTime        @default(now())
+
+  @@unique([userProfileId, userGroupId], name: "user_group_member_uq")
+  @@map("user_group_member")
+  @@schema("public")
+}
+
+model UserPreference {
+  id                        String          @id @default(cuid())
+  userProfileId             String          @map("user_profile_id")
+  userProfile               UserProfile     @relation(fields: [userProfileId], references: [id])
+  category                  String
+  key                       String
+  value                     String?
+  values                    String[]
+  created                   DateTime        @default(now())
+
+  @@unique([userProfileId, key], name: "user_preference_uq")
+  @@map("user_preference")
+  @@schema("public")
+}
+
+model UserProfile {
+  id                          String       @id @default(cuid())
+  userId                      String?      @map("user_id") @unique  // Map to NextAuth's User model
+  user                        User?        @relation(fields: [userId], references: [id])
+  isAdmin                     Boolean      @map("is_admin")
+  isTestUser                  Boolean?     @map("is_test_user")     // Should eventually be not null
+  deletePending               DateTime?    @map("delete_pending")  // Start date/time of delete pending
+
+  // Non-core fields
+  ownerType                   String?      @db.Char(1) @map("owner_type")  // Human or Bot
+  roles                       String[]
+
+  ofExternalUserIntegrations   ExternalUserIntegration[]
+  ofUserGroups                 UserGroup[]
+  ofUserGroupMembers           UserGroupMember[]
+  ofUserPreferences            UserPreference[]
+  ofRateLimitedApiEvents       RateLimitedApiEvent[]
+  ofTipGotIts                  TipGotIt[]
+
+  ofBatchJobs                  BatchJob[]
+  ofAgentUsers                 AgentUser[]
+  ofChatMessageCreated         ChatMessageCreated[]
+  ofChatParticipants           ChatParticipant[]
+  ofChatSessions               ChatSession[]
+  ofChatSettings               ChatSettings[]
+
+  ofInstances                  Instance[]
+
+  ofAiPersonas                 AiPersona[]
+  ofUserDomainInterests        UserDomainInterest[]
+  ofUserEntityInterests        UserEntityInterest[]
+
+  @@map("user_profile")
+  @@schema("public")
+}
+
+// Serene Core
+
+model SystemProperty {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  value        String?
+
+  @@map("system_property")
+  @@schema("core")
+}
+
+model Tip {
+  id                           String               @id @default(cuid())
+  name                         String               @unique
+  tags                         String[]
+
+  ofTipGotIts                  TipGotIt[]
+
+  @@index([tags])
+  @@map("tip")
+  @@schema("public")
+}
+
+model TipGotIt {
+  id                           String               @id @default(cuid())
+  tipId                        String               @map("tip_id")
+  tip                          Tip                  @relation(fields: [tipId], references: [id])
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+
+  @@unique([tipId, userProfileId], name: "tip_got_it_uq")
+  @@index([userProfileId])
+  @@map("tip_got_it")
+  @@schema("public")
+}
+
+// Instances
+
+model Instance {
+  // An instance is a project
+  id                           String               @id @default(cuid())
+  parentId                     String?              @map("parent_id")
+  parent                       Instance?            @relation("parent", fields: [parentId], references: [id])
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  status                       String               @db.Char(1)
+  name                         String
+  created                      DateTime             @default(now())
+  updated                      DateTime             @updatedAt
+  // Additional fields (should be moved to InstanceSetting)
+  instanceType                 String               @map("instance_type") @db.Char(1)  // P (project), E (environment)
+  projectType                  String?              @map("project_type")               // Char 1: B (back-end), A (app), W (web-app), char 2: L (library)?
+  isDefault                    Boolean              @map("is_default")
+  isDemo                       Boolean              @map("is_demo")
+  publicAccess                 String?              @map("public_access") @db.Char(1)  // E.g. R/W
+
+  ofBatchJobs                         BatchJob[]
+  ofChatMessageCreated                ChatMessageCreated[]
+  ofChatSessions                      ChatSession[]
+
+  ofInstances                         Instance[]           @relation("parent")
+
+  @@unique([parentId, name])
+  @@map("instance")
+  @@schema("public")
+}
+
+// Generic tech
+model RateLimitedApi {
+  id                           String               @id @default(cuid())
+  techId                       String?              @map("tech_id")
+  tech                         Tech?                @relation(fields: [techId], references: [id])
+  ratePerMinute                Int                  @map("rate_per_minute")
+
+  ofRateLimitedApiEvents       RateLimitedApiEvent[]
+
+  @@map("rate_limited_api")
+  @@schema("public")
+}
+
+model RateLimitedApiEvent {
+  // Using a separate table from ChatMessage, because ChatMessage is populated
+  // after the LLM API returns, but the rate limited event should be tracked
+  // from just before the API call is made.
+  id                           String               @id @default(cuid())
+  rateLimitedApiId             String               @map("api_rate_limited_id")
+  rateLimitedApi               RateLimitedApi       @relation(fields: [rateLimitedApiId], references: [id])
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  created                      DateTime             @default(now())
+
+  @@index([created])
+  @@map("rate_limited_api_event")
+  @@schema("public")
+}
+
+model Tech {
+  id                           String               @id @default(cuid())
+  techProviderId               String               @map("tech_provider_id")
+  techProvider                 TechProvider         @relation(fields: [techProviderId], references: [id])
+  status                       String               @db.Char(1)
+  variantName                  String               @map("variant_name") @unique
+  resource                     String
+  protocol                     String?              // E.g. for LLMs 'OpenAI' or 'Gemini'
+  pricingTier                  String               @map("pricing_tier")
+  isDefaultProvider            Boolean              @map("is_default_provider")
+  isAdminOnly                  Boolean              @map("is_admin_only")
+
+  ofChatMessageCreated         ChatMessageCreated[]
+  ofLlmCaches                  LlmCache[]
+  ofRateLimitedApis            RateLimitedApi[]
+
+  @@map("tech")
+  @@schema("public")
+}
+
+model TechProvider {
+  id                           String               @id @default(cuid())
+  status                       String               @db.Char(1)
+  name                         String               @unique
+  baseUrl                      String?              @map("base_url")
+
+  ofTechs                      Tech[]
+  ofTechProviderApiKeys        TechProviderApiKey[]
+
+  @@map("tech_provider")
+  @@schema("public")
+}
+
+model TechProviderApiKey {
+  id                           String               @id @default(cuid())
+  techProviderId               String               @map("tech_provider_id")
+  techProvider                 TechProvider         @relation(fields: [techProviderId], references: [id])
+  status                       String               @db.Char(1)
+  name                         String
+  accountEmail                 String               @map("account_email")
+  apiKey                       String               @map("api_key")
+  pricingTier                  String?              @map("pricing_tier")
+
+  @@unique([techProviderId, name])
+  @@unique([techProviderId, apiKey])
+  @@map("tech_provider_api_key")
+  @@schema("public")
+}

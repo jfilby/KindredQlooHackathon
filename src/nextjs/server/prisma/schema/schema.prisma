@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "core"]
+}
+
+// Kindred: Batch
+
+model BatchJob {
+  id                         String           @id @default(cuid())
+  instanceId                 String?          @map("instance_id")
+  instance                   Instance?        @relation(fields: [instanceId], references: [id])
+  userProfileId              String?          @map("user_profile_id")
+  userProfile                UserProfile?     @relation(fields: [userProfileId], references: [id])
+  runInATransaction          Boolean          @map("run_in_a_transaction")
+  status                     String           @db.Char(1)
+  progressPct                Int?             @map("progress_pct")
+  message                    String?
+  jobType                    String           @map("job_type")
+  refModel                   String?          @map("ref_model")
+  refId                      String?          @map("ref_id")
+  parameters                 String?          // Stringified JSON
+  created                    DateTime         @default(now())
+  updated                    DateTime         @updatedAt
+
+  @@index([refId])
+  @@map("batch_job")
+  @@schema("public")
+}
+
+// Kindred: Qloo
+
+model QlooAudience {
+  id                           String               @id @default(cuid())
+  name                         String               @unique
+  platforms                    String[]
+  keywords                     String[]
+
+  ofQlooAudiencePersonas       QlooAudiencePersona[]
+
+  @@map("qloo_audience")
+  @@schema("public")
+}
+
+model QlooAudiencePersona {
+  id                           String               @id @default(cuid())
+  qlooAudienceId               String               @map("qloo_audience_id")
+  qlooAudience                 QlooAudience         @relation(fields: [qlooAudienceId], references: [id])
+  name                         String
+  description                  String
+
+  @@unique([qlooAudienceId, name])
+  @@map("qloo_audience_persona")
+  @@schema("public")
+}
+
+model QlooEntity {
+  id                           String               @id @default(cuid())
+  isTrending                   Boolean              @map("is_trending")
+  name                         String               @unique
+  keywords                     String[]
+  json                         Json                 @db.JsonB
+  created                      DateTime             @default(now())
+  updated                      DateTime             @updatedAt
+
+  ofEntityInterests            EntityInterest[]
+
+  @@map("qloo_entity")
+  @@schema("public")
+}
+
+model QlooTagType {
+  id                           String               @id @default(cuid())
+  urn                          String               @unique
+  entityTypes                  String[]             @map("entity_types")
+
+  @@map("qloo_tag_type")
+  @@schema("public")
+}
+
+// Kindred: AI Personas
+
+model AiPersona {
+  // The userProfileId is the user that the AI persona is created for
+  id                           String               @id @default(cuid())
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  status                       String               @db.Char(1)  // A (active), P (delete pending)
+  name                         String
+  gender                       String
+  dateOfBirth                  DateTime             @map("date_of_birth")
+  description                  String
+  prompt                       String?
+  created                      DateTime             @default(now())
+  updated                      DateTime             @updatedAt
+
+  ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
+  ofAiPersonaEntityInterests   AiPersonaEntityInterest[]
+
+  @@unique([userProfileId, name])
+  @@map("ai_persona")
+  @@schema("public")
+}
+
+// Kindred: Interests
+
+model DomainInterest {
+  id                           String               @id @default(cuid())
+  qlooDomain                   String?              @map("qloo_domain")
+  name                         String               @unique
+
+  ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
+  ofUserDomainInterests        UserDomainInterest[]
+
+  @@map("domain_interest")
+  @@schema("public")
+}
+
+model EntityInterest {
+  id                           String               @id @default(cuid())
+  qlooEntityId                 String?              @map("qloo_entity_id")
+  qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
+  name                         String               @unique
+
+  ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
+  ofUserEntityInterests        UserEntityInterest[]
+
+  @@map("entity_interest")
+  @@schema("public")
+}
+
+model AiPersonaDomainInterest {
+  id                           String               @id @default(cuid())
+  aiPersonaId                  String               @map("ai_persona_id")
+  aiPersona                    AiPersona            @relation(fields: [aiPersonaId], references: [id])
+  domainInterestId             String               @map("domain_interest_id")
+  domainInterest               DomainInterest       @relation(fields: [domainInterestId], references: [id])
+
+  @@unique([aiPersonaId, domainInterestId])
+  @@map("ai_persona_domain_interest")
+  @@schema("public")
+}
+
+model AiPersonaEntityInterest {
+  id                           String               @id @default(cuid())
+  aiPersonaId                  String               @map("ai_persona_id")
+  aiPersona                    AiPersona            @relation(fields: [aiPersonaId], references: [id])
+  entityInterestId             String               @map("entity_interest_id")
+  entityInterest               EntityInterest       @relation(fields: [entityInterestId], references: [id])
+
+  @@unique([aiPersonaId, entityInterestId])
+  @@map("ai_persona_entity_interest")
+  @@schema("public")
+}
+
+model UserDomainInterest {
+  id                           String               @id @default(cuid())
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  domainInterestId             String               @map("domain_interest_id")
+  domainInterest               DomainInterest       @relation(fields: [domainInterestId], references: [id])
+
+  @@unique([userProfileId, domainInterestId])
+  @@map("user_domain_interest")
+  @@schema("public")
+}
+
+model UserEntityInterest {
+  id                           String               @id @default(cuid())
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  entityInterestId             String               @map("entity_interest_id")
+  entityInterest               EntityInterest       @relation(fields: [entityInterestId], references: [id])
+
+  @@unique([userProfileId, entityInterestId])
+  @@map("user_entity_interest")
+  @@schema("public")
+}
