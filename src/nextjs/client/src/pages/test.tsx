@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import { useState } from 'react'
 import { Box } from '@mui/material'
-import { loadServerPage } from '@/services/page/load-server-page'
-import { pageBodyWidthPlus } from '@/components/layout/full-height-layout'
-import ToolpadLayout from '@/components/layout/toolpad-layout'
+// import { loadServerPage } from '@/services/page/load-server-page'
+// import { pageBodyWidthPlus } from '@/components/layout/full-height-layout'
+// import ToolpadLayout from '@/components/layout/toolpad-layout'
 import AiPersonaChatNavBar from '@/components/chats/ai-persona-chat-nav-bar'
 import ViewChatSession from '@/components/chats/view-session'
+import GraphTest from '@/components/cytoscape/graph'
 
 interface Props {
   userProfile: any
@@ -22,7 +23,7 @@ export default function ViewAiPersonaChatPage({
                         }: Props) {
 
   // State
-  const [pathname, setPathname] = useState(`/ai-persona/${aiPersona.id}/chat`)
+  const [pathname, setPathname] = useState(`/test`)
   const [prompt, setPrompt] = useState<string>('')
 
   // Render
@@ -32,7 +33,9 @@ export default function ViewAiPersonaChatPage({
         <title>{process.env.NEXT_PUBLIC_APP_NAME} - AI persona chat</title>
       </Head>
 
-      <ToolpadLayout
+      <GraphTest />
+
+      {/* <ToolpadLayout
         userProfile={userProfile}
         instance={instance}
         pathname={pathname}
@@ -60,12 +63,12 @@ export default function ViewAiPersonaChatPage({
             }
           </>
         </Box>
-      </ToolpadLayout>
+      </ToolpadLayout> */}
     </>
   )
 }
 
-export async function getServerSideProps(context: any) {
+/* export async function getServerSideProps(context: any) {
 
   return loadServerPage(
            context,
@@ -75,4 +78,4 @@ export async function getServerSideProps(context: any) {
              verifyAdminUsersOnly: false,
              verifyLoggedInUsersOnly: true
            })
-}
+} */

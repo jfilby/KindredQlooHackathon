@@ -1,0 +1,22 @@
+export class BaseDataTypes {
+
+  // Statuses
+  static activeStatus = 'A'
+  static deletePendingStatus = 'P'
+
+  static statusMap = {
+    [this.activeStatus]: 'Active',
+    [this.deletePendingStatus]: 'Delete pending'
+  }
+
+  static statusArray = [
+    {
+      value: this.activeStatus,
+      name: 'Active'
+    },
+    {
+      value: this.deletePendingStatus,
+      name: 'Delete pending'
+    }
+  ]
+}

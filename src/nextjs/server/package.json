@@ -13,7 +13,7 @@
     "schema": "prisma/schema"
   },
   "dependencies": {
-    "@aiconstrux/client": "^0.2.9",
+    "@aiconstrux/client": "^0.2.10",
     "@apollo/client": "^3.11.4",
     "@apollo/server": "^4.11.3",
     "@eslint/eslintrc": "^3",
