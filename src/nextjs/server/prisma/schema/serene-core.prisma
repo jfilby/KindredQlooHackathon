@@ -216,6 +216,8 @@ model UserProfile {
   ofUserDomainInterests        UserDomainInterest[]
   ofUserEntityInterests        UserEntityInterest[]
 
+  ofSearchQueries              SearchQuery[]
+
   @@map("user_profile")
   @@schema("public")
 }
@@ -329,7 +331,6 @@ model Tech {
   isAdminOnly                  Boolean              @map("is_admin_only")
 
   ofChatMessageCreated         ChatMessageCreated[]
-  ofLlmCaches                  LlmCache[]
   ofRateLimitedApis            RateLimitedApi[]
 
   @@map("tech")
