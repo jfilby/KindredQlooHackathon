@@ -3,8 +3,10 @@ require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` })
 
 // Requires/imports
 import { prisma } from './db'
+import { TechProviderMutateService } from '@/serene-core-server/services/tech/tech-provider-mutate-service'
 import { UsersService } from '@/serene-core-server/services/users/service'
 import { ServerTestTypes } from './types/server-test-types'
+import { SearchQueryServiceTests } from './services/search/search-query-service-tests'
 import { SetupService } from './setup/setup'
 import { Tests } from './services/tests/tests'
 
@@ -15,10 +17,14 @@ import { Tests } from './services/tests/tests'
   const fnName = 'cli.ts'
 
   // Consts
+  const loadTechProviderApiKeysCommand = 'load-tech-provider-api-keys'
+  const searchCommand = 'search'
   const setupCommand = 'setup'
   const testCommand = 'test'
 
   const commands = [
+          loadTechProviderApiKeysCommand,
+          searchCommand,
           setupCommand,
           testCommand
         ]
@@ -29,15 +35,18 @@ import { Tests } from './services/tests/tests'
   console.log(`${fnName}: comand to run: ${command}`)
 
   // Services
+  const searchQueryServiceTests = new SearchQueryServiceTests()
   const setupService = new SetupService()
+  const techProviderMutateService = new TechProviderMutateService()
   const tests = new Tests()
   const usersService = new UsersService()
 
   // Get admin user that created the instance
   const adminUserProfile = await
-          usersService.getUserProfileByEmail(
+          usersService.getOrCreateUserByEmail(
             prisma,
-            ServerTestTypes.adminUserEmail)
+            ServerTestTypes.adminUserEmail,
+            undefined)  // defaultUserPreferences
 
   // Get/create a regular (non-admin) user
   const regularTestUserProfile = await
@@ -48,6 +57,22 @@ import { Tests } from './services/tests/tests'
 
   // Run the chosen command
   switch (command) {
+
+    case loadTechProviderApiKeysCommand: {
+
+      await techProviderMutateService.cliLoadJsonStr(prisma)
+
+      break
+    }
+
+    case searchCommand: {
+
+      await searchQueryServiceTests.testInputSearch(
+              prisma,
+              regularTestUserProfile)
+
+      break
+    }
 
     case setupCommand: {
 
@@ -72,9 +97,13 @@ import { Tests } from './services/tests/tests'
     default: {
       console.log(`${fnName}: invalid command, selection is: ` +
                   JSON.stringify(commands))
+
+      await prisma.$disconnect()
+      process.exit(1)
     }
   }
 
   // Done
   await prisma.$disconnect()
+  process.exit(0)
 })()

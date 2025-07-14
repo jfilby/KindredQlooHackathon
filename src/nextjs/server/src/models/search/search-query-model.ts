@@ -8,7 +8,7 @@ export class SearchQueryModel {
   // Code
   async create(
           prisma: PrismaClient,
-          userProfileId: string,
+          userProfileId: string | null,
           query: string) {
 
     // Debug
@@ -103,15 +103,15 @@ export class SearchQueryModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          userProfileId: string,
+          userProfileId: string | null,
           query: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (userProfileId == null) {
-      console.error(`${fnName}: userProfileId == null`)
+    if (userProfileId === undefined) {
+      console.error(`${fnName}: userProfileId === undefined`)
       throw 'Validation error'
     }
 
@@ -144,7 +144,7 @@ export class SearchQueryModel {
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          userProfileId: string | undefined,
+          userProfileId: string | null | undefined,
           query: string | undefined) {
 
     // Debug
@@ -170,7 +170,7 @@ export class SearchQueryModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          userProfileId: string | undefined,
+          userProfileId: string | null | undefined,
           query: string | undefined) {
 
     // Debug
@@ -198,8 +198,8 @@ export class SearchQueryModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (userProfileId == null) {
-        console.error(`${fnName}: id is null and userProfileId is null`)
+      if (userProfileId === undefined) {
+        console.error(`${fnName}: id is null and userProfileId is undefined`)
         throw 'Prisma error'
       }
 

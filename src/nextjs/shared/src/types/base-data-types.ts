@@ -19,4 +19,9 @@ export class BaseDataTypes {
       name: 'Delete pending'
     }
   ]
+
+  // Agents
+  static searchAgentRefId = 'Search'
+  static searchAgentName = 'Search'
+  static searchAgentRole = 'Search'
 }
