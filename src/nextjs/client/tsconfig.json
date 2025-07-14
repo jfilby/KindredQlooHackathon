@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/shared/*": ["../shared/src/*"],
+      "@/serene-ai-client/*": ["./deployed/serene-ai-client/*"],
       "@/serene-core-client/*": ["./deployed/serene-core-client/*"],
     }
   },
