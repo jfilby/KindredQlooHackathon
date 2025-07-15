@@ -58,5 +58,8 @@ export async function getPostSummaries(
   )
 
   // Return
-  return postSummaries
+  return {
+    status: true,
+    postSummaries: postSummaries
+  }
 }

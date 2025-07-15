@@ -109,6 +109,12 @@ export const typeDefs = `#graphql
     updated: String!
   }
 
+  type PostSummaryResults {
+    status: Boolean!
+    message: String
+    postSummaries: [PostSummary]
+  }
+
   type PostUrlSummary {
     id: String!
     postUrlId: String!
@@ -238,6 +244,6 @@ export const typeDefs = `#graphql
     # Summaries
     getPostSummaries(
       userProfileId: String!,
-      daysAgo: Int): [PostSummary]
+      siteTopicListId: String!): PostSummaryResults!
   }
 `
