@@ -71,25 +71,39 @@ export class SearchQueryService {
 
     // Define the prompt
     const prompt =
-            `You must use your knowledge base as a discovery engine.\n` +
-            `- It's critical that URLs are accurate and exist.\n` +
-            `- Each entry must be a distinct concept.\n` +
-            `- Rank the entries as a search engine would.\n` +
-            `Return 10 search results for the query: ${query}\n` +
+            `You must use your knowledge base as a discovery engine to \n` +
+            `generate concept graphs based on a query.\n` +
+            `\n` +
+            `How to decide what to generate:\n` +
+            `- If the query is ambiguous then return results for all ` +
+            `possible concepts.\n` +
+            `- If the query is specific then return concepts for the ` +
+            `topic.\n` +
+            `\n` +
+            `Return 10 results for the query: ${query}\n` +
             `\n` +
             `The results must be in JSON, based on this example:\n` +
             `{\n` +
-            `  "title": "Abc"\n` +
-            `  "description": "All about Abc"\n` +
-            `  "urls": [\n` +
-            `    "https://abc.com",\n` +
-            `    "https://wikipedia.org/wiki/abc"\n` +
+            `  "title": "Notion",\n` +
+            `  "specifically": "productivity software"\n` +
+            `  "graph: [\n` +
+            `    {\n` +
+            `      "id": "about",\n` +
+            `      "title": "About",\n` +
+            `      "specifically": "about notion",\n` +
+            `      "relatedIds": [ "examples" ]\n` +
+            `    },\n` +
+            `    {\n` +
+            `      "id": "examples",\n` +
+            `      "title": "Examples",\n` +
+            `      "specifically": "examples of using notion",\n` +
+            `      "relatedIds": [ "about" ]\n` +
+            `    }\n` +
             `  ]\n` +
             `}\n` +
             `\n` +
             `Notes:\n` +
-            `- The title must be 80 chars at most.\n` +
-            `- The description must be 256 chars at most.\n`
+            `- The title and specifically fields must be 80 chars at most.\n`
 
     // Query via AIC
     const queryResults = await
