@@ -1,33 +1,29 @@
 import { PrismaClient } from '@prisma/client'
 
-export class PostModel {
+export class PostUrlModel {
 
   // Consts
-  clName = 'PostModel'
+  clName = 'PostUrlModel'
 
   // Code
   async create(
           prisma: PrismaClient,
-          siteId: string,
-          postUrlId: string | null,
-          externalId: string | null,
-          title: string,
-          posted: Date,
-          checkedComments: Date | null) {
+          url: string,
+          verified: boolean,
+          title: string | null,
+          text: string | null) {
 
     // Debug
     const fnName = `${this.clName}.create()`
 
     // Create record
     try {
-      return await prisma.post.create({
+      return await prisma.postUrl.create({
         data: {
-          siteId: siteId,
-          postUrlId: postUrlId,
-          externalId: externalId,
+          url: url,
+          verified: verified,
           title: title,
-          posted: posted,
-          checkedComments: checkedComments
+          text: text
         }
       })
     } catch(error) {
@@ -45,7 +41,7 @@ export class PostModel {
 
     // Delete
     try {
-      return await prisma.post.delete({
+      return await prisma.postUrl.delete({
         where: {
           id: id
         }
@@ -66,10 +62,10 @@ export class PostModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var post: any = null
+    var postUrl: any = null
 
     try {
-      post = await prisma.post.findUnique({
+      postUrl = await prisma.postUrl.findUnique({
         where: {
           id: id
         }
@@ -82,7 +78,7 @@ export class PostModel {
     }
 
     // Return
-    return post
+    return postUrl
   }
 
   async getByIds(
@@ -94,7 +90,7 @@ export class PostModel {
 
     // Query
     try {
-      return await prisma.post.findMany({
+      return await prisma.postUrl.findMany({
         where: {
           id: {
             in: ids
@@ -111,31 +107,24 @@ export class PostModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          siteId: string,
-          externalId: string) {
+          url: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (siteId == null) {
-      console.error(`${fnName}: siteId == null`)
-      throw 'Validation error'
-    }
-
-    if (externalId == null) {
-      console.error(`${fnName}: externalId == null`)
+    if (url == null) {
+      console.error(`${fnName}: url == null`)
       throw 'Validation error'
     }
 
     // Query
-    var post: any = null
+    var postUrl: any = null
 
     try {
-      post = await prisma.post.findFirst({
+      postUrl = await prisma.postUrl.findFirst({
         where: {
-          siteId: siteId,
-          externalId: externalId
+          url: url
         }
       })
     } catch(error: any) {
@@ -146,32 +135,28 @@ export class PostModel {
     }
 
     // Return
-    return post
+    return postUrl
   }
 
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          siteId: string | undefined,
-          postUrlId: string | null | undefined,
-          externalId: string | null | undefined,
-          title: string | undefined,
-          posted: Date | undefined,
-          checkedComments: Date | null | undefined) {
+          url: string | undefined,
+          verified: boolean | undefined,
+          title: string | null | undefined,
+          text: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
 
     // Update record
     try {
-      return await prisma.post.update({
+      return await prisma.postUrl.update({
         data: {
-          siteId: siteId,
-          postUrlId: postUrlId,
-          externalId: externalId,
+          url: url,
+          verified: verified,
           title: title,
-          posted: posted,
-          checkedComments: checkedComments
+          text: text
         },
         where: {
           id: id
@@ -186,12 +171,10 @@ export class PostModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          siteId: string | undefined,
-          postUrlId: string | null | undefined,
-          externalId: string | null | undefined,
-          title: string | undefined,
-          posted: Date | undefined,
-          checkedComments: Date | null | undefined) {
+          url: string | undefined,
+          verified: boolean | undefined,
+          title: string | null | undefined,
+          text: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -200,14 +183,12 @@ export class PostModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        siteId != null &&
-        externalId != null) {
+        url != null) {
 
       const post = await
               this.getByUniqueKey(
                 prisma,
-                siteId,
-                externalId)
+                url)
 
       if (post != null) {
         id = post.id
@@ -218,33 +199,23 @@ export class PostModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (siteId == null) {
-        console.error(`${fnName}: id is null and siteId is null`)
+      if (url == null) {
+        console.error(`${fnName}: id is null and url is null`)
         throw 'Prisma error'
       }
 
-      if (postUrlId === undefined) {
-        console.error(`${fnName}: id is null and postUrlId is undefined`)
+      if (verified == null) {
+        console.error(`${fnName}: id is null and verified is null`)
         throw 'Prisma error'
       }
 
-      if (externalId === undefined) {
-        console.error(`${fnName}: id is null and externalId is undefined`)
+      if (title === undefined) {
+        console.error(`${fnName}: id is null and title is undefined`)
         throw 'Prisma error'
       }
 
-      if (title == null) {
-        console.error(`${fnName}: id is null and title is null`)
-        throw 'Prisma error'
-      }
-
-      if (posted == null) {
-        console.error(`${fnName}: id is null and posted is null`)
-        throw 'Prisma error'
-      }
-
-      if (checkedComments === undefined) {
-        console.error(`${fnName}: id is null and checkedComments is undefined`)
+      if (text === undefined) {
+        console.error(`${fnName}: id is null and text is undefined`)
         throw 'Prisma error'
       }
 
@@ -252,12 +223,10 @@ export class PostModel {
       return await
                this.create(
                  prisma,
-                 siteId,
-                 postUrlId,
-                 externalId,
+                 url,
+                 verified,
                  title,
-                 posted,
-                 checkedComments)
+                 text)
     } else {
 
       // Update
@@ -265,12 +234,10 @@ export class PostModel {
                this.update(
                  prisma,
                  id,
-                 siteId,
-                 postUrlId,
-                 externalId,
+                 url,
+                 verified,
                  title,
-                 posted,
-                 checkedComments)
+                 text)
     }
   }
 }

@@ -5,12 +5,14 @@ import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { AgentUserService } from '@/services/agents/agent-user-service'
 import { QlooSetupService } from '@/services/qloo/qloo-setup-service'
+import { SocialMediaSetupService } from '@/social-media/setup-service'
 
 // Services
 const agentUserService = new AgentUserService()
 const chatSettingsModel = new ChatSettingsModel()
 const qlooSetupService = new QlooSetupService()
 const sereneAiSetup = new SereneAiSetup()
+const socialMediaSetupService = new SocialMediaSetupService()
 
 // Class
 export class SetupService {
@@ -70,5 +72,8 @@ export class SetupService {
     await qlooSetupService.run(
             prisma,
             adminUserProfile)
+
+    // Social media setup
+    await socialMediaSetupService.setup(prisma)
   }
 }

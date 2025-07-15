@@ -5,6 +5,7 @@ require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` })
 import { prisma } from './db'
 import { TechProviderMutateService } from '@/serene-core-server/services/tech/tech-provider-mutate-service'
 import { UsersService } from '@/serene-core-server/services/users/service'
+import { HackerNewAlgoliaTestsService } from './social-media/site-specific/hn-algolia-service-tests'
 import { ServerTestTypes } from './types/server-test-types'
 import { SearchQueryServiceTests } from './services/search/search-query-service-tests'
 import { SetupService } from './setup/setup'
@@ -17,12 +18,14 @@ import { Tests } from './services/tests/tests'
   const fnName = 'cli.ts'
 
   // Consts
+  const importFromHnCommand = 'import-from-hn'
   const loadTechProviderApiKeysCommand = 'load-tech-provider-api-keys'
   const searchCommand = 'search'
   const setupCommand = 'setup'
   const testCommand = 'test'
 
   const commands = [
+          importFromHnCommand,
           loadTechProviderApiKeysCommand,
           searchCommand,
           setupCommand,
@@ -35,6 +38,7 @@ import { Tests } from './services/tests/tests'
   console.log(`${fnName}: comand to run: ${command}`)
 
   // Services
+  const hackerNewAlgoliaTestsService = new HackerNewAlgoliaTestsService()
   const searchQueryServiceTests = new SearchQueryServiceTests()
   const setupService = new SetupService()
   const techProviderMutateService = new TechProviderMutateService()
@@ -57,6 +61,13 @@ import { Tests } from './services/tests/tests'
 
   // Run the chosen command
   switch (command) {
+
+    case importFromHnCommand: {
+
+      await hackerNewAlgoliaTestsService.run(prisma)
+
+      break
+    }
 
     case loadTechProviderApiKeysCommand: {
 

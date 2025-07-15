@@ -6,4 +6,11 @@ export class ServerOnlyTypes {
   static chatSettingsNames = [
     this.defaultChatSettingsName
   ]
+
+  // Social media sites
+  static hnSiteName = 'HN'
+
+  static socialMediaSites = [
+    this.hnSiteName
+  ]
 }

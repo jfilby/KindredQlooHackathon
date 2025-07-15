@@ -211,9 +211,12 @@ model Post {
   id                           String               @id @default(cuid())
   siteId                       String               @map("site_id")
   site                         Site                 @relation(fields: [siteId], references: [id])
-  text                         String
+  postUrlId                    String?              @map("post_url_id")
+  postUrl                      PostUrl?             @relation(fields: [postUrlId], references: [id])
   externalId                   String?
+  title                        String
   posted                       DateTime
+  checkedComments              DateTime?            @map("checked_comments")
 
   ofComments                   Comment[]
   ofPostSummaries              PostSummary[]
@@ -233,6 +236,21 @@ model PostTopic {
 
   @@unique([postId, siteTopicId])
   @@map("post_topic")
+  @@schema("public")
+}
+
+model PostUrl {
+  id                           String               @id @default(cuid())
+  url                          String               @unique
+  verified                     Boolean
+  title                        String?
+  text                         String?
+  created                    DateTime         @default(now())
+  updated                    DateTime         @updatedAt
+
+  ofPosts                      Post[]
+
+  @@map("post_url")
   @@schema("public")
 }
 
@@ -286,7 +304,7 @@ model ResultUrl {
 
   ofSearchResultUrls           SearchQueryResultUrl[]
 
-  @@map("url")
+  @@map("result_url")
   @@schema("public")
 }
 

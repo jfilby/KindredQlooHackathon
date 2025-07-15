@@ -10,8 +10,8 @@ export class CommentModel {
           prisma: PrismaClient,
           parentId: string | null,
           postId: string,
-          text: string,
           externalId: string | null,
+          text: string,
           posted: Date) {
 
     // Debug
@@ -23,8 +23,8 @@ export class CommentModel {
         data: {
           parentId: parentId,
           postId: postId,
-          text: text,
           externalId: externalId,
+          text: text,
           posted: posted
         }
       })
@@ -152,8 +152,8 @@ export class CommentModel {
           id: string | undefined,
           parentId: string | null | undefined,
           postId: string | undefined,
-          text: string | undefined,
           externalId: string | null | undefined,
+          text: string | undefined,
           posted: Date | undefined) {
 
     // Debug
@@ -165,8 +165,8 @@ export class CommentModel {
         data: {
           parentId: parentId,
           postId: postId,
-          text: text,
           externalId: externalId,
+          text: text,
           posted: posted
         },
         where: {
@@ -184,8 +184,8 @@ export class CommentModel {
           id: string | undefined,
           parentId: string | null | undefined,
           postId: string | undefined,
-          text: string | undefined,
           externalId: string | null | undefined,
+          text: string | undefined,
           posted: Date | undefined) {
 
     // Debug
@@ -223,13 +223,13 @@ export class CommentModel {
         throw 'Prisma error'
       }
 
-      if (text == null) {
-        console.error(`${fnName}: id is null and text is null`)
+      if (externalId === undefined) {
+        console.error(`${fnName}: id is null and externalId is undefined`)
         throw 'Prisma error'
       }
 
-      if (externalId === undefined) {
-        console.error(`${fnName}: id is null and externalId is externalId`)
+      if (text == null) {
+        console.error(`${fnName}: id is null and text is null`)
         throw 'Prisma error'
       }
 
@@ -244,8 +244,8 @@ export class CommentModel {
                  prisma,
                  parentId,
                  postId,
-                 text,
                  externalId,
+                 text,
                  posted)
     } else {
 
@@ -256,8 +256,8 @@ export class CommentModel {
                  id,
                  parentId,
                  postId,
-                 text,
                  externalId,
+                 text,
                  posted)
     }
   }
