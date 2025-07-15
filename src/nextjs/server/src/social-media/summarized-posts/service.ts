@@ -9,12 +9,14 @@ import { CommentModel } from '@/models/social-media/comment-model'
 import { PostModel } from '@/models/social-media/post-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
+import { SiteModel } from '@/models/social-media/site-model'
 
 // Models
 const commentModel = new CommentModel()
 const postModel = new PostModel()
 const postSummaryModel = new PostSummaryModel()
 const postUrlModel = new PostUrlModel()
+const siteModel = new SiteModel()
 const techModel = new TechModel()
 
 // Services
@@ -83,7 +85,8 @@ export class SummarizePostService {
     const tech = await
             techModel.getByVariantName(
               prisma,
-              AiTechDefs.openRouter_MistralSmall3pt2_24b_Chutes)
+              AiTechDefs.googleGemini_V2pt5FlashFree)
+              // AiTechDefs.openRouter_MistralSmall3pt2_24b_Chutes)
 
     // Return
     return tech
@@ -199,6 +202,17 @@ export class SummarizePostService {
     // Debug
     // console.log(`${fnName}: tech: ` + JSON.stringify(tech))
 
+    // Get Site
+    const site = await
+            siteModel.getById(
+              prisma,
+              post.siteId)
+
+    // Validate
+    if (site == null) {
+      throw new CustomError(`${fnName}: site == null`)
+    }
+
     // Get post
     const postJson = {
       title: post.title
@@ -230,8 +244,14 @@ export class SummarizePostService {
           `  that it's a summary or that it's in markdown.\n` +
           `- Don't use headings. Only use bold text if something really ` +
           `  needs to stand out.\n` +
-          `- The summary should be driven by the social media most and its ` +
-          `  comments.\n`
+          `- There's no need to generate a title.\n` +
+          `- The first half of the summary should be about the post/url ` +
+          `  content. It should be 1-3 sentences.\n` +
+          `- The second half of the summary should be about the ` +
+          `  ${site.name} post and its comments, but don't duplicate ` +
+          `  anything already written for the summary.\n` +
+          `- Don't consider comments that are too terse, unhelpful or ` +
+          `  proven wrong by follow-on comments.`
 
     // Existing summary post?
     if (postSummary != null &&
@@ -239,19 +259,19 @@ export class SummarizePostService {
 
       // Continue general instructions
       prompt +=
-          `- There's an existing post summary, try to only update it if ` +
-          `  needed.\n`
+        `- There's an existing post summary, try to only update it if ` +
+        `  needed.\n`
 
       // Existing post summary text
       prompt +=
-          `## Existing post summary\n` +
-          postSummary.text +
-          `\n`
+        `## Existing post summary\n` +
+        postSummary.text +
+        `\n`
     }
 
     // Social-media post
     prompt +=
-      `## Social-media post\n` +
+      `## ${site.name} post\n` +
       post.title +
       `\n` +
       `The post is: ` + JSON.stringify(postJson) +
@@ -276,25 +296,46 @@ export class SummarizePostService {
     }
 
     prompt +=
-      `## Social-media comments\n` +
+      `## ${site.name} comments\n` +
       `\n` +
       `The comments follow: ` + JSON.stringify(commentsJson)
 
     // Query via AIC
-    const queryResults = await
-            agentLlmService.agentSingleShotLlmRequest(
-              prisma,
-              tech,
-              userProfileId,
-              null,       // instanceId
-              ServerOnlyTypes.defaultChatSettingsName,
-              null,       // agentUniqueRefId
-              BaseDataTypes.searchAgentName,
-              BaseDataTypes.searchAgentRole,
-              prompt,
-              true,       // isEncryptedAtRest
-              false,      // isJsonMode
-              false)      // tryGetFromCache
+    var queryResults: any = undefined
+
+    for (var i = 0; i < 5; i++) {
+
+      try {
+        queryResults = await
+          agentLlmService.agentSingleShotLlmRequest(
+          prisma,
+            tech,
+            userProfileId,
+            null,       // instanceId
+            ServerOnlyTypes.defaultChatSettingsName,
+            BaseDataTypes.searchAgentRefId,
+            BaseDataTypes.searchAgentName,
+            BaseDataTypes.searchAgentRole,
+            prompt,
+            true,       // isEncryptedAtRest
+            false,      // isJsonMode
+            false)      // tryGetFromCache
+
+      } catch(e: any) {
+        console.log(`${fnName}: exception: ` + JSON.stringify(e))
+      }
+
+      if (queryResults != null) {
+        break
+      }
+    }
+
+    // Validate
+    if (queryResults == null) {
+
+      console.log(`${fnName}: queryResults == null after several tries`)
+      return
+    }
 
     // Debug
     console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))

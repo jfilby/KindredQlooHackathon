@@ -113,7 +113,7 @@ export class SearchQueryService {
               userProfile.id,
               null,       // instanceId
               ServerOnlyTypes.defaultChatSettingsName,
-              null,       // agentUniqueRefId
+              BaseDataTypes.searchAgentRefId,
               BaseDataTypes.searchAgentName,
               BaseDataTypes.searchAgentRole,
               prompt,
