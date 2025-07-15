@@ -3,11 +3,17 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { CommentModel } from '@/models/social-media/comment-model'
 import { PostModel } from '@/models/social-media/post-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
+import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
+import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
+import { SiteTopicModel } from '@/models/social-media/site-topic-model'
 
 // Models
 const commentModel = new CommentModel()
 const postModel = new PostModel()
 const postUrlModel = new PostUrlModel()
+const siteTopicModel = new SiteTopicModel()
+const siteTopicListModel = new SiteTopicListModel()
+const siteTopicListPostModel = new SiteTopicListPostModel()
 
 // Class
 export class HackerNewAlgoliaService {
@@ -88,7 +94,35 @@ export class HackerNewAlgoliaService {
     // Debug
     console.log(`${fnName}: results: ` + JSON.stringify(results))
 
+    // Get the SiteTopic for HN front-page
+    const siteTopic = await
+            siteTopicModel.getByUniqueKey(
+              prisma,
+              siteId,
+              'front-page')  // name
+
+    // Validate
+    if (siteTopic == null) {
+      throw new CustomError(`${fnName}: siteTopic == null`)
+    }
+
+    // Define the listing date/time
+    const listed = new Date()
+
+    // Define the ranking type
+    const rankingType = 'front-page'
+
+    // Create SiteTopicList
+    const siteTopicList = await
+            siteTopicListModel.create(
+              prisma,
+              siteTopic.id,
+              rankingType,
+              listed)
+
     // Save each hit as a post
+    var index = 0
+
     for (const hit of results.hits) {
 
       // Get/create PostUrl
@@ -124,6 +158,13 @@ export class HackerNewAlgoliaService {
                 hit.title,
                 hit.created_at,
                 null)       // checkedComments
+
+      // Create SiteTopicListPost
+      await siteTopicListPostModel.create(
+              prisma,
+              siteTopicList.id,
+              post.id,
+              index)
 
       // Get top comments for the post
       for (const commentId of hit.children) {

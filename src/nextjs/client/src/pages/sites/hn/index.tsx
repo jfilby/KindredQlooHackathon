@@ -8,7 +8,7 @@ interface Props {
   userProfile: any
 }
 
-export default function HnPostSummariesPage({
+export default function PostSummariesPage({
                           userProfile
                         }: Props) {
 
@@ -20,7 +20,7 @@ export default function HnPostSummariesPage({
   return (
     <>
       <Head>
-        <title>{process.env.NEXT_PUBLIC_APP_NAME} - HN summaries</title>
+        <title>{process.env.NEXT_PUBLIC_APP_NAME} - Post summaries</title>
       </Head>
 
       <FullHeightLayout

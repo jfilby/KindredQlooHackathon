@@ -221,6 +221,7 @@ model Post {
   ofComments                   Comment[]
   ofPostSummaries              PostSummary[]
   ofPostTopics                 PostTopic[]
+  ofSiteTopicListPosts         SiteTopicListPost[]
 
   @@unique([siteId, externalId])
   @@map("post")
@@ -273,9 +274,38 @@ model SiteTopic {
   name                         String
 
   ofPostTopics                 PostTopic[]
+  ofSiteTopicLists             SiteTopicList[]
 
   @@unique([siteId, name])
   @@map("site_topic")
+  @@schema("public")
+}
+
+model SiteTopicList {
+  id                           String               @id @default(cuid())
+  siteTopicId                  String               @map("site_topic_id")
+  siteTopic                    SiteTopic            @relation(fields: [siteTopicId], references: [id])
+  rankingType                  String               @map("ranking_type")
+  listed                       DateTime
+
+  ofSiteTopicListPosts         SiteTopicListPost[]
+
+  @@unique([siteTopicId, rankingType, listed])
+  @@map("site_topic_list")
+  @@schema("public")
+}
+
+model SiteTopicListPost {
+  id                           String               @id @default(cuid())
+  siteTopicListId              String               @map("site_topic_list_id")
+  siteTopicList                SiteTopicList        @relation(fields: [siteTopicListId], references: [id])
+  postId                       String               @map("post_id")
+  post                         Post                 @relation(fields: [postId], references: [id])
+  index                        Int
+
+  @@unique([siteTopicListId, postId])
+  @@unique([siteTopicListId, index])
+  @@map("site_topic_list_post")
   @@schema("public")
 }
 

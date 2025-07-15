@@ -100,6 +100,24 @@ export const typeDefs = `#graphql
     description: String!
   }
 
+  type PostSummary {
+    id: String!
+    postId: String!
+    userProfileId: String
+    status: String!
+    text: String!
+    updated: String!
+  }
+
+  type PostUrlSummary {
+    id: String!
+    postUrlId: String!
+    userProfileId: String
+    status: String!
+    text: String!
+    updated: String!
+  }
+
   type ServerStartData {
     status: Boolean!
     message: String
@@ -216,5 +234,10 @@ export const typeDefs = `#graphql
     runDemosSetup(userProfileId: String!): StatusAndMessage!
     runSetup(userProfileId: String!): StatusAndMessage!
     runTests(userProfileId: String!): StatusAndMessage!
+
+    # Summaries
+    getPostSummaries(
+      userProfileId: String!,
+      daysAgo: Int): [PostSummary]
   }
 `

@@ -1,29 +1,27 @@
 import { PrismaClient } from '@prisma/client'
 
-export class PostSummaryModel {
+export class SiteTopicListModel {
 
   // Consts
-  clName = 'PostSummaryModel'
+  clName = 'SiteTopicListModel'
 
   // Code
   async create(
           prisma: PrismaClient,
-          postId: string,
-          userProfileId: string | null,
-          status: string,
-          text: string) {
+          siteTopicId: string,
+          rankingType: string,
+          listed: Date) {
 
     // Debug
     const fnName = `${this.clName}.create()`
 
     // Create record
     try {
-      return await prisma.postSummary.create({
+      return await prisma.siteTopicList.create({
         data: {
-          postId: postId,
-          userProfileId: userProfileId,
-          status: status,
-          text: text
+          siteTopicId: siteTopicId,
+          rankingType: rankingType,
+          listed: listed
         }
       })
     } catch(error) {
@@ -41,7 +39,7 @@ export class PostSummaryModel {
 
     // Delete
     try {
-      return await prisma.postSummary.delete({
+      return await prisma.siteTopicList.delete({
         where: {
           id: id
         }
@@ -62,10 +60,10 @@ export class PostSummaryModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var postSummary: any = null
+    var siteTopicList: any = null
 
     try {
-      postSummary = await prisma.postSummary.findUnique({
+      siteTopicList = await prisma.siteTopicList.findUnique({
         where: {
           id: id
         }
@@ -78,7 +76,7 @@ export class PostSummaryModel {
     }
 
     // Return
-    return postSummary
+    return siteTopicList
   }
 
   async getByIds(
@@ -90,7 +88,7 @@ export class PostSummaryModel {
 
     // Query
     try {
-      return await prisma.postSummary.findMany({
+      return await prisma.siteTopicList.findMany({
         where: {
           id: {
             in: ids
@@ -105,54 +103,40 @@ export class PostSummaryModel {
     }
   }
 
-  async getByPostIdsAndUserProfileId(
-          prisma: PrismaClient,
-          postIds: string[],
-          userProfileId: string | null) {
-
-    // Debug
-    const fnName = `${this.clName}.getByPostIdsAndUserProfileId()`
-
-    // Query
-    try {
-      return await prisma.postSummary.findMany({
-        where: {
-          postId: {
-            in: postIds
-          },
-          userProfileId: userProfileId
-        }
-      })
-    } catch(error: any) {
-      if (!(error instanceof error.NotFound)) {
-        console.error(`${fnName}: error: ${error}`)
-        throw 'Prisma error'
-      }
-    }
-  }
-
   async getByUniqueKey(
           prisma: PrismaClient,
-          postId: string,
-          userProfileId: string | null) {
+          siteTopicId: string,
+          rankingType: string,
+          listed: Date) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (postId == null) {
-      console.error(`${fnName}: postId == null`)
+    if (siteTopicId == null) {
+      console.error(`${fnName}: siteTopicId == null`)
+      throw 'Validation error'
+    }
+
+    if (rankingType == null) {
+      console.error(`${fnName}: rankingType == null`)
+      throw 'Validation error'
+    }
+
+    if (listed == null) {
+      console.error(`${fnName}: listed == null`)
       throw 'Validation error'
     }
 
     // Query
-    var postSummary: any = null
+    var siteTopicList: any = null
 
     try {
-      postSummary = await prisma.postSummary.findFirst({
+      siteTopicList = await prisma.siteTopicList.findFirst({
         where: {
-          postId: postId,
-          userProfileId: userProfileId
+          siteTopicId: siteTopicId,
+          rankingType: rankingType,
+          listed: listed
         }
       })
     } catch(error: any) {
@@ -163,28 +147,26 @@ export class PostSummaryModel {
     }
 
     // Return
-    return postSummary
+    return siteTopicList
   }
 
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          postId: string | undefined,
-          userProfileId: string | null | undefined,
-          status: string | undefined,
-          text: string | undefined) {
+          siteTopicId: string | undefined,
+          rankingType: string | undefined,
+          listed: Date | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
 
     // Update record
     try {
-      return await prisma.postSummary.update({
+      return await prisma.siteTopicList.update({
         data: {
-          postId: postId,
-          userProfileId: userProfileId,
-          status: status,
-          text: text
+          siteTopicId: siteTopicId,
+          rankingType: rankingType,
+          listed: listed
         },
         where: {
           id: id
@@ -199,10 +181,9 @@ export class PostSummaryModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          postId: string | undefined,
-          userProfileId: string | null | undefined,
-          status: string | undefined,
-          text: string | undefined) {
+          siteTopicId: string | undefined,
+          rankingType: string | undefined,
+          listed: Date | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -211,14 +192,16 @@ export class PostSummaryModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        postId != null &&
-        userProfileId != null) {
+        siteTopicId != null &&
+        rankingType != null &&
+        listed != null) {
 
       const post = await
               this.getByUniqueKey(
                 prisma,
-                postId,
-                userProfileId)
+                siteTopicId,
+                rankingType,
+                listed)
 
       if (post != null) {
         id = post.id
@@ -229,23 +212,18 @@ export class PostSummaryModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (postId == null) {
-        console.error(`${fnName}: id is null and postId is null`)
+      if (siteTopicId == null) {
+        console.error(`${fnName}: id is null and siteTopicId is null`)
         throw 'Prisma error'
       }
 
-      if (userProfileId === undefined) {
-        console.error(`${fnName}: id is null and userProfileId is undefined`)
+      if (rankingType == null) {
+        console.error(`${fnName}: id is null and rankingType is null`)
         throw 'Prisma error'
       }
 
-      if (status == null) {
-        console.error(`${fnName}: id is null and status is null`)
-        throw 'Prisma error'
-      }
-
-      if (text == null) {
-        console.error(`${fnName}: id is null and text is null`)
+      if (listed == null) {
+        console.error(`${fnName}: id is null and listed is null`)
         throw 'Prisma error'
       }
 
@@ -253,10 +231,9 @@ export class PostSummaryModel {
       return await
                this.create(
                  prisma,
-                 postId,
-                 userProfileId,
-                 status,
-                 text)
+                 siteTopicId,
+                 rankingType,
+                 listed)
     } else {
 
       // Update
@@ -264,10 +241,9 @@ export class PostSummaryModel {
                this.update(
                  prisma,
                  id,
-                 postId,
-                 userProfileId,
-                 status,
-                 text)
+                 siteTopicId,
+                 rankingType,
+                 listed)
     }
   }
 }
