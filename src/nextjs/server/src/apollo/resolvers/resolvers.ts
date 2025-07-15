@@ -16,7 +16,7 @@ import { upsertUserPreference } from '@/serene-core-server/apollo/resolvers/muta
 ;
 
 // Kindred mutations imports
-;
+import { loadServerStartData } from './mutations/server-data-start'
 
 // Code
 const Query = {
@@ -75,8 +75,10 @@ const Mutation = {
   // User preferences
   upsertUserPreference,
 
-  // CodeWriter
+  // Kindred
   // ---
+
+  loadServerStartData
 }
 
 const resolvers = { Query, Mutation }

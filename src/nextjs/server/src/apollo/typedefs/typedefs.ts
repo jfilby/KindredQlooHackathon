@@ -172,12 +172,6 @@ export const typeDefs = `#graphql
     # Serene Core
     # ---
 
-    # Start
-    loadServerStartData(
-      userProfileId: String!,
-      instanceId: String,
-      agentId: String): ServerStartData!
-
     # Users
     createBlankUser: UserProfile!
     createUserByEmail(email: String!): UserProfile!
@@ -208,6 +202,13 @@ export const typeDefs = `#graphql
 
     # Kindred
     # ---
+
+    # Start
+    loadServerStartData(
+      userProfileId: String!,
+      loadChatSession: Boolean,
+      chatSessionId: String,
+      chatSettingsName: String): ServerStartData!
 
     # Admin
     runAdminFix(userProfileId: String!): StatusAndMessage!
