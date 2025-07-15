@@ -286,7 +286,10 @@ model PostSummary {
   post                         Post                 @relation(fields: [postId], references: [id])
   userProfileId                String?              @map("user_profile_id")
   userProfile                  UserProfile?         @relation(fields: [userProfileId], references: [id])
+  status                       String               @db.Char(1)
   text                         String
+  created                      DateTime             @default(now())
+  updated                      DateTime             @updatedAt
 
   @@unique([postId, userProfileId])
   @@map("post_summary")

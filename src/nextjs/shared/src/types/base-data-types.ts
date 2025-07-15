@@ -3,6 +3,8 @@ export class BaseDataTypes {
   // Statuses
   static activeStatus = 'A'
   static deletePendingStatus = 'P'
+  static newStatus = 'N'
+  static inactiveStatus = 'I'
 
   static statusMap = {
     [this.activeStatus]: 'Active',

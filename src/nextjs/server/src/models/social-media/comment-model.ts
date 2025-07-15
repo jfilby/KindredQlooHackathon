@@ -56,6 +56,28 @@ export class CommentModel {
     }
   }
 
+  async filter(
+          prisma: PrismaClient,
+          postId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Query
+    try {
+      return await prisma.comment.findMany({
+        where: {
+          postId: postId
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {

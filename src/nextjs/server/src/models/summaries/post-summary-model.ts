@@ -10,6 +10,7 @@ export class PostSummaryModel {
           prisma: PrismaClient,
           postId: string,
           userProfileId: string | null,
+          status: string,
           text: string) {
 
     // Debug
@@ -21,6 +22,7 @@ export class PostSummaryModel {
         data: {
           postId: postId,
           userProfileId: userProfileId,
+          status: status,
           text: text
         }
       })
@@ -117,11 +119,6 @@ export class PostSummaryModel {
       throw 'Validation error'
     }
 
-    if (userProfileId == null) {
-      console.error(`${fnName}: userProfileId == null`)
-      throw 'Validation error'
-    }
-
     // Query
     var postSummary: any = null
 
@@ -148,6 +145,7 @@ export class PostSummaryModel {
           id: string | undefined,
           postId: string | undefined,
           userProfileId: string | null | undefined,
+          status: string | undefined,
           text: string | undefined) {
 
     // Debug
@@ -159,6 +157,7 @@ export class PostSummaryModel {
         data: {
           postId: postId,
           userProfileId: userProfileId,
+          status: status,
           text: text
         },
         where: {
@@ -176,6 +175,7 @@ export class PostSummaryModel {
           id: string | undefined,
           postId: string | undefined,
           userProfileId: string | null | undefined,
+          status: string | undefined,
           text: string | undefined) {
 
     // Debug
@@ -213,6 +213,11 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
 
+      if (status == null) {
+        console.error(`${fnName}: id is null and status is null`)
+        throw 'Prisma error'
+      }
+
       if (text == null) {
         console.error(`${fnName}: id is null and text is null`)
         throw 'Prisma error'
@@ -224,6 +229,7 @@ export class PostSummaryModel {
                  prisma,
                  postId,
                  userProfileId,
+                 status,
                  text)
     } else {
 
@@ -234,6 +240,7 @@ export class PostSummaryModel {
                  id,
                  postId,
                  userProfileId,
+                 status,
                  text)
     }
   }
