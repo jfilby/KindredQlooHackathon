@@ -245,10 +245,11 @@ model PostUrl {
   verified                     Boolean
   title                        String?
   text                         String?
-  created                    DateTime         @default(now())
-  updated                    DateTime         @updatedAt
+  created                      DateTime         @default(now())
+  updated                      DateTime         @updatedAt
 
   ofPosts                      Post[]
+  ofPostUrlSummaries           PostUrlSummary[]
 
   @@map("post_url")
   @@schema("public")
@@ -278,7 +279,7 @@ model SiteTopic {
   @@schema("public")
 }
 
-// Kindred: Social media summary
+// Kindred: LLM-generated summaries
 
 model PostSummary {
   id                           String               @id @default(cuid())
@@ -293,6 +294,22 @@ model PostSummary {
 
   @@unique([postId, userProfileId])
   @@map("post_summary")
+  @@schema("public")
+}
+
+model PostUrlSummary {
+  id                           String               @id @default(cuid())
+  postUrlId                    String               @map("post_url_id")
+  postUrl                      PostUrl              @relation(fields: [postUrlId], references: [id])
+  userProfileId                String?              @map("user_profile_id")
+  userProfile                  UserProfile?         @relation(fields: [userProfileId], references: [id])
+  status                       String               @db.Char(1)
+  text                         String
+  created                      DateTime             @default(now())
+  updated                      DateTime             @updatedAt
+
+  @@unique([postUrlId, userProfileId])
+  @@map("post_url_summary")
   @@schema("public")
 }
 

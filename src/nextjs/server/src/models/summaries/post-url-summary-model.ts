@@ -1,28 +1,28 @@
 import { PrismaClient } from '@prisma/client'
 
-export class PostUrlModel {
+export class PostUrlSummaryModel {
 
   // Consts
-  clName = 'PostUrlModel'
+  clName = 'PostUrlSummaryModel'
 
   // Code
   async create(
           prisma: PrismaClient,
-          url: string,
-          verified: boolean,
-          title: string | null,
-          text: string | null) {
+          postUrlId: string,
+          userProfileId: string | null,
+          status: string,
+          text: string) {
 
     // Debug
     const fnName = `${this.clName}.create()`
 
     // Create record
     try {
-      return await prisma.postUrl.create({
+      return await prisma.postUrlSummary.create({
         data: {
-          url: url,
-          verified: verified,
-          title: title,
+          postUrlId: postUrlId,
+          userProfileId: userProfileId,
+          status: status,
           text: text
         }
       })
@@ -41,31 +41,9 @@ export class PostUrlModel {
 
     // Delete
     try {
-      return await prisma.postUrl.delete({
+      return await prisma.postUrlSummary.delete({
         where: {
           id: id
-        }
-      })
-    } catch(error: any) {
-      if (!(error instanceof error.NotFound)) {
-        console.error(`${fnName}: error: ${error}`)
-        throw 'Prisma error'
-      }
-    }
-  }
-
-  async filter(
-          prisma: PrismaClient,
-          verified: boolean) {
-
-    // Debug
-    const fnName = `${this.clName}.filter()`
-
-    // Query
-    try {
-      return await prisma.postUrl.findMany({
-        where: {
-          verified: verified
         }
       })
     } catch(error: any) {
@@ -84,10 +62,10 @@ export class PostUrlModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var postUrl: any = null
+    var postUrlSummary: any = null
 
     try {
-      postUrl = await prisma.postUrl.findUnique({
+      postUrlSummary = await prisma.postUrlSummary.findUnique({
         where: {
           id: id
         }
@@ -100,7 +78,7 @@ export class PostUrlModel {
     }
 
     // Return
-    return postUrl
+    return postUrlSummary
   }
 
   async getByIds(
@@ -112,7 +90,7 @@ export class PostUrlModel {
 
     // Query
     try {
-      return await prisma.postUrl.findMany({
+      return await prisma.postUrlSummary.findMany({
         where: {
           id: {
             in: ids
@@ -129,24 +107,26 @@ export class PostUrlModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          url: string) {
+          postUrlId: string,
+          userProfileId: string | null) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (url == null) {
-      console.error(`${fnName}: url == null`)
+    if (postUrlId == null) {
+      console.error(`${fnName}: postUrlId == null`)
       throw 'Validation error'
     }
 
     // Query
-    var postUrl: any = null
+    var postUrlSummary: any = null
 
     try {
-      postUrl = await prisma.postUrl.findFirst({
+      postUrlSummary = await prisma.postUrlSummary.findFirst({
         where: {
-          url: url
+          postUrlId: postUrlId,
+          userProfileId: userProfileId
         }
       })
     } catch(error: any) {
@@ -157,52 +137,27 @@ export class PostUrlModel {
     }
 
     // Return
-    return postUrl
-  }
-
-  async getUnsummarized(
-          prisma: PrismaClient,
-          limitBy: number) {
-
-    // Debug
-    const fnName = `${this.clName}.getUnsummarized()`
-
-    // Query
-    try {
-      return await prisma.postUrl.findMany({
-        take: limitBy,
-        where: {
-          ofPostUrlSummaries: {
-            none: {}
-          }
-        }
-      })
-    } catch(error: any) {
-      if (!(error instanceof error.NotFound)) {
-        console.error(`${fnName}: error: ${error}`)
-        throw 'Prisma error'
-      }
-    }
+    return postUrlSummary
   }
 
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          url: string | undefined,
-          verified: boolean | undefined,
-          title: string | null | undefined,
-          text: string | null | undefined) {
+          postUrlId: string | undefined,
+          userProfileId: string | null | undefined,
+          status: string | undefined,
+          text: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
 
     // Update record
     try {
-      return await prisma.postUrl.update({
+      return await prisma.postUrlSummary.update({
         data: {
-          url: url,
-          verified: verified,
-          title: title,
+          postUrlId: postUrlId,
+          userProfileId: userProfileId,
+          status: status,
           text: text
         },
         where: {
@@ -218,10 +173,10 @@ export class PostUrlModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          url: string | undefined,
-          verified: boolean | undefined,
-          title: string | null | undefined,
-          text: string | null | undefined) {
+          postUrlId: string | undefined,
+          userProfileId: string | null | undefined,
+          status: string | undefined,
+          text: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -230,12 +185,14 @@ export class PostUrlModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        url != null) {
+        postUrlId != null &&
+        userProfileId != null) {
 
       const post = await
               this.getByUniqueKey(
                 prisma,
-                url)
+                postUrlId,
+                userProfileId)
 
       if (post != null) {
         id = post.id
@@ -246,23 +203,23 @@ export class PostUrlModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (url == null) {
-        console.error(`${fnName}: id is null and url is null`)
+      if (postUrlId == null) {
+        console.error(`${fnName}: id is null and postUrlId is null`)
         throw 'Prisma error'
       }
 
-      if (verified == null) {
-        console.error(`${fnName}: id is null and verified is null`)
+      if (userProfileId === undefined) {
+        console.error(`${fnName}: id is null and userProfileId is undefined`)
         throw 'Prisma error'
       }
 
-      if (title === undefined) {
-        console.error(`${fnName}: id is null and title is undefined`)
+      if (status == null) {
+        console.error(`${fnName}: id is null and status is null`)
         throw 'Prisma error'
       }
 
-      if (text === undefined) {
-        console.error(`${fnName}: id is null and text is undefined`)
+      if (text == null) {
+        console.error(`${fnName}: id is null and text is null`)
         throw 'Prisma error'
       }
 
@@ -270,9 +227,9 @@ export class PostUrlModel {
       return await
                this.create(
                  prisma,
-                 url,
-                 verified,
-                 title,
+                 postUrlId,
+                 userProfileId,
+                 status,
                  text)
     } else {
 
@@ -281,9 +238,9 @@ export class PostUrlModel {
                this.update(
                  prisma,
                  id,
-                 url,
-                 verified,
-                 title,
+                 postUrlId,
+                 userProfileId,
+                 status,
                  text)
     }
   }

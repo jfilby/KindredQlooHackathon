@@ -11,6 +11,7 @@ import { ServerTestTypes } from './types/server-test-types'
 import { SearchQueryServiceTests } from './services/search/search-query-service-tests'
 import { SetupService } from './setup/setup'
 import { SummarizePostService } from './social-media/summarized-posts/service'
+import { SummarizePostUrlService } from './social-media/summarized-post-urls/service'
 import { Tests } from './services/tests/tests'
 
 // Main batch
@@ -26,6 +27,7 @@ import { Tests } from './services/tests/tests'
   const searchCommand = 'search'
   const setupCommand = 'setup'
   const summarizePostsCommand = 'summarize-posts'
+  const summarizePostUrlsCommand = 'summarize-post-urls'
   const testCommand = 'test'
 
   const commands = [
@@ -35,6 +37,7 @@ import { Tests } from './services/tests/tests'
           searchCommand,
           setupCommand,
           summarizePostsCommand,
+          summarizePostUrlsCommand,
           testCommand
         ]
 
@@ -49,6 +52,7 @@ import { Tests } from './services/tests/tests'
   const searchQueryServiceTests = new SearchQueryServiceTests()
   const setupService = new SetupService()
   const summarizePostService = new SummarizePostService()
+  const summarizePostUrlService = new SummarizePostUrlService()
   const techProviderMutateService = new TechProviderMutateService()
   const tests = new Tests()
   const usersService = new UsersService()
@@ -112,6 +116,15 @@ import { Tests } from './services/tests/tests'
     case summarizePostsCommand: {
 
       await summarizePostService.run(
+              prisma,
+              adminUserProfile.id)
+
+      break
+    }
+
+    case summarizePostUrlsCommand: {
+
+      await summarizePostUrlService.run(
               prisma,
               adminUserProfile.id)
 
