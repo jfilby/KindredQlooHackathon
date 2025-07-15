@@ -49,6 +49,7 @@ export class HackerNewAlgoliaService {
 
       } else {
 
+        // Response error handling
         console.error(`${fnName}: status: ${response.status}: ` +
                       `${response.statusText}`)
 

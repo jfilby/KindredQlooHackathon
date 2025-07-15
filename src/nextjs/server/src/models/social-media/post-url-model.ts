@@ -54,6 +54,28 @@ export class PostUrlModel {
     }
   }
 
+  async filter(
+          prisma: PrismaClient,
+          verified: boolean) {
+
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Query
+    try {
+      return await prisma.postUrl.findMany({
+        where: {
+          verified: verified
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {
