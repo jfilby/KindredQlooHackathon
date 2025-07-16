@@ -291,35 +291,19 @@ export class SummarizePostMutateService {
       `\n` +
       `The comments follow: ` + JSON.stringify(commentsJson)
 
-    // LLM requests
-    var queryResults: any = undefined
-
-    for (var i = 0; i < 5; i++) {
-
-      try {
-        queryResults = await
-          agentLlmService.agentSingleShotLlmRequest(
-          prisma,
-            tech,
-            userProfileId,
-            null,       // instanceId
-            ServerOnlyTypes.defaultChatSettingsName,
-            BaseDataTypes.searchAgentRefId,
-            BaseDataTypes.searchAgentName,
-            BaseDataTypes.searchAgentRole,
-            prompt,
-            true,       // isEncryptedAtRest
-            false,      // isJsonMode
-            false)      // tryGetFromCache
-
-      } catch(e: any) {
-        console.log(`${fnName}: exception: ` + JSON.stringify(e))
-      }
-
-      if (queryResults != null) {
-        break
-      }
-    }
+    // LLM request
+    const queryResults = await
+            agentLlmService.agentSingleShotLlmRequest(
+              prisma,
+              tech,
+              userProfileId,
+              null,       // instanceId
+              ServerOnlyTypes.defaultChatSettingsName,
+              BaseDataTypes.searchAgentRefId,
+              BaseDataTypes.searchAgentName,
+              BaseDataTypes.searchAgentRole,
+              prompt,
+              false)      // isJsonMode
 
     // Validate
     if (queryResults == null) {

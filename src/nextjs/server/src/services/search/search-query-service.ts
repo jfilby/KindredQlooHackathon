@@ -117,9 +117,7 @@ export class SearchQueryService {
               BaseDataTypes.searchAgentName,
               BaseDataTypes.searchAgentRole,
               prompt,
-              true,       // isEncryptedAtRest
-              true,       // isJsonMode
-              false)      // tryGetFromCache
+              true)       // isJsonMode
 
     // Debug
     console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
