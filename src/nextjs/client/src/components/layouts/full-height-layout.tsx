@@ -9,6 +9,7 @@ interface Props {
   userProfileId: string | undefined
 }
 
+export const pageBodyWidthPlusPlus = '80em'
 export const pageBodyWidthPlus = '60em'
 export const pageBodyWidth = '54em'
 export const columnBodyWidth = '40em'

@@ -9,7 +9,7 @@ export class PostUrlSummaryModel {
   async create(
           prisma: PrismaClient,
           postUrlId: string,
-          userProfileId: string | null,
+          userProfileId: string,
           status: string,
           text: string) {
 
@@ -108,7 +108,7 @@ export class PostUrlSummaryModel {
   async getByUniqueKey(
           prisma: PrismaClient,
           postUrlId: string,
-          userProfileId: string | null) {
+          userProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
@@ -144,7 +144,7 @@ export class PostUrlSummaryModel {
           prisma: PrismaClient,
           id: string | undefined,
           postUrlId: string | undefined,
-          userProfileId: string | null | undefined,
+          userProfileId: string | undefined,
           status: string | undefined,
           text: string | undefined) {
 
@@ -174,7 +174,7 @@ export class PostUrlSummaryModel {
           prisma: PrismaClient,
           id: string | undefined,
           postUrlId: string | undefined,
-          userProfileId: string | null | undefined,
+          userProfileId: string | undefined,
           status: string | undefined,
           text: string | undefined) {
 

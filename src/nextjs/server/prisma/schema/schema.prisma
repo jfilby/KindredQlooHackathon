@@ -315,8 +315,8 @@ model PostSummary {
   id                           String               @id @default(cuid())
   postId                       String               @map("post_id")
   post                         Post                 @relation(fields: [postId], references: [id])
-  userProfileId                String?              @map("user_profile_id")
-  userProfile                  UserProfile?         @relation(fields: [userProfileId], references: [id])
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
   status                       String               @db.Char(1)
   text                         String
   created                      DateTime             @default(now())
@@ -331,8 +331,8 @@ model PostUrlSummary {
   id                           String               @id @default(cuid())
   postUrlId                    String               @map("post_url_id")
   postUrl                      PostUrl              @relation(fields: [postUrlId], references: [id])
-  userProfileId                String?              @map("user_profile_id")
-  userProfile                  UserProfile?         @relation(fields: [userProfileId], references: [id])
+  userProfileId                String               @map("user_profile_id")
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
   status                       String               @db.Char(1)
   text                         String
   created                      DateTime             @default(now())

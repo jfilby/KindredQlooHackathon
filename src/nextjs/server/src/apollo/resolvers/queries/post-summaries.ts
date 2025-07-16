@@ -1,5 +1,7 @@
 import { CustomError } from '@/serene-core-server/types/errors'
+import { UsersService } from '@/serene-core-server/services/users/service'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { ServerTestTypes } from '@/types/server-test-types'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { SiteModel } from '@/models/social-media/site-model'
 import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
@@ -13,6 +15,9 @@ const siteTopicListModel = new SiteTopicListModel()
 const siteTopicListPostModel = new SiteTopicListPostModel()
 const siteTopicModel = new SiteTopicModel()
 
+// Services
+const usersService = new UsersService()
+
 // Code
 export async function getPostSummaries(
                         parent: any,
@@ -23,8 +28,23 @@ export async function getPostSummaries(
   // Debug
   const fnName = `getPostSummaries()`
 
-  // Validate
-  if (args.siteTopicListId == null) {
+  // Get anon user
+  const anonUserProfile = await
+          usersService.getUserProfileByEmail(
+            prisma,
+            ServerTestTypes.anonUserEmail)
+
+  const forUserProfileId = anonUserProfile.id
+
+  // Get siteTopicListId
+  var siteTopicListId: string
+
+  if (args.siteTopicListId != null) {
+
+    siteTopicListId = args.siteTopicListId
+  } else {
+
+    // Get the default
 
     // Get HN site
     const site = await
@@ -66,13 +86,16 @@ export async function getPostSummaries(
         message: `No listings`
       }
     }
+
+    // Set siteTopicListId
+    siteTopicListId = siteTopicList.id
   }
 
   // Get posts for the site topic list
   const siteTopicListPosts = await
           siteTopicListPostModel.filter(
             prisma,
-            args.siteTopicListId)
+            siteTopicListId)
 
   // Validate
   if (siteTopicListPosts == null) {
@@ -85,12 +108,15 @@ export async function getPostSummaries(
   // Get postIds
   const postIds = siteTopicListPosts.map(post => post.postId)
 
+  // Debug
+  console.log(`${fnName}: postIds: ` + JSON.stringify(postIds))
+
   // Get post summaries
   const postSummaries = await
           postSummaryModel.getByPostIdsAndUserProfileId(
             prisma,
             postIds,
-            null)  // userProfileId
+            forUserProfileId)
 
   // Validate
   if (postSummaries == null) {
@@ -107,11 +133,20 @@ export async function getPostSummaries(
 
   // Sort postSummaries based on the original index
   const sortedPostSummaries = postSummaries.sort(
-    (a, b) => (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0)
+    (a, b) =>
+      (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0)
   )
 
   // Debug
   console.log(`${fnName}: sortedPostSummaries: ${sortedPostSummaries.length}`)
+
+  // Get postIds
+  const sortedPostIds =
+          sortedPostSummaries.map(
+            sortedPostSummary => sortedPostSummary.postId)
+
+  // Debug
+  console.log(`${fnName}: sortedPostIds: ` + JSON.stringify(sortedPostIds))
 
   // Return
   return {

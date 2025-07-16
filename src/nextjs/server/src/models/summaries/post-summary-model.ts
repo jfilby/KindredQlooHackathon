@@ -9,7 +9,7 @@ export class PostSummaryModel {
   async create(
           prisma: PrismaClient,
           postId: string,
-          userProfileId: string | null,
+          userProfileId: string,
           status: string,
           text: string) {
 
@@ -108,7 +108,7 @@ export class PostSummaryModel {
   async getByPostIdsAndUserProfileId(
           prisma: PrismaClient,
           postIds: string[],
-          userProfileId: string | null) {
+          userProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.getByPostIdsAndUserProfileId()`
@@ -116,6 +116,13 @@ export class PostSummaryModel {
     // Query
     try {
       return await prisma.postSummary.findMany({
+        include: {
+          post: {
+            include: {
+              postUrl: true
+            }
+          }
+        },
         where: {
           postId: {
             in: postIds
@@ -134,7 +141,7 @@ export class PostSummaryModel {
   async getByUniqueKey(
           prisma: PrismaClient,
           postId: string,
-          userProfileId: string | null) {
+          userProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
@@ -170,7 +177,7 @@ export class PostSummaryModel {
           prisma: PrismaClient,
           id: string | undefined,
           postId: string | undefined,
-          userProfileId: string | null | undefined,
+          userProfileId: string | undefined,
           status: string | undefined,
           text: string | undefined) {
 
@@ -200,7 +207,7 @@ export class PostSummaryModel {
           prisma: PrismaClient,
           id: string | undefined,
           postId: string | undefined,
-          userProfileId: string | null | undefined,
+          userProfileId: string | undefined,
           status: string | undefined,
           text: string | undefined) {
 

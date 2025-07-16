@@ -64,7 +64,7 @@ export default function ViewPostSummaryCard({
     <div
       onMouseOver={(e) => setActionsDisplay('inline-block')}
       onMouseOut={(e) => setActionsDisplay('none')}
-      style={{ paddingTop: '2em', minWidth: 275 }}>
+      style={{ paddingTop: '2em' }}>
 
       {message != null ?
         <Alert
@@ -82,7 +82,7 @@ export default function ViewPostSummaryCard({
 
           <>
             <Link
-              href=''
+              href={postSummary.post.postUrl.url}
               style={{ color: 'black' }}>
 
               <Typography
@@ -93,11 +93,18 @@ export default function ViewPostSummaryCard({
                 }}
                 variant='h6'>
                 {basicSharedUtils.getSnippet(
-                   postSummary.text,
-                   255)}
+                   postSummary.post.title,
+                   120)}
               </Typography>
             </Link>
-          
+
+            <Typography
+              variant='body1'>
+              {basicSharedUtils.getSnippet(
+                 postSummary.text,
+                 255)}
+            </Typography>
+
             {postSummary.status === BaseDataTypes.deletePendingStatus ?
               <Typography
                 style={{ color: 'gray' }}

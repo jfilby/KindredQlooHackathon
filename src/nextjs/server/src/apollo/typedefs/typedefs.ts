@@ -100,6 +100,12 @@ export const typeDefs = `#graphql
     description: String!
   }
 
+  type Post {
+    title: String!
+    posted: String!
+    postUrl: PostUrl!
+  }
+
   type PostSummary {
     id: String!
     postId: String!
@@ -107,12 +113,17 @@ export const typeDefs = `#graphql
     status: String!
     text: String!
     updated: String!
+    post: Post!
   }
 
   type PostSummaryResults {
     status: Boolean!
     message: String
     postSummaries: [PostSummary]
+  }
+
+  type PostUrl {
+    url: String!
   }
 
   type PostUrlSummary {

@@ -71,6 +71,13 @@ import { Tests } from './services/tests/tests'
             ServerTestTypes.regularTestUserEmail,
             undefined)  // defaultUserPreferences
 
+  // Get/create a regular (non-admin) user for the anonymous reader
+  const anonUserProfile = await
+          usersService.getOrCreateUserByEmail(
+            prisma,
+            ServerTestTypes.anonUserEmail,
+            undefined)  // defaultUserPreferences
+
   // Run the chosen command
   switch (command) {
 
@@ -117,7 +124,8 @@ import { Tests } from './services/tests/tests'
 
       await summarizePostService.run(
               prisma,
-              adminUserProfile.id)
+              adminUserProfile.id,
+              anonUserProfile.id)
 
       break
     }
@@ -126,7 +134,8 @@ import { Tests } from './services/tests/tests'
 
       await summarizePostUrlService.run(
               prisma,
-              adminUserProfile.id)
+              adminUserProfile.id,
+              anonUserProfile.id)
 
       break
     }

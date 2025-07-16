@@ -17,6 +17,13 @@ export const getPostSummariesQuery = gql`
         status
         text
         updated
+        post {
+          title
+          posted
+          postUrl {
+            url
+          }
+        }
       }
     }
   }

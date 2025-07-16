@@ -93,7 +93,8 @@ export class SummarizePostService {
   }
 
   async run(prisma: PrismaClient,
-            userProfileId: string) {
+            userProfileId: string,
+            forUserProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.run()`
@@ -116,7 +117,7 @@ export class SummarizePostService {
               prisma,
               post,
               userProfileId,
-              null)  // Not personalized
+              forUserProfileId)
     }
   }
 
@@ -124,7 +125,7 @@ export class SummarizePostService {
           prisma: PrismaClient,
           post: Post,
           userProfileId: string,
-          forUserProfileId: string | null) {
+          forUserProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.summarizePost()`
@@ -183,7 +184,7 @@ export class SummarizePostService {
   async summarizePostWithLlm(
           prisma: PrismaClient,
           userProfileId: string,
-          forUserProfileId: string | null,
+          forUserProfileId: string,
           post: Post,
           postSummary: PostSummary | null) {
 
