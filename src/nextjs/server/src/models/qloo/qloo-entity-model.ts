@@ -8,9 +8,12 @@ export class QlooEntityModel {
   // Code
   async create(
           prisma: PrismaClient,
+          qlooEntityId: string,
           isTrending: boolean,
           name: string,
-          keywords: string[],
+          disambiguation: string,
+          types: string[],
+          popularity: number,
           json: any) {
 
     // Debug
@@ -20,9 +23,12 @@ export class QlooEntityModel {
     try {
       return await prisma.qlooEntity.create({
         data: {
+          qlooEntityId: qlooEntityId,
           isTrending: isTrending,
           name: name,
-          keywords: keywords,
+          disambiguation: disambiguation,
+          types: types,
+          popularity: popularity,
           json: json
         }
       })
@@ -57,7 +63,7 @@ export class QlooEntityModel {
   async filter(
           prisma: PrismaClient,
           isTrending: boolean | undefined,
-          keywords: string[] | undefined) {
+          types: string[] | undefined) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
@@ -67,8 +73,8 @@ export class QlooEntityModel {
       return await prisma.qlooEntity.findMany({
         where: {
           isTrending: isTrending,
-          keywords: keywords ? {
-            hasEvery: keywords
+          types: types ? {
+            hasEvery: types
           } : undefined
         }
       })
@@ -131,14 +137,14 @@ export class QlooEntityModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          name: string) {
+          qlooEntityId: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (name == null) {
-      console.error(`${fnName}: name == null`)
+    if (qlooEntityId == null) {
+      console.error(`${fnName}: qlooEntityId == null`)
       throw 'Validation error'
     }
 
@@ -148,7 +154,7 @@ export class QlooEntityModel {
     try {
       qlooEntity = await prisma.qlooEntity.findFirst({
         where: {
-          name: name
+          qlooEntityId: qlooEntityId
         }
       })
     } catch(error: any) {
@@ -165,9 +171,12 @@ export class QlooEntityModel {
   async update(
           prisma: PrismaClient,
           id: string | undefined,
+          qlooEntityId: string | undefined,
           isTrending: boolean | undefined,
           name: string | undefined,
-          keywords: string[] | undefined,
+          disambiguation: string | undefined,
+          types: string[] | undefined,
+          popularity: number | undefined,
           json: any | undefined) {
 
     // Debug
@@ -177,9 +186,12 @@ export class QlooEntityModel {
     try {
       return await prisma.qlooEntity.update({
         data: {
+          qlooEntityId: qlooEntityId,
           isTrending: isTrending,
           name: name,
-          keywords: keywords,
+          disambiguation: disambiguation,
+          types: types,
+          popularity: popularity,
           json: json
         },
         where: {
@@ -195,9 +207,12 @@ export class QlooEntityModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
+          qlooEntityId: string | undefined,
           isTrending: boolean | undefined,
           name: string | undefined,
-          keywords: string[] | undefined,
+          disambiguation: string | undefined,
+          types: string[] | undefined,
+          popularity: number | undefined,
           json: any | undefined) {
 
     // Debug
@@ -207,12 +222,12 @@ export class QlooEntityModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        name != null) {
+        qlooEntityId != null) {
 
       const qlooEntity = await
               this.getByUniqueKey(
                 prisma,
-                name)
+                qlooEntityId)
 
       if (qlooEntity != null) {
         id = qlooEntity.id
@@ -223,6 +238,11 @@ export class QlooEntityModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
+      if (qlooEntityId == null) {
+        console.error(`${fnName}: id is null and qlooEntityId is null`)
+        throw 'Prisma error'
+      }
+
       if (isTrending == null) {
         console.error(`${fnName}: id is null and isTrending is null`)
         throw 'Prisma error'
@@ -233,8 +253,18 @@ export class QlooEntityModel {
         throw 'Prisma error'
       }
 
-      if (keywords == null) {
-        console.error(`${fnName}: id is null and keywords is null`)
+      if (disambiguation == null) {
+        console.error(`${fnName}: id is null and disambiguation is null`)
+        throw 'Prisma error'
+      }
+
+      if (types == null) {
+        console.error(`${fnName}: id is null and types is null`)
+        throw 'Prisma error'
+      }
+
+      if (popularity == null) {
+        console.error(`${fnName}: id is null and popularity is null`)
         throw 'Prisma error'
       }
 
@@ -247,9 +277,12 @@ export class QlooEntityModel {
       return await
                this.create(
                  prisma,
+                 qlooEntityId,
                  isTrending,
                  name,
-                 keywords,
+                 disambiguation,
+                 types,
+                 popularity,
                  json)
     } else {
 
@@ -258,9 +291,12 @@ export class QlooEntityModel {
                this.update(
                  prisma,
                  id,
+                 qlooEntityId,
                  isTrending,
                  name,
-                 keywords,
+                 disambiguation,
+                 types,
+                 popularity,
                  json)
     }
   }

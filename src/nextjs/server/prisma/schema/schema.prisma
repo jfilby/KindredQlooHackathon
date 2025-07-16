@@ -67,9 +67,12 @@ model QlooAudiencePersona {
 
 model QlooEntity {
   id                           String               @id @default(cuid())
+  qlooEntityId                 String               @map("qloo_entity_id") @unique
   isTrending                   Boolean              @map("is_trending")
-  name                         String               @unique
-  keywords                     String[]
+  name                         String
+  disambiguation               String
+  types                        String[]
+  popularity                   Float
   json                         Json                 @db.JsonB
   created                      DateTime             @default(now())
   updated                      DateTime             @updatedAt

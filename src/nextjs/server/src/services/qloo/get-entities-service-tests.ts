@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { QlooEntityType } from '@/types/qloo-types'
+import { QlooEntityCategory } from '@/types/qloo-types'
 import { GetQlooEntitiesService } from './get-entities-service'
 
 // Services
@@ -18,11 +18,10 @@ export class GetQlooEntitiesServiceTests {
     const fnName = `${this.clName}.tests()`
 
     // Query
-    const results = await
-            getQlooEntitiesService.get(
-                `Notion SaaS`,
-                [QlooEntityType.brandEntityUrn])
-
-    console.log(`${fnName}: entities: ` + JSON.stringify(results))
+    await getQlooEntitiesService.getAndSave(
+            prisma,
+            `John Wick`,
+            3,  // take
+            QlooEntityCategory.movie)
   }
 }
