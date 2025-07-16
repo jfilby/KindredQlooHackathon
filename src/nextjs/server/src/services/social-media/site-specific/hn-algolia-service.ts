@@ -166,6 +166,9 @@ export class HackerNewAlgoliaService {
               post.id,
               index)
 
+      // Inc index
+      index += 1
+
       // Get top comments for the post
       for (const commentId of hit.children) {
 
