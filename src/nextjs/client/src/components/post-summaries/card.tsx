@@ -7,6 +7,7 @@ import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { BasicSharedUtils } from '@/shared/services/basic-utils'
 import DeleteDialog from '../dialogs/delete-dialog'
 import UndeleteDialog from '../dialogs/undelete-dialog'
+import Markdown from 'react-markdown'
 
 interface Props {
   userProfileId: string
@@ -76,34 +77,44 @@ export default function ViewPostSummaryCard({
         <></>
       }
 
-      <div style={{ marginBottom: '2em' }}>
-        <div
-          style={{ display: 'inline-block', verticalAlign: 'top', width: '70%' }}>
+      <div style={{ marginBottom: '2em', textAlign: 'left' }}>
+        <div style={{ display: 'inline-block', verticalAlign: 'top' }}>
 
           <>
-            <Link
-              href={postSummary.post.postUrl.url}
-              style={{ color: 'black' }}>
 
-              <Typography
-                style={{
-                  color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
-                  display: 'inline-block',
-                  textAlign: 'left'
+            <Typography
+              style={{
+                color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
+                display: 'inline-block',
+                textAlign: 'left'
+              }}
+              variant='h6'>
+
+              <Link
+                href={postSummary.post.postUrl.url}
+                style={{ color: 'black' }}
+                sx={{
+                  textDecorationColor: 'black',
+                  textDecorationThickness: '1px',
+                  '&:hover': {
+                    textDecorationThickness: '2px',
+                  },
                 }}
-                variant='h6'>
+                underline='always'>
+
                 {basicSharedUtils.getSnippet(
                    postSummary.post.title,
                    120)}
-              </Typography>
-            </Link>
+              </Link>
+            </Typography>
 
-            <Typography
-              variant='body1'>
+            <Markdown>
               {basicSharedUtils.getSnippet(
                  postSummary.text,
-                 255)}
-            </Typography>
+                 // 255
+                 1000
+                 )}
+            </Markdown>
 
             {postSummary.status === BaseDataTypes.deletePendingStatus ?
               <Typography

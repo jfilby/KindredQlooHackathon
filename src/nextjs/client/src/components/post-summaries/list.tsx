@@ -19,7 +19,7 @@ export default function ListPostSummaries({
           <div style={{ marginBottom: '2em' }}>
 
             <Typography variant='h5'>
-              List
+              Latest summaries
             </Typography>
           </div>
 
