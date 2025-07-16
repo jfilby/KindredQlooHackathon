@@ -248,7 +248,9 @@ export class SummarizePostMutateService {
           `- This summary will appear just below the title, so don't ` +
           `  duplicate it.\n` +
           `- The first half of the summary should be about the post/url ` +
-          `  content. It should be 1-3 sentences.\n` +
+          `  content. It should be 1-3 sentences at most, written in clear, ` +
+          `  concise language that doesn't waffle and shouldn't include` +
+          `  what's already in the title.\n` +
           `- The second half of the summary should be about the ` +
           `  ${site.name} post and its comments, but don't duplicate ` +
           `  anything already written for the summary.\n` +
