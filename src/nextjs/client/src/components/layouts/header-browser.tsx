@@ -3,7 +3,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import { Box, Grid, Link, Typography } from '@mui/material'
 import { HeaderBrowserLink } from './header-browser-link'
 
-const HEADER_HEIGHT = 50
+const HEADER_HEIGHT = 30
 
 interface Props {
   highLevelLink: string
@@ -24,7 +24,7 @@ export function HeaderBrowser({ highLevelLink }: Props) {
 
   return (
     <Box height={HEADER_HEIGHT}>
-      <Grid container spacing={2} style={{ marginTop: '-0.5em' }}>
+      <Grid container spacing={2} style={{ marginTop: '0.5em' }}>
         <Grid size={9} style={{ textAlign: 'left' }}>
           <Typography variant='body1'>
             <HeaderBrowserLink
