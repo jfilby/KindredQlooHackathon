@@ -76,22 +76,25 @@ export default function ViewPostSummaryCard({
         <></>
       }
 
-      <div style={{ marginBottom: '2em', height: '2em' }}>
+      <div style={{ marginBottom: '2em' }}>
         <div
           style={{ display: 'inline-block', verticalAlign: 'top', width: '70%' }}>
 
           <>
-            <Link href=''>
+            <Link
+              href=''
+              style={{ color: 'black' }}>
 
               <Typography
                 style={{
                   color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
-                  display: 'inline-block'
+                  display: 'inline-block',
+                  textAlign: 'left'
                 }}
                 variant='h6'>
                 {basicSharedUtils.getSnippet(
                    postSummary.text,
-                   55)}
+                   255)}
               </Typography>
             </Link>
           
@@ -112,29 +115,29 @@ export default function ViewPostSummaryCard({
             <></>
           }
         </div>
-
-        <div style={{ display: actionsDisplay, height: '2em', textAlign: 'right', width: '30%' }}>
-
-          <div>
-            <>
-              {postSummaryToSave.status !== BaseDataTypes.deletePendingStatus ?
-
-                <LabeledIconButton
-                  icon={DeleteIcon}
-                  label='Delete'
-                  onClick={(e: any) => setDeleteDialogOpen(true)}
-                  style={{ marginRight: '1em' }} />
-              :
-                <LabeledIconButton
-                  icon={RestoreFromTrashIcon}
-                  label='Restore'
-                  onClick={(e: any) => setUndeleteDialogOpen(true)}
-                  style={{ cursor: 'pointer' }} />
-              }
-            </>
-          </div>
-        </div>
       </div>
+
+      {/* <div style={{ display: actionsDisplay, height: '2em', textAlign: 'right', width: '30%' }}>
+
+        <div>
+          <>
+            {postSummaryToSave.status !== BaseDataTypes.deletePendingStatus ?
+
+              <LabeledIconButton
+                icon={DeleteIcon}
+                label='Delete'
+                onClick={(e: any) => setDeleteDialogOpen(true)}
+                style={{ marginRight: '1em' }} />
+            :
+              <LabeledIconButton
+                icon={RestoreFromTrashIcon}
+                label='Restore'
+                onClick={(e: any) => setUndeleteDialogOpen(true)}
+                style={{ cursor: 'pointer' }} />
+            }
+          </>
+        </div>
+      </div> */}
 
       <Divider variant='fullWidth' />
 
