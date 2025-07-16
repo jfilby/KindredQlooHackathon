@@ -105,8 +105,8 @@ model AiPersona {
   created                      DateTime             @default(now())
   updated                      DateTime             @updatedAt
 
-  ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
-  ofAiPersonaEntityInterests   AiPersonaEntityInterest[]
+  // ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
+  // ofAiPersonaEntityInterests   AiPersonaEntityInterest[]
 
   @@unique([userProfileId, name])
   @@map("ai_persona")
@@ -120,8 +120,9 @@ model DomainInterest {
   qlooDomain                   String?              @map("qloo_domain")
   name                         String               @unique
 
-  ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
-  ofUserDomainInterests        UserDomainInterest[]
+  ofEntityInterests            EntityInterest[]
+  // ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
+  // ofUserDomainInterests        UserDomainInterest[]
 
   @@map("domain_interest")
   @@schema("public")
@@ -129,18 +130,21 @@ model DomainInterest {
 
 model EntityInterest {
   id                           String               @id @default(cuid())
+  domainInterestId             String               @map("domain_interest_id")
+  domainInterest               DomainInterest       @relation(fields: [domainInterestId], references: [id])
   qlooEntityId                 String?              @map("qloo_entity_id")
   qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
   name                         String               @unique
 
-  ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
+  // ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
   ofUserEntityInterests        UserEntityInterest[]
 
+  @@unique([domainInterestId, name])
   @@map("entity_interest")
   @@schema("public")
 }
 
-model AiPersonaDomainInterest {
+/* model AiPersonaDomainInterest {
   id                           String               @id @default(cuid())
   aiPersonaId                  String               @map("ai_persona_id")
   aiPersona                    AiPersona            @relation(fields: [aiPersonaId], references: [id])
@@ -174,7 +178,7 @@ model UserDomainInterest {
   @@unique([userProfileId, domainInterestId])
   @@map("user_domain_interest")
   @@schema("public")
-}
+} */
 
 model UserEntityInterest {
   id                           String               @id @default(cuid())
