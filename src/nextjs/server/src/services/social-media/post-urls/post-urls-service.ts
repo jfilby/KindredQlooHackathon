@@ -18,6 +18,7 @@ export class PostUrlsService {
   // Code
   async extractArticle(url: string) {
 
+    // Get content with Puppeteer
     const browser = await puppeteer.launch({ headless: true })
     const page = await browser.newPage()
 
@@ -27,9 +28,19 @@ export class PostUrlsService {
     await browser.close()
 
     const doc = new JSDOM(html, { url })
-    const reader = new Readability(doc.window.document)
-    const article = reader.parse();
 
+    // Parse with Readability
+    const reader = new Readability(doc.window.document)
+    const article = reader.parse()
+
+    // Remove redundant tab chars
+    if (article != null &&
+        article.textContent != null) {
+
+      article.textContent = article.textContent.replace(/\t+/g, '\t')
+    }
+
+    // Return
     return {
       title: article?.title || '',
       content: article?.textContent || '',
