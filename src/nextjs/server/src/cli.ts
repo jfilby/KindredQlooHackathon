@@ -5,13 +5,13 @@ require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` })
 import { prisma } from './db'
 import { TechProviderMutateService } from '@/serene-core-server/services/tech/tech-provider-mutate-service'
 import { UsersService } from '@/serene-core-server/services/users/service'
-import { HackerNewAlgoliaTestsService } from './social-media/site-specific/hn-algolia-service-tests'
-import { PostUrlsService } from './social-media/post-urls/post-urls-service'
+import { HackerNewAlgoliaTestsService } from './services/social-media/site-specific/hn-algolia-service-tests'
+import { PostUrlsService } from './services/social-media/post-urls/post-urls-service'
 import { ServerTestTypes } from './types/server-test-types'
 import { SearchQueryServiceTests } from './services/search/search-query-service-tests'
 import { SetupService } from './setup/setup'
-import { SummarizePostService } from './social-media/summarized-posts/service'
-import { SummarizePostUrlService } from './social-media/summarized-post-urls/service'
+import { SummarizePostService } from './services/social-media/summarized-posts/service'
+import { SummarizePostUrlService } from './services/social-media/summarized-post-urls/service'
 import { Tests } from './services/tests/tests'
 
 // Main batch
