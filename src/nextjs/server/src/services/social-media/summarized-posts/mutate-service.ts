@@ -1,7 +1,5 @@
 import { Post, PostSummary, PostUrl, PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { TechModel } from '@/serene-core-server/models/tech/tech-model'
-import { AiTechDefs } from '@/serene-ai-server/types/tech-defs'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
@@ -10,6 +8,7 @@ import { PostModel } from '@/models/social-media/post-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
+import { GetTechService } from '@/services/llms/get-tech-service'
 
 // Models
 const commentModel = new CommentModel()
@@ -17,10 +16,10 @@ const postModel = new PostModel()
 const postSummaryModel = new PostSummaryModel()
 const postUrlModel = new PostUrlModel()
 const siteModel = new SiteModel()
-const techModel = new TechModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
+const getTechService = new GetTechService()
 
 // Class
 export class SummarizePostMutateService {
@@ -75,21 +74,6 @@ export class SummarizePostMutateService {
       hours: diffHours,
       days: diffDays,
     }
-  }
-
-  async getTech(
-          prisma: PrismaClient,
-          userProfileId: string | null) {
-
-    // Get the default (GPT 4o)
-    const tech = await
-            techModel.getByVariantName(
-              prisma,
-              AiTechDefs.googleGemini_V2pt5FlashFree)
-              // AiTechDefs.openRouter_MistralSmall3pt2_24b_Chutes)
-
-    // Return
-    return tech
   }
 
   async run(prisma: PrismaClient,
@@ -209,7 +193,7 @@ export class SummarizePostMutateService {
 
     // Get the LLM
     const tech = await
-            this.getTech(
+            getTechService.getStandardLlmTech(
               prisma,
               userProfileId)
 
@@ -307,7 +291,7 @@ export class SummarizePostMutateService {
       `\n` +
       `The comments follow: ` + JSON.stringify(commentsJson)
 
-    // Query via AIC
+    // LLM requests
     var queryResults: any = undefined
 
     for (var i = 0; i < 5; i++) {

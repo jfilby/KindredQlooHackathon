@@ -8,15 +8,15 @@ import { ServerOnlyTypes } from '@/types/server-only-types'
 import { PostUrlSummaryModel } from '@/models/summaries/post-url-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
+import { GetTechService } from '@/services/llms/get-tech-service'
 
 // Models
 const postUrlModel = new PostUrlModel()
 const postUrlSummaryModel = new PostUrlSummaryModel()
-const siteModel = new SiteModel()
-const techModel = new TechModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
+const getTechService = new GetTechService()
 
 // Class
 export class SummarizePostUrlService {
@@ -25,21 +25,6 @@ export class SummarizePostUrlService {
   clName = 'SummarizePostUrlService'
 
   // Code
-  async getTech(
-          prisma: PrismaClient,
-          userProfileId: string | null) {
-
-    // Get the default (GPT 4o)
-    const tech = await
-            techModel.getByVariantName(
-              prisma,
-              AiTechDefs.googleGemini_V2pt5FlashFree)
-              // AiTechDefs.openRouter_MistralSmall3pt2_24b_Chutes)
-
-    // Return
-    return tech
-  }
-
   async run(prisma: PrismaClient,
             userProfileId: string,
             forUserProfileId: string) {
@@ -130,7 +115,7 @@ export class SummarizePostUrlService {
 
     // Get the LLM
     const tech = await
-            this.getTech(
+            getTechService.getStandardLlmTech(
               prisma,
               userProfileId)
 
@@ -183,7 +168,7 @@ export class SummarizePostUrlService {
       }
     }
 
-    // Query via AIC
+    // LLM requests
     var queryResults: any = undefined
 
     for (var i = 0; i < 5; i++) {

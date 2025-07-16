@@ -105,7 +105,7 @@ export class SearchQueryService {
             `Notes:\n` +
             `- The title and specifically fields must be 80 chars at most.\n`
 
-    // Query via AIC
+    // LLM requests
     const queryResults = await
             agentLlmService.agentSingleShotLlmRequest(
               prisma,
