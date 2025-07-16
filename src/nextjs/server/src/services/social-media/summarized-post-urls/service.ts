@@ -75,6 +75,14 @@ export class SummarizePostUrlService {
     // Debug
     const fnName = `${this.clName}.summarizePostUrl()`
 
+    // Validate
+    if (postUrl.title == null &&
+        postUrl.text == null) {
+
+      console.error(`${fnName}: title and text are both null (skipping)`)
+      return
+    }
+
     // Skip those with existing summaries, or recently summarized
     var postUrlSummary = await
           postUrlSummaryModel.getByUniqueKey(
@@ -125,11 +133,6 @@ export class SummarizePostUrlService {
 
     // Debug
     // console.log(`${fnName}: tech: ` + JSON.stringify(tech))
-
-    // Get post
-    const postJson = {
-      title: postUrl.title
-    }
 
     // Define the prompt
     var prompt =

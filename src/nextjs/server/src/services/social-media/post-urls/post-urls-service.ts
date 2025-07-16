@@ -56,8 +56,23 @@ export class PostUrlsService {
     for (const postUrl of postUrls) {
 
       // Fetch the URL
-      const results = await
-              this.extractArticle(postUrl.url)
+      var results: any = undefined
+
+      try {
+        results = await
+          this.extractArticle(postUrl.url)
+      } catch (e: any) {
+
+        console.error(`${fnName}: e: ` + JSON.stringify(e))
+      }
+
+      // Did the fetch fail, or were no title or text extracted?
+      if (results == null ||
+          (results.title == null &&
+           results.content == null)) {
+
+        continue
+      }
 
       // Save
       await postUrlModel.update(
