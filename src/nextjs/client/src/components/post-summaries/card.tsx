@@ -1,0 +1,166 @@
+import { useEffect, useState } from 'react'
+import DeleteIcon from '@mui/icons-material/Delete'
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash'
+import { Alert, Divider, Link, Typography } from '@mui/material'
+import LabeledIconButton from '@/serene-core-client/components/buttons/labeled-icon-button'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { BasicSharedUtils } from '@/shared/services/basic-utils'
+import DeleteDialog from '../dialogs/delete-dialog'
+import UndeleteDialog from '../dialogs/undelete-dialog'
+
+interface Props {
+  userProfileId: string
+  postSummary: any
+}
+
+export default function ViewPostSummaryCard({
+                          userProfileId,
+                          postSummary
+                        }: Props) {
+
+  // Services
+  const basicSharedUtils = new BasicSharedUtils()
+
+  // State
+  const [alertSeverity, setAlertSeverity] = useState<any>('')
+  const [message, setMessage] = useState<string | undefined>(undefined)
+
+  const [actionsDisplay, setActionsDisplay] = useState('none')
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [undeleteDialogOpen, setUndeleteDialogOpen] = useState(false)
+  const [deleteAction, setDeleteAction] = useState(false)
+  const [undeleteAction, setUndeleteAction] = useState(false)
+  const [saveAction, setSaveAction] = useState(false)
+
+  const [postSummaryToSave, setPostSummaryToSave] = useState(postSummary)
+
+  // Effects
+  useEffect(() => {
+
+    if (deleteAction === true) {
+
+      postSummaryToSave.status = BaseDataTypes.deletePendingStatus
+      setPostSummaryToSave(postSummaryToSave)
+      setSaveAction(true)
+      setDeleteAction(false)
+    }
+
+  }, [deleteAction])
+
+  useEffect(() => {
+
+    if (undeleteAction === true) {
+
+      postSummaryToSave.status = BaseDataTypes.activeStatus
+      setPostSummaryToSave(postSummaryToSave)
+      setSaveAction(true)
+      setUndeleteAction(false)
+    }
+
+  }, [undeleteAction])
+
+  // Render
+  return (
+    <div
+      onMouseOver={(e) => setActionsDisplay('inline-block')}
+      onMouseOut={(e) => setActionsDisplay('none')}
+      style={{ paddingTop: '2em', minWidth: 275 }}>
+
+      {message != null ?
+        <Alert
+          severity={alertSeverity}
+          style={{ marginBottom: '2em' }}>
+          {message}
+        </Alert>
+      :
+        <></>
+      }
+
+      <div style={{ marginBottom: '2em', height: '2em' }}>
+        <div
+          style={{ display: 'inline-block', verticalAlign: 'top', width: '70%' }}>
+
+          <>
+            <Link href=''>
+
+              <Typography
+                style={{
+                  color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
+                  display: 'inline-block'
+                }}
+                variant='h6'>
+                {basicSharedUtils.getSnippet(
+                   postSummary.text,
+                   55)}
+              </Typography>
+            </Link>
+          
+            {postSummary.status === BaseDataTypes.deletePendingStatus ?
+              <Typography
+                style={{ color: 'gray' }}
+                variant='body2'>
+                <i>Deleted</i>
+              </Typography>
+            :
+              <></>
+            }
+          </>
+
+          {postSummary.createdByName != null ?
+            <>{postSummary.createdByName}</>
+          :
+            <></>
+          }
+        </div>
+
+        <div style={{ display: actionsDisplay, height: '2em', textAlign: 'right', width: '30%' }}>
+
+          <div>
+            <>
+              {postSummaryToSave.status !== BaseDataTypes.deletePendingStatus ?
+
+                <LabeledIconButton
+                  icon={DeleteIcon}
+                  label='Delete'
+                  onClick={(e: any) => setDeleteDialogOpen(true)}
+                  style={{ marginRight: '1em' }} />
+              :
+                <LabeledIconButton
+                  icon={RestoreFromTrashIcon}
+                  label='Restore'
+                  onClick={(e: any) => setUndeleteDialogOpen(true)}
+                  style={{ cursor: 'pointer' }} />
+              }
+            </>
+          </div>
+        </div>
+      </div>
+
+      <Divider variant='fullWidth' />
+
+      {/* <SavePostSummary
+        postSummary={postSummaryToSave}
+        userProfileId={userProfileId}
+        setAlertSeverity={setAlertSeverity}
+        setMessage={setMessage}
+        saveAction={saveAction}
+        setSaveAction={setSaveAction}
+        setSaveCompleted={undefined}
+        setEditMode={undefined} /> */}
+
+      <DeleteDialog
+        open={deleteDialogOpen}
+        type='post summary'
+        name={postSummary.name}
+        setOpen={setDeleteDialogOpen}
+        setDeleteConfirmed={setDeleteAction} />
+
+      <UndeleteDialog
+        open={undeleteDialogOpen}
+        name={postSummary.name}
+        setOpen={setUndeleteDialogOpen}
+        setUndeleteConfirmed={setUndeleteAction} />
+
+    </div>
+  )
+}

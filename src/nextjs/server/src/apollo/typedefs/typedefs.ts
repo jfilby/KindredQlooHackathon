@@ -189,6 +189,11 @@ export const typeDefs = `#graphql
 
     # Kindred
     # ---
+
+    # Summaries
+    getPostSummaries(
+      userProfileId: String!,
+      siteTopicListId: String): PostSummaryResults!
   }
 
   type Mutation {
@@ -240,10 +245,5 @@ export const typeDefs = `#graphql
     runDemosSetup(userProfileId: String!): StatusAndMessage!
     runSetup(userProfileId: String!): StatusAndMessage!
     runTests(userProfileId: String!): StatusAndMessage!
-
-    # Summaries
-    getPostSummaries(
-      userProfileId: String!,
-      siteTopicListId: String!): PostSummaryResults!
   }
 `

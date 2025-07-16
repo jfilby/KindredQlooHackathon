@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import { useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import FullHeightLayout, { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
+import LoadPostSummariesByFilter from '@/components/post-summaries/load-by-filter'
+import ListPostSummaries from '@/components/post-summaries/list'
 
 interface Props {
   userProfile: any
@@ -13,8 +15,7 @@ export default function PostSummariesPage({
                         }: Props) {
 
   // State
-  const [pathname, setPathname] = useState(`/test`)
-  const [prompt, setPrompt] = useState<string>('')
+  const [postSummaries, setPostSummaries] = useState<any[] | undefined>(undefined)
 
   // Render
   return (
@@ -30,10 +31,21 @@ export default function PostSummariesPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
-          <>
-          </>
+          {postSummaries != null ?
+            <ListPostSummaries
+              userProfileId={userProfile.id}
+              postSummaries={postSummaries} />
+          :
+            <Typography>
+              Loading..
+            </Typography>
+          }
         </Box>
       </FullHeightLayout>
+
+      <LoadPostSummariesByFilter
+        userProfileId={userProfile.id}
+        setPostSummaries={setPostSummaries} />
     </>
   )
 }
@@ -44,6 +56,6 @@ export async function getServerSideProps(context: any) {
            context,
            {
              verifyAdminUsersOnly: false,
-             verifyLoggedInUsersOnly: true
+             verifyLoggedInUsersOnly: false
            })
 }

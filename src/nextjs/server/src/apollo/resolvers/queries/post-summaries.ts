@@ -79,6 +79,9 @@ export async function getPostSummaries(
     throw new CustomError(`${fnName}: siteTopicListPosts == null`)
   }
 
+  // Debug
+  console.log(`${fnName}: siteTopicListPosts: ${siteTopicListPosts.length}`)
+
   // Get postIds
   const postIds = siteTopicListPosts.map(post => post.postId)
 
@@ -94,6 +97,9 @@ export async function getPostSummaries(
     throw new CustomError(`${fnName}: postSummaries == null`)
   }
 
+  // Debug
+  console.log(`${fnName}: postSummaries: ${postSummaries.length}`)
+
   // Build a map from postId to index
   const postOrderMap = new Map(
     siteTopicListPosts.map((post, idx) => [post.postId, post.index ?? idx])
@@ -104,9 +110,12 @@ export async function getPostSummaries(
     (a, b) => (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0)
   )
 
+  // Debug
+  console.log(`${fnName}: sortedPostSummaries: ${sortedPostSummaries.length}`)
+
   // Return
   return {
     status: true,
-    postSummaries: postSummaries
+    postSummaries: sortedPostSummaries
   }
 }
