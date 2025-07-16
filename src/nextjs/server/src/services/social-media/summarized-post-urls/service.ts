@@ -1,4 +1,4 @@
-import { PostUrl, PostUrlSummary, PrismaClient } from '@prisma/client'
+import { PostUrl, PostUrlSummary, PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { TechModel } from '@/serene-core-server/models/tech/tech-model'
 import { AiTechDefs } from '@/serene-ai-server/types/tech-defs'
@@ -7,10 +7,12 @@ import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { PostUrlSummaryModel } from '@/models/summaries/post-url-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
+import { SiteModel } from '@/models/social-media/site-model'
 
 // Models
 const postUrlModel = new PostUrlModel()
 const postUrlSummaryModel = new PostUrlSummaryModel()
+const siteModel = new SiteModel()
 const techModel = new TechModel()
 
 // Services
@@ -142,6 +144,7 @@ export class SummarizePostUrlService {
           `## General instructions\n` +
           `- Summarize the following web page in markdown, but don't ` +
           `  mention that it's a summary or that it's in markdown.\n` +
+          // `- Write in the style of a ${site.name} top commenter.\n` +
           `- Don't use headings. Only use bold text if something really ` +
           `  needs to stand out.\n` +
           `- There's no need to generate a title.\n`

@@ -1,4 +1,4 @@
-import { Post, PostSummary, PostUrl, PrismaClient } from '@prisma/client'
+import { Post, PostSummary, PostUrl, PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { TechModel } from '@/serene-core-server/models/tech/tech-model'
 import { AiTechDefs } from '@/serene-ai-server/types/tech-defs'
@@ -172,11 +172,23 @@ export class SummarizePostMutateService {
     // Debug
     console.log(`${fnName}: proceeding to summarize..`)
 
+    // Get Site
+    const site = await
+            siteModel.getById(
+              prisma,
+              post.siteId)
+
+    // Validate
+    if (site == null) {
+      throw new CustomError(`${fnName}: site == null`)
+    }
+
     // Summarize post
     await this.summarizePostWithLlm(
             prisma,
             userProfileId,
             forUserProfileId,
+            site,
             post,
             postSummary)
   }
@@ -185,6 +197,7 @@ export class SummarizePostMutateService {
           prisma: PrismaClient,
           userProfileId: string,
           forUserProfileId: string,
+          site: Site,
           post: Post,
           postSummary: PostSummary | null) {
 
@@ -202,17 +215,6 @@ export class SummarizePostMutateService {
 
     // Debug
     // console.log(`${fnName}: tech: ` + JSON.stringify(tech))
-
-    // Get Site
-    const site = await
-            siteModel.getById(
-              prisma,
-              post.siteId)
-
-    // Validate
-    if (site == null) {
-      throw new CustomError(`${fnName}: site == null`)
-    }
 
     // Get post
     const postJson = {
@@ -243,6 +245,7 @@ export class SummarizePostMutateService {
           `## General instructions\n` +
           `- Summarize the following post in markdown, but don't mention ` +
           `  that it's a summary or that it's in markdown.\n` +
+          `- Write in the style of a ${site.name} top commenter.\n` +
           `- Don't use headings. Only use bold text if something really ` +
           `  needs to stand out.\n` +
           `- This summary will appear just below the title, so don't ` +
