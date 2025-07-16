@@ -245,7 +245,8 @@ export class SummarizePostMutateService {
           `  that it's a summary or that it's in markdown.\n` +
           `- Don't use headings. Only use bold text if something really ` +
           `  needs to stand out.\n` +
-          `- There's no need to generate a title.\n` +
+          `- This summary will appear just below the title, so don't ` +
+          `  duplicate it.\n` +
           `- The first half of the summary should be about the post/url ` +
           `  content. It should be 1-3 sentences.\n` +
           `- The second half of the summary should be about the ` +
