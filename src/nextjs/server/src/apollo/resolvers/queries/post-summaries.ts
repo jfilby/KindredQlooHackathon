@@ -1,10 +1,17 @@
 import { CustomError } from '@/serene-core-server/types/errors'
+import { ServerOnlyTypes } from '@/types/server-only-types'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
+import { SiteModel } from '@/models/social-media/site-model'
+import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
 import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
+import { SiteTopicModel } from '@/models/social-media/site-topic-model'
 
 // Models
 const postSummaryModel = new PostSummaryModel()
+const siteModel = new SiteModel()
+const siteTopicListModel = new SiteTopicListModel()
 const siteTopicListPostModel = new SiteTopicListPostModel()
+const siteTopicModel = new SiteTopicModel()
 
 // Code
 export async function getPostSummaries(
@@ -18,7 +25,47 @@ export async function getPostSummaries(
 
   // Validate
   if (args.siteTopicListId == null) {
-    throw new CustomError(`${fnName}: args.siteTopicListId == null`)
+
+    // Get HN site
+    const site = await
+            siteModel.getByUniqueKey(
+              prisma,
+              ServerOnlyTypes.hnSiteName)
+
+    // Validate
+    if (site == null) {
+      throw new CustomError(`${fnName}: site == null`)
+    }
+
+    // Get SiteTopic
+    const siteTopic = await
+            siteTopicModel.getByUniqueKey(
+              prisma,
+              site.id,
+              'front-page')
+
+    // Validate
+    if (siteTopic == null) {
+      return {
+        status: true,
+        message: `No such topic`
+      }
+    }
+
+    // Get SiteTopicList
+    const siteTopicList = await
+            siteTopicListModel.getLatestBySiteTopicId(
+              prisma,
+              siteTopic.id,
+              'front-page')  // rankingType
+
+    if (siteTopicList == null) {
+
+      return {
+        status: true,
+        message: `No listings`
+      }
+    }
   }
 
   // Get posts for the site topic list

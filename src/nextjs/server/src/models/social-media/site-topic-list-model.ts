@@ -150,6 +150,51 @@ export class SiteTopicListModel {
     return siteTopicList
   }
 
+  async getLatestBySiteTopicId(
+          prisma: PrismaClient,
+          siteTopicId: string,
+          rankingType: string) {
+
+    // Debug
+    const fnName = `${this.clName}.getLatestBySiteId()`
+
+    // Validate
+    if (siteTopicId == null) {
+      console.error(`${fnName}: siteTopicId == null`)
+      throw 'Validation error'
+    }
+
+    if (rankingType == null) {
+      console.error(`${fnName}: rankingType == null`)
+      throw 'Validation error'
+    }
+
+    // Query
+    var siteTopicList: any = null
+
+    try {
+      siteTopicList = await prisma.siteTopicList.findFirst({
+        where: {
+          siteTopicId: siteTopicId,
+          rankingType: rankingType
+        },
+        orderBy: [
+          {
+            listed: 'desc'
+          }
+        ]
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+
+    // Return
+    return siteTopicList
+  }
+
   async update(
           prisma: PrismaClient,
           id: string | undefined,
