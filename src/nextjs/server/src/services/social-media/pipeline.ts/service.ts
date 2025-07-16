@@ -1,0 +1,72 @@
+import { PrismaClient, Site } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
+import { ServerOnlyTypes } from '@/types/server-only-types'
+import { HackerNewAlgoliaService } from '../site-specific/hn-algolia-service'
+import { PostUrlsService } from '../post-urls/post-urls-service'
+import { SummarizePostService } from '@/services/social-media/summarized-posts/service'
+import { SummarizePostUrlService } from '@/services/social-media/summarized-post-urls/service'
+
+// Services
+const hackerNewAlgoliaService = new HackerNewAlgoliaService()
+const postUrlsService = new PostUrlsService()
+const summarizePostService = new SummarizePostService()
+const summarizePostUrlService = new SummarizePostUrlService()
+
+export class SocialMediaPipelineService {
+
+  // Consts
+  clName = 'SocialMediaPipelineService'
+
+  // Code
+  async importSite(
+          prisma: PrismaClient,
+          site: Site) {
+
+    // Debug
+    const fnName = `${this.clName}.importSite()`
+
+    // Import by site
+    switch (site.name) {
+
+      case ServerOnlyTypes.hnSiteName: {
+
+        const results = await
+                hackerNewAlgoliaService.getFrontPageStories(
+                prisma,
+                site.id)
+
+        return results
+      }
+
+      default: {
+        throw new CustomError(`${fnName}: unhandled site.name: ${site.name}`)
+      }
+    }
+  }
+
+  async run(prisma: PrismaClient,
+            userProfileId: string,
+            site: Site) {
+
+    // Debug
+    const fnName = `${this.clName}.run()`
+
+    // Import
+    await this.importSite(
+            prisma,
+            site)
+
+    // Get post URLs
+    await postUrlsService.getPending(prisma)
+
+    // Summarize posts
+    await summarizePostService.run(
+            prisma,
+            userProfileId)
+
+    // Summarize post URLs
+    await summarizePostUrlService.run(
+            prisma,
+            userProfileId)
+  }
+}
