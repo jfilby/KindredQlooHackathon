@@ -3,13 +3,13 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { HackerNewAlgoliaService } from '../site-specific/hn-algolia-service'
 import { PostUrlsService } from '../post-urls/post-urls-service'
-import { SummarizePostService } from '@/services/social-media/summarized-posts/service'
+import { SummarizePostMutateService } from '@/services/social-media/summarized-posts/mutate-service'
 import { SummarizePostUrlService } from '@/services/social-media/summarized-post-urls/service'
 
 // Services
 const hackerNewAlgoliaService = new HackerNewAlgoliaService()
 const postUrlsService = new PostUrlsService()
-const summarizePostService = new SummarizePostService()
+const summarizePostMutateService = new SummarizePostMutateService()
 const summarizePostUrlService = new SummarizePostUrlService()
 
 export class SocialMediaPipelineService {
@@ -46,6 +46,7 @@ export class SocialMediaPipelineService {
 
   async run(prisma: PrismaClient,
             userProfileId: string,
+            forUserProfileId: string,
             site: Site) {
 
     // Debug
@@ -60,13 +61,15 @@ export class SocialMediaPipelineService {
     await postUrlsService.getPending(prisma)
 
     // Summarize posts
-    await summarizePostService.run(
+    await summarizePostMutateService.run(
             prisma,
-            userProfileId)
+            userProfileId,
+            forUserProfileId)
 
     // Summarize post URLs
     await summarizePostUrlService.run(
             prisma,
-            userProfileId)
+            userProfileId,
+            forUserProfileId)
   }
 }

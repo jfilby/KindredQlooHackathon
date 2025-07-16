@@ -10,7 +10,7 @@ import { PostUrlsService } from './services/social-media/post-urls/post-urls-ser
 import { ServerTestTypes } from './types/server-test-types'
 import { SearchQueryServiceTests } from './services/search/search-query-service-tests'
 import { SetupService } from './setup/setup'
-import { SummarizePostService } from './services/social-media/summarized-posts/service'
+import { SummarizePostMutateService } from './services/social-media/summarized-posts/mutate-service'
 import { SummarizePostUrlService } from './services/social-media/summarized-post-urls/service'
 import { Tests } from './services/tests/tests'
 
@@ -51,7 +51,7 @@ import { Tests } from './services/tests/tests'
   const postUrlsService = new PostUrlsService()
   const searchQueryServiceTests = new SearchQueryServiceTests()
   const setupService = new SetupService()
-  const summarizePostService = new SummarizePostService()
+  const summarizePostMutateService = new SummarizePostMutateService()
   const summarizePostUrlService = new SummarizePostUrlService()
   const techProviderMutateService = new TechProviderMutateService()
   const tests = new Tests()
@@ -122,7 +122,7 @@ import { Tests } from './services/tests/tests'
 
     case summarizePostsCommand: {
 
-      await summarizePostService.run(
+      await summarizePostMutateService.run(
               prisma,
               adminUserProfile.id,
               anonUserProfile.id)

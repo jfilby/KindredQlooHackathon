@@ -23,10 +23,10 @@ const techModel = new TechModel()
 const agentLlmService = new AgentLlmService()
 
 // Class
-export class SummarizePostService {
+export class SummarizePostMutateService {
 
   // Consts
-  clName = 'SummarizePostService'
+  clName = 'SummarizePostMutateService'
 
   // Code
   async getCommentsJson(
