@@ -76,9 +76,9 @@ export class UsersGenMutateService {
               adminUserProfileId,
               null,       // instanceId
               ServerOnlyTypes.defaultChatSettingsName,
-              BaseDataTypes.searchAgentRefId,
-              BaseDataTypes.searchAgentName,
-              BaseDataTypes.searchAgentRole,
+              BaseDataTypes.batchAgentRefId,
+              BaseDataTypes.batchAgentName,
+              BaseDataTypes.batchAgentRole,
               prompt,
               false)      // isJsonMode
 

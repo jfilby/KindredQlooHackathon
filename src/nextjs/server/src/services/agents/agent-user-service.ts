@@ -22,9 +22,9 @@ export class AgentUserService {
             agentUserModel.upsert(
               prisma,
               undefined,                        // id
-              BaseDataTypes.searchAgentRefId,   // uniqueRefId
-              BaseDataTypes.searchAgentName,
-              BaseDataTypes.searchAgentRole,
+              BaseDataTypes.batchAgentRefId,   // uniqueRefId
+              BaseDataTypes.batchAgentName,
+              BaseDataTypes.batchAgentRole,
               10,                               // maxPrevMessages
               null)                             // defaultPrompt
 

@@ -113,9 +113,9 @@ export class SearchQueryService {
               userProfile.id,
               null,       // instanceId
               ServerOnlyTypes.defaultChatSettingsName,
-              BaseDataTypes.searchAgentRefId,
-              BaseDataTypes.searchAgentName,
-              BaseDataTypes.searchAgentRole,
+              BaseDataTypes.batchAgentRefId,
+              BaseDataTypes.batchAgentName,
+              BaseDataTypes.batchAgentRole,
               prompt,
               true)       // isJsonMode
 

@@ -23,7 +23,7 @@ export class BaseDataTypes {
   ]
 
   // Agents
-  static searchAgentRefId = 'Search'
-  static searchAgentName = 'Search'
-  static searchAgentRole = 'Search'
+  static batchAgentRefId = 'Batch'
+  static batchAgentName = 'Batch'
+  static batchAgentRole = 'Batch processing'
 }
