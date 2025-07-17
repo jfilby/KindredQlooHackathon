@@ -111,8 +111,8 @@ export default function ViewPostSummaryCard({
             <Markdown>
               {stringUtilsService.getSnippet(
                  postSummary.text,
-                 // 255
-                 1000
+                 // 1000
+                 10000
                  )}
             </Markdown>
 
