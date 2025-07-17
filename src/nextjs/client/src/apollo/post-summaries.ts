@@ -12,9 +12,13 @@ export const getPostSummariesQuery = gql`
       message
       postSummaries {
         id
+        site {
+          name
+        }
         postId
         userProfileId
         status
+        socialMediaUrl
         postSummary
         topComments
         otherComments

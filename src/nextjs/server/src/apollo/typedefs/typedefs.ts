@@ -119,9 +119,11 @@ export const typeDefs = `#graphql
 
   type PostSummary {
     id: String!
+    site: Site!
     postId: String!
     userProfileId: String
     status: String!
+    socialMediaUrl: String
     postSummary: String
     topComments: String
     otherComments: String
@@ -152,6 +154,11 @@ export const typeDefs = `#graphql
     status: Boolean!
     message: String
     aiPersona: AiPersona
+  }
+
+  type Site {
+    id: String!
+    name: String!
   }
 
   type StatusAndFoundAndMessage {

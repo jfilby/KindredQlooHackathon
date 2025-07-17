@@ -13,4 +13,8 @@ export class ServerOnlyTypes {
   static socialMediaSites = [
     this.hnSiteName
   ]
+
+  static socialMediaUrls = {
+    [this.hnSiteName]: `https://news.ycombinator.com/item?id={externalId}`
+  }
 }

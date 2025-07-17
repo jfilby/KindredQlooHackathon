@@ -1,3 +1,4 @@
+import { PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
@@ -5,7 +6,6 @@ import { SiteModel } from '@/models/social-media/site-model'
 import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
 import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
 import { SiteTopicModel } from '@/models/social-media/site-topic-model'
-import { PrismaClient } from '@prisma/client'
 
 // Models
 const postSummaryModel = new PostSummaryModel()
@@ -21,6 +21,24 @@ export class SummarizePostQueryService {
   clName = 'SummarizePostQueryService'
 
   // Code
+  addSocialMediaDetails(
+    site: Site,
+    postSummaries: any) {
+
+    for (var postSummary of postSummaries) {
+
+      postSummary.site = site
+
+      if (postSummary.post.externalId != null) {
+
+        postSummary.socialMediaUrl =
+          ServerOnlyTypes.socialMediaUrls[site.name].replace(
+            '{externalId}',
+            postSummary.post.externalId)
+      }
+    }
+  }
+
   async filter(
           prisma: PrismaClient,
           forUserProfileId: string,
@@ -28,6 +46,17 @@ export class SummarizePostQueryService {
 
     // Debug
     const fnName = `${this.clName}.filter()`
+
+    // Get Site
+    const site = await
+            siteModel.getByUniqueKey(
+              prisma,
+              ServerOnlyTypes.hnSiteName)
+
+    // Validate
+    if (site == null) {
+      throw new CustomError(`${fnName}: site == null`)
+    }
 
     // Get siteTopicListId
     var siteTopicListId: string
@@ -38,17 +67,6 @@ export class SummarizePostQueryService {
     } else {
 
       // Get the default
-
-      // Get HN site
-      const site = await
-              siteModel.getByUniqueKey(
-                prisma,
-                ServerOnlyTypes.hnSiteName)
-
-      // Validate
-      if (site == null) {
-        throw new CustomError(`${fnName}: site == null`)
-      }
 
       // Get SiteTopic
       const siteTopic = await
@@ -115,6 +133,11 @@ export class SummarizePostQueryService {
     if (postSummaries == null) {
       throw new CustomError(`${fnName}: postSummaries == null`)
     }
+
+    // Add social media links
+    this.addSocialMediaDetails(
+      site,
+      postSummaries)
 
     // Debug
     console.log(`${fnName}: postSummaries: ${postSummaries.length}`)

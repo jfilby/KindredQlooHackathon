@@ -81,7 +81,6 @@ export default function ViewPostSummaryCard({
         <div style={{ display: 'inline-block', verticalAlign: 'top' }}>
 
           <>
-
             <Typography
               style={{
                 color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
@@ -100,6 +99,7 @@ export default function ViewPostSummaryCard({
                     textDecorationThickness: '2px',
                   },
                 }}
+                target='_new'
                 underline='always'>
 
                 {stringUtilsService.getSnippet(
@@ -108,17 +108,50 @@ export default function ViewPostSummaryCard({
               </Link>
             </Typography>
 
-            <Markdown>
-              {postSummary.postSummary}
-            </Markdown>
+            {postSummary.socialMediaUrl != null ?
+              <Typography>
+                <Link
+                  href={postSummary.socialMediaUrl}
+                  style={{ color: 'grey' }}
+                  sx={{
+                     textDecorationColor: 'grey',
+                     textDecorationThickness: '1px',
+                     '&:hover': {
+                       textDecorationThickness: '2px',
+                     },
+                  }}
+                  target='_new'
+                  underline='hover'>
+                  Discuss on {postSummary.site.name}
+                </Link>
+              </Typography>
+            :
+              <></>
+            }
 
-            <Markdown>
-              {postSummary.topComments}
-            </Markdown>
+            {postSummary.postSummary != null ?
+              <Markdown>
+                {postSummary.postSummary}
+              </Markdown>
+            :
+              <></>
+            }
 
-            <Markdown>
-              {postSummary.otherComments}
-            </Markdown>
+            {postSummary.topComments != null ?
+              <Markdown>
+                {postSummary.topComments}
+              </Markdown>
+            :
+              <></>
+            }
+
+            {postSummary.otherComments != null ?
+              <Markdown>
+                {postSummary.otherComments}
+              </Markdown>
+            :
+              <></>
+            }
 
             {postSummary.status === BaseDataTypes.deletePendingStatus ?
               <Typography
