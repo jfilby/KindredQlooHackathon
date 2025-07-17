@@ -91,7 +91,7 @@ model UserProfile {
   ofBatchJobs                 BatchJob[]
   ofSearchQueries             SearchQuery[]
   // ofUserDomainInterests       UserDomainInterest[]
-  ofUserEntityInterests       UserEntityInterest[]
+  ofUserInterests             UserInterest[]
 
   ofPostSummaries             PostSummary[]
   ofPostUrlSummaries          PostUrlSummary[]

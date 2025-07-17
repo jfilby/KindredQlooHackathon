@@ -3,20 +3,20 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash'
 import { Alert, Divider, Link, Typography } from '@mui/material'
 import LabeledIconButton from '@/serene-core-client/components/buttons/labeled-icon-button'
-import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { StringUtilsService } from '@/serene-core-client/services/utils/string'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
 import DeleteDialog from '../dialogs/delete-dialog'
 import UndeleteDialog from '../dialogs/undelete-dialog'
 import Markdown from 'react-markdown'
 
 interface Props {
   userProfileId: string
-  postSummary: any
+  userInterest: any
 }
 
-export default function ViewPostSummaryCard({
+export default function ViewUserInterestCard({
                           userProfileId,
-                          postSummary
+                          userInterest
                         }: Props) {
 
   // Services
@@ -33,15 +33,15 @@ export default function ViewPostSummaryCard({
   const [undeleteAction, setUndeleteAction] = useState(false)
   const [saveAction, setSaveAction] = useState(false)
 
-  const [postSummaryToSave, setPostSummaryToSave] = useState(postSummary)
+  const [userInterestToSave, setPostSummaryToSave] = useState(userInterest)
 
   // Effects
   useEffect(() => {
 
     if (deleteAction === true) {
 
-      postSummaryToSave.status = BaseDataTypes.deletePendingStatus
-      setPostSummaryToSave(postSummaryToSave)
+      userInterestToSave.status = BaseDataTypes.deletePendingStatus
+      setPostSummaryToSave(userInterestToSave)
       setSaveAction(true)
       setDeleteAction(false)
     }
@@ -52,8 +52,8 @@ export default function ViewPostSummaryCard({
 
     if (undeleteAction === true) {
 
-      postSummaryToSave.status = BaseDataTypes.activeStatus
-      setPostSummaryToSave(postSummaryToSave)
+      userInterestToSave.status = BaseDataTypes.activeStatus
+      setPostSummaryToSave(userInterestToSave)
       setSaveAction(true)
       setUndeleteAction(false)
     }
@@ -84,14 +84,14 @@ export default function ViewPostSummaryCard({
 
             <Typography
               style={{
-                color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
+                color: userInterest.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
                 display: 'inline-block',
                 textAlign: 'left'
               }}
               variant='h6'>
 
               <Link
-                href={postSummary.post.postUrl.url}
+                href={userInterest.post.postUrl.url}
                 style={{ color: 'black' }}
                 sx={{
                   textDecorationColor: 'black',
@@ -103,20 +103,20 @@ export default function ViewPostSummaryCard({
                 underline='always'>
 
                 {stringUtilsService.getSnippet(
-                   postSummary.post.title,
+                   userInterest.post.title,
                    120)}
               </Link>
             </Typography>
 
             <Markdown>
               {stringUtilsService.getSnippet(
-                 postSummary.text,
+                 userInterest.text,
                  // 255
                  1000
                  )}
             </Markdown>
 
-            {postSummary.status === BaseDataTypes.deletePendingStatus ?
+            {userInterest.status === BaseDataTypes.deletePendingStatus ?
               <Typography
                 style={{ color: 'gray' }}
                 variant='body2'>
@@ -127,8 +127,8 @@ export default function ViewPostSummaryCard({
             }
           </>
 
-          {postSummary.createdByName != null ?
-            <>{postSummary.createdByName}</>
+          {userInterest.createdByName != null ?
+            <>{userInterest.createdByName}</>
           :
             <></>
           }
@@ -139,7 +139,7 @@ export default function ViewPostSummaryCard({
 
         <div>
           <>
-            {postSummaryToSave.status !== BaseDataTypes.deletePendingStatus ?
+            {userInterestToSave.status !== BaseDataTypes.deletePendingStatus ?
 
               <LabeledIconButton
                 icon={DeleteIcon}
@@ -160,7 +160,7 @@ export default function ViewPostSummaryCard({
       <Divider variant='fullWidth' />
 
       {/* <SavePostSummary
-        postSummary={postSummaryToSave}
+        userInterest={userInterestToSave}
         userProfileId={userProfileId}
         setAlertSeverity={setAlertSeverity}
         setMessage={setMessage}
@@ -172,13 +172,13 @@ export default function ViewPostSummaryCard({
       <DeleteDialog
         open={deleteDialogOpen}
         type='post summary'
-        name={postSummary.name}
+        name={userInterest.name}
         setOpen={setDeleteDialogOpen}
         setDeleteConfirmed={setDeleteAction} />
 
       <UndeleteDialog
         open={undeleteDialogOpen}
-        name={postSummary.name}
+        name={userInterest.name}
         setOpen={setUndeleteDialogOpen}
         setUndeleteConfirmed={setUndeleteAction} />
 

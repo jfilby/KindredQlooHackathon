@@ -100,6 +100,17 @@ export const typeDefs = `#graphql
     description: String!
   }
 
+  type EntityInterest {
+    id: String!
+    interestType: InterestType!
+    name: String!
+  }
+
+  type InterestType {
+    id: String!
+    name: String!
+  }
+
   type Post {
     title: String!
     posted: String!
@@ -145,6 +156,18 @@ export const typeDefs = `#graphql
     status: Boolean!
     found: Boolean!
     message: String
+  }
+
+  type UserInterest {
+    id: String!
+    userProfileId: String!
+    entityInterest: EntityInterest
+  }
+
+  type UserInterestsResults {
+    status: Boolean!
+    message: String
+    userInterests: [UserInterest]
   }
 
   # Queries
@@ -205,6 +228,9 @@ export const typeDefs = `#graphql
     getPostSummaries(
       userProfileId: String!,
       siteTopicListId: String): PostSummaryResults!
+
+    # Interests
+    getUserInterests(userProfileId: String!): UserInterestsResults!
   }
 
   type Mutation {
