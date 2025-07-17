@@ -185,7 +185,7 @@ export class SummarizePostUrlService {
     // Validate
     if (queryResults == null) {
 
-      console.log(`${fnName}: queryResults == null after several tries`)
+      console.log(`${fnName}: queryResults == null`)
       return
     }
 

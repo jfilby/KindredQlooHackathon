@@ -1,4 +1,5 @@
 import { PrismaClient, User } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
 import { UserModel } from '@/serene-core-server/models/users/user-model'
 import { UsersService } from '@/serene-core-server/services/users/service'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
@@ -7,11 +8,13 @@ import { QlooEntityCategory } from '@/types/qloo-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
+import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../llms/get-tech-service'
 
 // Models
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
+const userEntityInterestModel = new UserEntityInterestModel()
 const userModel = new UserModel()
 
 // Services
@@ -20,10 +23,10 @@ const getTechService = new GetTechService()
 const usersService = new UsersService()
 
 // Class
-export class UsersGenMutateService {
+export class GenTestUsersMutateService {
 
   // Consts
-  clName = 'UsersGenMutateService'
+  clName = 'GenTestUsersMutateService'
 
   // Code
   async generateUser(
@@ -63,13 +66,11 @@ export class UsersGenMutateService {
       `  {\n` +
       `    "name": "John T Booker"\n` +
       `    "email": "tester-john.t.booker@aiconstrux.com",\n` +
-      `    "interests": [\n` +
-      `      {\n` +
-      `        "urn:entity:books": [ "Snow Crash", "The Left Hand of Darkness" ],\n` +
-      `        "urn:entity:movies": [ "Ghost in the Shell", "Children of Men" ],\n` +
-      `        "urn:entity:music": [ "Boards of Canada", "Trent Reznor" ]\n` +
-      `      }\n` +
-      `    ]\n` +
+      `    "interests": {\n` +
+      `      "urn:entity:books": [ "Snow Crash", "The Left Hand of Darkness" ],\n` +
+      `      "urn:entity:movies": [ "Ghost in the Shell", "Children of Men" ],\n` +
+      `      "urn:entity:music": [ "Boards of Canada", "Trent Reznor" ]\n` +
+      `    }\n` +
       `  }\n` +
       `]\n`
 
@@ -91,12 +92,18 @@ export class UsersGenMutateService {
               BaseDataTypes.batchAgentName,
               BaseDataTypes.batchAgentRole,
               prompt,
-              false)      // isJsonMode
+              true)       // isJsonMode
 
     // Validate
     if (queryResults == null) {
 
-      console.log(`${fnName}: queryResults == null after several tries`)
+      console.log(`${fnName}: queryResults == null`)
+      return
+    }
+
+    if (queryResults.json == null) {
+
+      console.log(`${fnName}: queryResults.json == null`)
       return
     }
 
@@ -104,7 +111,12 @@ export class UsersGenMutateService {
     console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Process
-    for (const userDetails of queryResults.messages) {
+    for (const userDetails of queryResults.json) {
+
+      // Validate email
+      if (userDetails.email == null) {
+        throw new CustomError(`${fnName}: userDetails.email == null`)
+      }
 
       // Get/create a test user
       const testerUserProfile = await
@@ -113,8 +125,17 @@ export class UsersGenMutateService {
                 userDetails.email,
                 undefined)  // defaultUserPreferences
 
+      // Debug
+      console.log(`${fnName}: userDetails.interests: ` +
+                  JSON.stringify(userDetails.interests))
+
       // Create interests
-      for (const [entityType, interests] of userDetails.interests) {
+      for (const [entityType, interests] of
+             Object.entries(userDetails.interests)) {
+
+        // Debug
+        console.log(`${fnName}: entityType: ${entityType} interests: ` +
+                    `${interests}`)
 
         // Get InterestType
         const interestType = await
@@ -125,33 +146,52 @@ export class UsersGenMutateService {
         // Validate
         if (interestType == null) {
 
-          console.log(`${fnName}: interestType == null for entityType: ` +
+          throw new CustomError(
+                      `${fnName}: interestType == null for entityType: ` +
                       entityType)
-
-          continue
         }
 
         // Upsert entity interests
-        for (const interest of interests) {
+        for (const interest of interests as string[]) {
 
-          await entityInterestModel.upsert(
-                  prisma,
-                  undefined,  // id
-                  interestType.id,
-                  undefined,  // qlooEntityId
-                  interest)   // name
+          const entityInterest = await
+                  entityInterestModel.upsert(
+                    prisma,
+                    undefined,  // id
+                    interestType.id,
+                    null,       // qlooEntityId
+                    interest)   // name
+
+          const userEntityInterest = await
+                  userEntityInterestModel.upsert(
+                    prisma,
+                    undefined,  // id
+                    testerUserProfile.id,
+                    entityInterest.id)
         }
       }
     }
   }
 
-  async generateUsers(prisma: PrismaClient) {
+  async generateUserInTransaction(
+          prisma: PrismaClient,
+          adminUserProfileId: string) {
 
     // Debug
-    const fnName = `${this.clName}.generateUsers()`
+    const fnName = `${this.clName}.generateUserInTransaction()`
 
-    // Generate users until enough are available
-    ;
+    // Transaction
+    await prisma.$transaction(async (transactionPrisma: any) => {
+
+      // Generate user
+      await this.generateUser(
+              transactionPrisma,
+              adminUserProfileId)
+    },
+    {
+      maxWait: 5 * 60000, // default: 5m
+      timeout: 5 * 60000, // default: 5m
+    })
   }
 
   async getTesterEmails(prisma: PrismaClient) {

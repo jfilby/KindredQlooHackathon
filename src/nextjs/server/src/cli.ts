@@ -5,6 +5,7 @@ require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` })
 import { prisma } from './db'
 import { TechProviderMutateService } from '@/serene-core-server/services/tech/tech-provider-mutate-service'
 import { UsersService } from '@/serene-core-server/services/users/service'
+import { GenTestUsersMutateService } from './services/tribes/gen-test-users-mutate-service'
 import { HackerNewAlgoliaTestsService } from './services/social-media/site-specific/hn-algolia-service-tests'
 import { PostUrlsService } from './services/social-media/post-urls/post-urls-service'
 import { ServerTestTypes } from './types/server-test-types'
@@ -22,6 +23,7 @@ import { Tests } from './services/tests/tests'
 
   // Consts
   const importFromHnCommand = 'import-from-hn'
+  const genTestUserCommand = 'gen-test-user'
   const getPostUrlsCommand = 'get-post-urls'
   const loadTechProviderApiKeysCommand = 'load-tech-provider-api-keys'
   const searchCommand = 'search'
@@ -32,6 +34,7 @@ import { Tests } from './services/tests/tests'
 
   const commands = [
           importFromHnCommand,
+          genTestUserCommand,
           getPostUrlsCommand,
           loadTechProviderApiKeysCommand,
           searchCommand,
@@ -47,6 +50,7 @@ import { Tests } from './services/tests/tests'
   console.log(`${fnName}: comand to run: ${command}`)
 
   // Services
+  const genTestUsersMutateService = new GenTestUsersMutateService()
   const hackerNewAlgoliaTestsService = new HackerNewAlgoliaTestsService()
   const postUrlsService = new PostUrlsService()
   const searchQueryServiceTests = new SearchQueryServiceTests()
@@ -80,6 +84,15 @@ import { Tests } from './services/tests/tests'
 
   // Run the chosen command
   switch (command) {
+
+    case genTestUserCommand: {
+
+      await genTestUsersMutateService.generateUserInTransaction(
+              prisma,
+              adminUserProfile.id)
+
+      break
+    }
 
     case importFromHnCommand: {
 
