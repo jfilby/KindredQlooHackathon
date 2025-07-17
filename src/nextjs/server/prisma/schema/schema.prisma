@@ -118,35 +118,6 @@ model AiPersona {
 
 // Kindred: Interests
 
-model DomainInterest {
-  id                           String               @id @default(cuid())
-  qlooDomain                   String?              @map("qloo_domain")
-  name                         String               @unique
-
-  ofEntityInterests            EntityInterest[]
-  // ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
-  // ofUserDomainInterests        UserDomainInterest[]
-
-  @@map("domain_interest")
-  @@schema("public")
-}
-
-model EntityInterest {
-  id                           String               @id @default(cuid())
-  domainInterestId             String               @map("domain_interest_id")
-  domainInterest               DomainInterest       @relation(fields: [domainInterestId], references: [id])
-  qlooEntityId                 String?              @map("qloo_entity_id")
-  qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
-  name                         String               @unique
-
-  // ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
-  ofUserEntityInterests        UserEntityInterest[]
-
-  @@unique([domainInterestId, name])
-  @@map("entity_interest")
-  @@schema("public")
-}
-
 /* model AiPersonaDomainInterest {
   id                           String               @id @default(cuid())
   aiPersonaId                  String               @map("ai_persona_id")
@@ -182,6 +153,35 @@ model UserDomainInterest {
   @@map("user_domain_interest")
   @@schema("public")
 } */
+
+model EntityInterest {
+  id                           String               @id @default(cuid())
+  interestTypeId               String               @map("interest_type_id")
+  interestType                 InterestType         @relation(fields: [interestTypeId], references: [id])
+  qlooEntityId                 String?              @map("qloo_entity_id")
+  qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
+  name                         String               @unique
+
+  // ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
+  ofUserEntityInterests        UserEntityInterest[]
+
+  @@unique([interestTypeId, name])
+  @@map("entity_interest")
+  @@schema("public")
+}
+
+model InterestType {
+  id                           String               @id @default(cuid())
+  qlooEntityType               String?              @map("qloo_entity_type")
+  name                         String               @unique
+
+  ofEntityInterests            EntityInterest[]
+  // ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
+  // ofUserDomainInterests        UserDomainInterest[]
+
+  @@map("interest_type")
+  @@schema("public")
+}
 
 model UserEntityInterest {
   id                           String               @id @default(cuid())

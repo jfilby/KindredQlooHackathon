@@ -4,12 +4,14 @@ import { SereneAiSetup } from '@/serene-ai-server/services/setup/setup-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { AgentUserService } from '@/services/agents/agent-user-service'
+import { InterestsSetupService } from '@/services/interests/setup-service'
 import { QlooSetupService } from '@/services/qloo/qloo-setup-service'
 import { SocialMediaSetupService } from '@/services/social-media/setup-service'
 
 // Services
 const agentUserService = new AgentUserService()
 const chatSettingsModel = new ChatSettingsModel()
+const interestsSetupService = new InterestsSetupService()
 const qlooSetupService = new QlooSetupService()
 const sereneAiSetup = new SereneAiSetup()
 const socialMediaSetupService = new SocialMediaSetupService()
@@ -69,9 +71,14 @@ export class SetupService {
             adminUserProfile.id)
 
     // Qloo setup
-    await qlooSetupService.run(
+    await qlooSetupService.setup(
             prisma,
             adminUserProfile)
+
+    // Interests setup
+    await interestsSetupService.setup(
+            prisma,
+            adminUserProfile.id)
 
     // Social media setup
     await socialMediaSetupService.setup(prisma)

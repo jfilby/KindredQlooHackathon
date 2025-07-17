@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 
-export class DomainInterestModel {
+export class InterestTypeModel {
 
   // Consts
-  clName = 'DomainInterestModel'
+  clName = 'InterestTypeModel'
 
   // Code
   async create(
           prisma: PrismaClient,
-          qlooDomain: string | null,
+          qlooEntityType: string | null,
           name: string) {
 
     // Debug
@@ -16,9 +16,9 @@ export class DomainInterestModel {
 
     // Create record
     try {
-      return await prisma.domainInterest.create({
+      return await prisma.interestType.create({
         data: {
-          qlooDomain: qlooDomain,
+          qlooEntityType: qlooEntityType,
           name: name
         }
       })
@@ -37,7 +37,7 @@ export class DomainInterestModel {
 
     // Delete
     try {
-      return await prisma.domainInterest.delete({
+      return await prisma.interestType.delete({
         where: {
           id: id
         }
@@ -57,7 +57,7 @@ export class DomainInterestModel {
 
     // Query
     try {
-      return await prisma.domainInterest.findMany({
+      return await prisma.interestType.findMany({
         where: {}
       })
     } catch(error: any) {
@@ -74,10 +74,10 @@ export class DomainInterestModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var domainInterest: any = null
+    var interestType: any = null
 
     try {
-      domainInterest = await prisma.domainInterest.findUnique({
+      interestType = await prisma.interestType.findUnique({
         where: {
           id: id
         }
@@ -90,7 +90,7 @@ export class DomainInterestModel {
     }
 
     // Return
-    return domainInterest
+    return interestType
   }
 
   async getByIds(
@@ -102,7 +102,7 @@ export class DomainInterestModel {
 
     // Query
     try {
-      return await prisma.domainInterest.findMany({
+      return await prisma.interestType.findMany({
         where: {
           id: {
             in: ids
@@ -116,6 +116,40 @@ export class DomainInterestModel {
       }
     }
   }
+
+  async getByQlooEntityType(
+          prisma: PrismaClient,
+          qlooEntityType: string) {
+
+    // Debug
+    const fnName = `${this.clName}.getByUniqueKey()`
+
+    // Validate
+    if (qlooEntityType == null) {
+      console.error(`${fnName}: qlooEntityType == null`)
+      throw 'Validation error'
+    }
+
+    // Query
+    var interestType: any = null
+
+    try {
+      interestType = await prisma.interestType.findFirst({
+        where: {
+          qlooEntityType: qlooEntityType
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+
+    // Return
+    return interestType
+  }
+
 
   async getByUniqueKey(
           prisma: PrismaClient,
@@ -131,10 +165,10 @@ export class DomainInterestModel {
     }
 
     // Query
-    var domainInterest: any = null
+    var interestType: any = null
 
     try {
-      domainInterest = await prisma.domainInterest.findFirst({
+      interestType = await prisma.interestType.findFirst({
         where: {
           name: name
         }
@@ -147,13 +181,13 @@ export class DomainInterestModel {
     }
 
     // Return
-    return domainInterest
+    return interestType
   }
 
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          qlooDomain: string | null | undefined,
+          qlooEntityType: string | null | undefined,
           name: string | undefined) {
 
     // Debug
@@ -161,9 +195,9 @@ export class DomainInterestModel {
 
     // Update record
     try {
-      return await prisma.domainInterest.update({
+      return await prisma.interestType.update({
         data: {
-          qlooDomain: qlooDomain,
+          qlooEntityType: qlooEntityType,
           name: name
         },
         where: {
@@ -179,7 +213,7 @@ export class DomainInterestModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          qlooDomain: string | null | undefined,
+          qlooEntityType: string | null | undefined,
           name: string | undefined) {
 
     // Debug
@@ -191,13 +225,13 @@ export class DomainInterestModel {
     if (id == null &&
         name != null) {
 
-      const domainInterest = await
+      const interestType = await
               this.getByUniqueKey(
                 prisma,
                 name)
 
-      if (domainInterest != null) {
-        id = domainInterest.id
+      if (interestType != null) {
+        id = interestType.id
       }
     }
 
@@ -205,8 +239,8 @@ export class DomainInterestModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (qlooDomain === undefined) {
-        console.error(`${fnName}: id is null and qlooDomain is undefined`)
+      if (qlooEntityType === undefined) {
+        console.error(`${fnName}: id is null and qlooEntityType is undefined`)
         throw 'Prisma error'
       }
 
@@ -219,7 +253,7 @@ export class DomainInterestModel {
       return await
                this.create(
                  prisma,
-                 qlooDomain,
+                 qlooEntityType,
                  name)
     } else {
 
@@ -228,7 +262,7 @@ export class DomainInterestModel {
                this.update(
                  prisma,
                  id,
-                 qlooDomain,
+                 qlooEntityType,
                  name)
     }
   }

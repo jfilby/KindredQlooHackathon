@@ -3,10 +3,15 @@ import { UserModel } from '@/serene-core-server/models/users/user-model'
 import { UsersService } from '@/serene-core-server/services/users/service'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { QlooEntityCategory } from '@/types/qloo-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { InterestTypeModel } from '@/models/interests/interest-type-model'
+import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { GetTechService } from '../llms/get-tech-service'
 
 // Models
+const entityInterestModel = new EntityInterestModel()
+const interestTypeModel = new InterestTypeModel()
 const userModel = new UserModel()
 
 // Services
@@ -43,6 +48,12 @@ export class UsersGenMutateService {
       `Don't use an existing tester email: ` + JSON.stringify(testerEmails) +
       `\n\n`
 
+    // Add types
+    prompt +=
+      `# Interest types\n` +
+      `Each interest belongs to a type (category). Here are the available ` +
+      `types: ` + JSON.stringify(QlooEntityCategory) + `\n\n`
+
     // Example
     prompt +=
       `\n` +
@@ -54,9 +65,9 @@ export class UsersGenMutateService {
       `    "email": "tester-john.t.booker@aiconstrux.com",\n` +
       `    "interests": [\n` +
       `      {\n` +
-      `        "books": [ "Snow Crash", "The Left Hand of Darkness" ],\n` +
-      `        "movies": [ "Ghost in the Shell", "Children of Men" ],\n` +
-      `        "music": [ "Boards of Canada", "Trent Reznor" ]\n` +
+      `        "urn:entity:books": [ "Snow Crash", "The Left Hand of Darkness" ],\n` +
+      `        "urn:entity:movies": [ "Ghost in the Shell", "Children of Men" ],\n` +
+      `        "urn:entity:music": [ "Boards of Canada", "Trent Reznor" ]\n` +
       `      }\n` +
       `    ]\n` +
       `  }\n` +
@@ -103,7 +114,34 @@ export class UsersGenMutateService {
                 undefined)  // defaultUserPreferences
 
       // Create interests
-      ;
+      for (const [entityType, interests] of userDetails.interests) {
+
+        // Get InterestType
+        const interestType = await
+                interestTypeModel.getByQlooEntityType(
+                  prisma,
+                  entityType)
+
+        // Validate
+        if (interestType == null) {
+
+          console.log(`${fnName}: interestType == null for entityType: ` +
+                      entityType)
+
+          continue
+        }
+
+        // Upsert entity interests
+        for (const interest of interests) {
+
+          await entityInterestModel.upsert(
+                  prisma,
+                  undefined,  // id
+                  interestType.id,
+                  undefined,  // qlooEntityId
+                  interest)   // name
+        }
+      }
     }
   }
 

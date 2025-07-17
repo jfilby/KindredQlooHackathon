@@ -11,8 +11,9 @@ export class QlooSetupService {
   clName = 'QlooSetupService'
 
   // Code
-  async run(prisma: PrismaClient,
-            userProfile: UserProfile) {
+  async setup(
+          prisma: PrismaClient,
+          userProfile: UserProfile) {
 
     // Get and save tag types
     await getQlooTagTypesService.getAndSave(prisma)

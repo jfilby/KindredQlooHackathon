@@ -8,7 +8,7 @@ export class EntityInterestModel {
   // Code
   async create(
           prisma: PrismaClient,
-          domainInterestId: string,
+          interestTypeId: string,
           qlooEntityId: string | null,
           name: string) {
 
@@ -19,7 +19,7 @@ export class EntityInterestModel {
     try {
       return await prisma.entityInterest.create({
         data: {
-          domainInterestId: domainInterestId,
+          interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
           name: name
         }
@@ -54,7 +54,7 @@ export class EntityInterestModel {
 
   async filter(
           prisma: PrismaClient,
-          domainInterestId: string | undefined) {
+          interestTypeId: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
@@ -63,7 +63,7 @@ export class EntityInterestModel {
     try {
       return await prisma.entityInterest.findMany({
         where: {
-          domainInterestId: domainInterestId
+          interestTypeId: interestTypeId
         }
       })
     } catch(error: any) {
@@ -125,15 +125,15 @@ export class EntityInterestModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          domainInterestId: string,
+          interestTypeId: string,
           name: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (domainInterestId == null) {
-      console.error(`${fnName}: domainInterestId == null`)
+    if (interestTypeId == null) {
+      console.error(`${fnName}: interestTypeId == null`)
       throw 'Validation error'
     }
 
@@ -148,7 +148,7 @@ export class EntityInterestModel {
     try {
       entityInterest = await prisma.entityInterest.findFirst({
         where: {
-          domainInterestId: domainInterestId,
+          interestTypeId: interestTypeId,
           name: name
         }
       })
@@ -166,7 +166,7 @@ export class EntityInterestModel {
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          domainInterestId: string | undefined,
+          interestTypeId: string | undefined,
           qlooEntityId: string | null | undefined,
           name: string | undefined) {
 
@@ -177,7 +177,7 @@ export class EntityInterestModel {
     try {
       return await prisma.entityInterest.update({
         data: {
-          domainInterestId: domainInterestId,
+          interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
           name: name
         },
@@ -194,7 +194,7 @@ export class EntityInterestModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          domainInterestId: string | undefined,
+          interestTypeId: string | undefined,
           qlooEntityId: string | null | undefined,
           name: string | undefined) {
 
@@ -205,13 +205,13 @@ export class EntityInterestModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        domainInterestId != null &&
+        interestTypeId != null &&
         name != null) {
 
       const entityInterest = await
               this.getByUniqueKey(
                 prisma,
-                domainInterestId,
+                interestTypeId,
                 name)
 
       if (entityInterest != null) {
@@ -223,8 +223,8 @@ export class EntityInterestModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (domainInterestId == null) {
-        console.error(`${fnName}: id is null and domainInterestId is null`)
+      if (interestTypeId == null) {
+        console.error(`${fnName}: id is null and interestTypeId is null`)
         throw 'Prisma error'
       }
 
@@ -242,7 +242,7 @@ export class EntityInterestModel {
       return await
                this.create(
                  prisma,
-                 domainInterestId,
+                 interestTypeId,
                  qlooEntityId,
                  name)
     } else {
@@ -252,7 +252,7 @@ export class EntityInterestModel {
                this.update(
                  prisma,
                  id,
-                 domainInterestId,
+                 interestTypeId,
                  qlooEntityId,
                  name)
     }
