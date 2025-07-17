@@ -234,15 +234,20 @@ export class SummarizePostMutateService {
           `  needs to stand out.\n` +
           `- This summary will appear just below the title, so don't ` +
           `  duplicate it.\n` +
-          `- The first half of the summary should be about the post/url ` +
-          `  content. It should be 1-3 sentences at most, written in clear, ` +
-          `  concise language that doesn't waffle and shouldn't include` +
-          `  what's already in the title.\n` +
-          `- The second half of the summary should be about the ` +
-          `  ${site.name} post and its comments, but don't duplicate ` +
-          `  anything already written for the summary.\n` +
+          `- The first part should be a summary of the url content and/or ` +
+          `  the post. It should be 1-3 sentences at most, written in ` +
+          `  clear, concise language that doesn't waffle and shouldn't ` +
+          `  include what's already in the title.\n` +
+          `- The second part should be bullet points of the top insightful ` +
+          `  comments (3 at most, with context if needed). Each point ` +
+          `  should be two sentences at most.\n` +
+          `- The third part should be a summary about the remaining ` +
+          `  comments. 3 sentences at most and don't duplicate anything ` +
+          `  already written.\n ` +
           `- Don't consider comments that are too terse, unhelpful or ` +
-          `  proven wrong by follow-on comments.`
+          `  proven wrong by follow-on comments.\n` +
+          `- Bulleted points should start with bold terms that are key to ` +
+          `  scanning the summary quickly, e.g.: **Tech**: this is ...\n`
 
     // Existing summary post?
     if (postSummary != null &&
