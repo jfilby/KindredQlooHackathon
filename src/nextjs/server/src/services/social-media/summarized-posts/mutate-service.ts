@@ -142,7 +142,9 @@ export class SummarizePostMutateService {
                 post.id,
                 forUserProfileId,
                 BaseDataTypes.inactiveStatus,
-                undefined)  // text
+                undefined,  // postSummary
+                undefined,  // topComments
+                undefined)  // otherComments
 
         return
       }
@@ -227,24 +229,22 @@ export class SummarizePostMutateService {
           `# Prompt\n` +
           `\n` +
           `## General instructions\n` +
-          `- Summarize the following post in markdown, but don't mention ` +
-          `  that it's a summary or that it's in markdown.\n` +
+          `- Summarize the following post into 3 parts, each a markdown ` +
+          `  string, but don't mention that it's a summary or that it's in ` +
+          `  markdown.\n` +
           `- Write in the style of a ${site.name} top commenter.\n` +
-          `- Don't use headings. Only use bold text if something really ` +
-          `  needs to stand out.\n` +
-          `- This summary will appear just below the title, so don't ` +
-          `  duplicate it.\n` +
-          `- The first part should be a summary of the url content and/or ` +
+          `- Don't use headings. Only use bold text if directed to.\n` +
+          `- Field part1 should be a summary of the url content and/or ` +
           `  the post. It should be 1-3 sentences at most, written in ` +
           `  clear, concise language that doesn't waffle and shouldn't ` +
           `  include anything not obvious from reading the title.\n` +
-          `- If the first part's summary would be redundant (of the title) ` +
+          `- If part1 would be redundant (of the title) ` +
           `  then skip it.\n` +
-          `- The second part should be bullet points of the top insightful ` +
+          `- Field part2 should be bullet points of the top insightful ` +
           `  comments (3 at most, with context if needed). Each point ` +
           `  should be two sentences at most.\n` +
-          `- The third part should be a summary about the remaining ` +
-          `  comments. 3 sentences at most and don't duplicate anything ` +
+          `- Field part3 should be a summary about the remaining comments. ` +
+          `  3 sentences at most and don't duplicate anything ` +
           `  already written.\n ` +
           `- Don't consider comments that are too terse, unhelpful or ` +
           `  proven wrong by follow-on comments.\n` +
@@ -252,19 +252,43 @@ export class SummarizePostMutateService {
           `  scanning the summary quickly, e.g.: **Tech**: this is ...\n`
 
     // Existing summary post?
-    if (postSummary != null &&
-        postSummary.text != null) {
+    if (postSummary != null) {
 
       // Continue general instructions
       prompt +=
         `- There's an existing post summary, try to only update it if ` +
         `  needed.\n`
+    }
+
+    // Results
+    prompt += 
+      `## Results\n` +
+      `Format your results as follows:\n` +
+      `{\n` +
+      `  "part1": "...",\n` +
+      `  "part2": "...",\n` +
+      `  "part3": "..."\n` +
+      `}\n` +
+      `\n` +
+      `- Values for fields part1, part2 and part3 must be strings.\n` +
+      `- The part2 field isn't an array.\n` +
+      `\n`
+
+    // Existing summary post?
+    if (postSummary != null) {
 
       // Existing post summary text
       prompt +=
         `## Existing post summary\n` +
-        postSummary.text +
-        `\n`
+        `### Part 1 (post summary)` +
+        `${postSummary.postSummary ?? ''}` +
+        `\n` +
+        `### Part 2 (top comments)` +
+        `${postSummary.topComments ?? ''}` +
+        `\n` +
+        `### Part 3 (other comments)` +
+        `${postSummary.otherComments ?? ''}` +
+        `\n\n`
     }
 
     // Social-media post
@@ -310,7 +334,7 @@ export class SummarizePostMutateService {
               BaseDataTypes.batchAgentName,
               BaseDataTypes.batchAgentRole,
               prompt,
-              false)      // isJsonMode
+              true)       // isJsonMode
 
     // Validate
     if (queryResults == null) {
@@ -322,16 +346,21 @@ export class SummarizePostMutateService {
     // Debug
     console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
-    // Extract the summary text
-    var text = ''
+    // Extract the summary texts
+    var part1 = ''
+    var part2 = ''
+    var part3 = ''
 
-    for (const message of queryResults.messages) {
+    if (queryResults.json.part1 != null) {
+      part1 = queryResults.json.part1
+    }
 
-      if (text.length > 0) {
-        text += '\n\n'
-      }
+    if (queryResults.json.part2 != null) {
+      part2 = queryResults.json.part2
+    }
 
-      text += message.text
+    if (queryResults.json.part3 != null) {
+      part3 = queryResults.json.part3
     }
 
     // Upsert the PostSummary
@@ -342,6 +371,8 @@ export class SummarizePostMutateService {
         post.id,
         forUserProfileId,
         BaseDataTypes.activeStatus,
-        text)
+        part1,
+        part2,
+        part3)
   }
 }

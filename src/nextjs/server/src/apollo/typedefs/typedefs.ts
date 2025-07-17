@@ -122,7 +122,9 @@ export const typeDefs = `#graphql
     postId: String!
     userProfileId: String
     status: String!
-    text: String!
+    postSummary: String
+    topComments: String
+    otherComments: String
     updated: String!
     post: Post!
   }

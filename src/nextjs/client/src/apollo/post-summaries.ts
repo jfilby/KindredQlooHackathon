@@ -15,7 +15,9 @@ export const getPostSummariesQuery = gql`
         postId
         userProfileId
         status
-        text
+        postSummary
+        topComments
+        otherComments
         updated
         post {
           title

@@ -109,11 +109,15 @@ export default function ViewPostSummaryCard({
             </Typography>
 
             <Markdown>
-              {stringUtilsService.getSnippet(
-                 postSummary.text,
-                 // 1000
-                 10000
-                 )}
+              {postSummary.postSummary}
+            </Markdown>
+
+            <Markdown>
+              {postSummary.topComments}
+            </Markdown>
+
+            <Markdown>
+              {postSummary.otherComments}
             </Markdown>
 
             {postSummary.status === BaseDataTypes.deletePendingStatus ?

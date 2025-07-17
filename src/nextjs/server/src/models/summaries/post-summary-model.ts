@@ -11,7 +11,9 @@ export class PostSummaryModel {
           postId: string,
           userProfileId: string,
           status: string,
-          text: string) {
+          postSummary: string | null,
+          topComments: string | null,
+          otherComments: string | null) {
 
     // Debug
     const fnName = `${this.clName}.create()`
@@ -23,7 +25,9 @@ export class PostSummaryModel {
           postId: postId,
           userProfileId: userProfileId,
           status: status,
-          text: text
+          postSummary: postSummary,
+          topComments: topComments,
+          otherComments: otherComments
         }
       })
     } catch(error) {
@@ -179,7 +183,9 @@ export class PostSummaryModel {
           postId: string | undefined,
           userProfileId: string | undefined,
           status: string | undefined,
-          text: string | undefined) {
+          postSummary: string | null | undefined,
+          topComments: string | null | undefined,
+          otherComments: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
@@ -191,7 +197,9 @@ export class PostSummaryModel {
           postId: postId,
           userProfileId: userProfileId,
           status: status,
-          text: text
+          postSummary: postSummary,
+          topComments: topComments,
+          otherComments: otherComments
         },
         where: {
           id: id
@@ -209,7 +217,9 @@ export class PostSummaryModel {
           postId: string | undefined,
           userProfileId: string | undefined,
           status: string | undefined,
-          text: string | undefined) {
+          postSummary: string | null | undefined,
+          topComments: string | null | undefined,
+          otherComments: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -251,8 +261,18 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
 
-      if (text == null) {
-        console.error(`${fnName}: id is null and text is null`)
+      if (postSummary === undefined) {
+        console.error(`${fnName}: id is null and postSummary is undefined`)
+        throw 'Prisma error'
+      }
+
+      if (topComments === undefined) {
+        console.error(`${fnName}: id is null and topComments is undefined`)
+        throw 'Prisma error'
+      }
+
+      if (otherComments === undefined) {
+        console.error(`${fnName}: id is null and otherComments is undefined`)
         throw 'Prisma error'
       }
 
@@ -263,7 +283,9 @@ export class PostSummaryModel {
                  postId,
                  userProfileId,
                  status,
-                 text)
+                 postSummary,
+                 topComments,
+                 otherComments)
     } else {
 
       // Update
@@ -274,7 +296,9 @@ export class PostSummaryModel {
                  postId,
                  userProfileId,
                  status,
-                 text)
+                 postSummary,
+                 topComments,
+                 otherComments)
     }
   }
 }
