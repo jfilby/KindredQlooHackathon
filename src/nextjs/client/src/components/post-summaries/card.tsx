@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete'
-import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash'
 import { Alert, Divider, Link, Typography } from '@mui/material'
-import LabeledIconButton from '@/serene-core-client/components/buttons/labeled-icon-button'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { StringUtilsService } from '@/serene-core-client/services/utils/string'
 import DeleteDialog from '../dialogs/delete-dialog'
