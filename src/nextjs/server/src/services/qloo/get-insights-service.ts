@@ -11,22 +11,22 @@ const qlooEntityModel = new QlooEntityModel()
 const qlooUtilsFetchService = new QlooUtilsFetchService()
 
 // Class
-export class GetQlooEntitiesService {
+export class GetQlooInsightsService {
 
   // Consts
-  clName = 'GetQlooEntitiesService'
+  clName = 'GetQlooInsightsService'
 
   // Code
-  async get(query: string,
+  async get(type: string,
             take: number = 3,
-            category: QlooEntityCategory | undefined = undefined) {
+            qlooEntityIds: string[] | undefined = undefined) {
 
     // Debug
     const fnName = `${this.clName}.get()`
 
     // Validate
-    if (query == null) {
-      throw new CustomError(`${fnName}: query == null`)
+    if (type == null) {
+      throw new CustomError(`${fnName}: type == null`)
     }
 
     if (take == null) {
@@ -38,24 +38,21 @@ export class GetQlooEntitiesService {
     }
 
     // Initial URL
-    var uri = `/search?`
+    var uri = `/v2/insights?`
 
     // Add tags to the URL
     var uriAdditions: string[] = [
       `take=${take}`
     ]
 
-    if (query != null) {
+    if (type != null) {
 
-      uriAdditions.push(`query=` + encodeURIComponent(query))
+      uriAdditions.push(`filter.type=` + encodeURIComponent(type))
     }
 
-    if (category != null) {
+    if (qlooEntityIds != null) {
 
-      const uriTypes: string[] =
-              [category].map(category => encodeURIComponent(category))
-
-      uriAdditions.push(`types=` + uriTypes.join(','))
+      uriAdditions.push(`filter.results.entities=` + qlooEntityIds.join(','))
     }
 
     // Complete the URL
@@ -65,15 +62,18 @@ export class GetQlooEntitiesService {
     const results = await
             qlooUtilsFetchService.fetch(uri)
 
+    // Debug
+    console.log(`${fnName}: results: ` + JSON.stringify(results))
+
     // Return
     return results
   }
 
   async getAndSave(
           prisma: PrismaClient,
-          query: string,
+          type: string,
           take: number = 3,
-          category: QlooEntityCategory | undefined = undefined) {
+          qlooEntityIds: string[] | undefined = undefined) {
 
     // Debug
     const fnName = `${this.clName}.getAndSave()`
@@ -81,18 +81,20 @@ export class GetQlooEntitiesService {
     // Get
     const getResults = await
             this.get(
-              query,
+              type,
               take,
-              category)
+              qlooEntityIds)
 
     // Validate
-    if (getResults.results == null) {
+    if (getResults.results == null ||
+        getResults.results.entities == null) {
       return
     }
 
     // Save the results
-    for (const result of getResults.results) {
+    for (const result of getResults.results.entities) {
 
+      // Save the entity
       const qlooEntity = await
               qlooEntityModel.upsert(
                 prisma,
