@@ -237,7 +237,9 @@ export class SummarizePostMutateService {
           `- The first part should be a summary of the url content and/or ` +
           `  the post. It should be 1-3 sentences at most, written in ` +
           `  clear, concise language that doesn't waffle and shouldn't ` +
-          `  include what's already in the title.\n` +
+          `  include anything not obvious from reading the title.\n` +
+          `- If the first part's summary would be redundant (of the title) ` +
+          `  then skip it.\n` +
           `- The second part should be bullet points of the top insightful ` +
           `  comments (3 at most, with context if needed). Each point ` +
           `  should be two sentences at most.\n` +
