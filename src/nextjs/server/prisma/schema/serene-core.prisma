@@ -92,6 +92,7 @@ model UserProfile {
   ofSearchQueries             SearchQuery[]
   // ofUserDomainInterests       UserDomainInterest[]
   ofUserInterests             UserInterest[]
+  ofUserInterestTexts         UserInterestText[]
 
   ofPostSummaries             PostSummary[]
   ofPostUrlSummaries          PostUrlSummary[]

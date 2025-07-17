@@ -195,6 +195,17 @@ model UserInterest {
   @@schema("public")
 }
 
+model UserInterestText {
+  // Used to save interest text before its resolved to UserInterests.
+  id                           String               @id @default(cuid())
+  userProfileId                String               @map("user_profile_id") @unique
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  text                         String
+
+  @@map("user_interest_text")
+  @@schema("public")
+}
+
 // Kindred: social media
 
 model Comment {

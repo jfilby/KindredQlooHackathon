@@ -282,5 +282,10 @@ export const typeDefs = `#graphql
     runDemosSetup(userProfileId: String!): StatusAndMessage!
     runSetup(userProfileId: String!): StatusAndMessage!
     runTests(userProfileId: String!): StatusAndMessage!
+
+    # Interests
+    upsertUserInterestsByText(
+      userProfileId: String!,
+      text: String!): StatusAndMessage!
   }
 `

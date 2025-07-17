@@ -5,13 +5,13 @@ import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
 import { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
 import LoadUserInterestsByFilter from '@/components/user-interests/load-by-filter'
-import ListUserInterests from '@/components/user-interests/list'
+import TextEditUserInterests from '@/components/user-interests/text-edit'
 
 interface Props {
   userProfile: any
 }
 
-export default function InterestsPage({
+export default function TextEditInterestsPage({
                           userProfile
                         }: Props) {
 
@@ -22,7 +22,7 @@ export default function InterestsPage({
   return (
     <>
       <Head>
-        <title>{process.env.NEXT_PUBLIC_APP_NAME} - Your interests</title>
+        <title>{process.env.NEXT_PUBLIC_APP_NAME} - Text edit your interests</title>
       </Head>
 
       <Layout userProfileId={userProfile.id}>
@@ -32,7 +32,7 @@ export default function InterestsPage({
           sx={{ bgcolor: 'background.default' }}>
 
           {userInterests != null ?
-            <ListUserInterests
+            <TextEditUserInterests
               userProfileId={userProfile.id}
               userInterests={userInterests} />
           :

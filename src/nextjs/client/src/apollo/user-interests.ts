@@ -21,3 +21,17 @@ export const getUserInterestsQuery = gql`
     }
   }
 `
+
+export const upsertUserInterestsTextMutation = gql`
+  mutation upsertUserInterestsByText(
+             $userProfileId: String!,
+             $text: String!) {
+    upsertUserInterestsByText(
+      userProfileId: $userProfileId,
+      text: $text) {
+
+      status
+      message
+    }
+  }
+`

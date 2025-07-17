@@ -1,27 +1,25 @@
 import { PrismaClient } from '@prisma/client'
 
-export class EntityInterestModel {
+export class UserInterestTextModel {
 
   // Consts
-  clName = 'EntityInterestModel'
+  clName = 'UserInterestTextModel'
 
   // Code
   async create(
           prisma: PrismaClient,
-          interestTypeId: string,
-          qlooEntityId: string | null,
-          name: string) {
+          userProfileId: string,
+          text: string) {
 
     // Debug
     const fnName = `${this.clName}.create()`
 
     // Create record
     try {
-      return await prisma.entityInterest.create({
+      return await prisma.userInterestText.create({
         data: {
-          interestTypeId: interestTypeId,
-          qlooEntityId: qlooEntityId,
-          name: name
+          userProfileId: userProfileId,
+          text: text
         }
       })
     } catch(error) {
@@ -39,7 +37,7 @@ export class EntityInterestModel {
 
     // Delete
     try {
-      return await prisma.entityInterest.delete({
+      return await prisma.userInterestText.delete({
         where: {
           id: id
         }
@@ -52,30 +50,6 @@ export class EntityInterestModel {
     }
   }
 
-  async filter(
-          prisma: PrismaClient,
-          interestTypeId: string | undefined,
-          includeInterestTypes: boolean = false) {
-
-    // Debug
-    const fnName = `${this.clName}.filter()`
-
-    // Query
-    try {
-      return await prisma.entityInterest.findMany({
-        include: {
-          interestType: includeInterestTypes
-        },
-        where: {
-          interestTypeId: interestTypeId
-        }
-      })
-    } catch(error: any) {
-      console.error(`${fnName}: error: ${error}`)
-      throw 'Prisma error'
-    }
-  }
-
   async getById(
           prisma: PrismaClient,
           id: string) {
@@ -84,10 +58,10 @@ export class EntityInterestModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var entityInterest: any = null
+    var userInterestText: any = null
 
     try {
-      entityInterest = await prisma.entityInterest.findUnique({
+      userInterestText = await prisma.userInterestText.findUnique({
         where: {
           id: id
         }
@@ -100,7 +74,7 @@ export class EntityInterestModel {
     }
 
     // Return
-    return entityInterest
+    return userInterestText
   }
 
   async getByIds(
@@ -112,7 +86,7 @@ export class EntityInterestModel {
 
     // Query
     try {
-      return await prisma.entityInterest.findMany({
+      return await prisma.userInterestText.findMany({
         where: {
           id: {
             in: ids
@@ -129,31 +103,24 @@ export class EntityInterestModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          interestTypeId: string,
-          name: string) {
+          userProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (interestTypeId == null) {
-      console.error(`${fnName}: interestTypeId == null`)
-      throw 'Validation error'
-    }
-
-    if (name == null) {
-      console.error(`${fnName}: name == null`)
+    if (userProfileId == null) {
+      console.error(`${fnName}: userProfileId == null`)
       throw 'Validation error'
     }
 
     // Query
-    var entityInterest: any = null
+    var userInterestText: any = null
 
     try {
-      entityInterest = await prisma.entityInterest.findFirst({
+      userInterestText = await prisma.userInterestText.findFirst({
         where: {
-          interestTypeId: interestTypeId,
-          name: name
+          userProfileId: userProfileId
         }
       })
     } catch(error: any) {
@@ -164,26 +131,24 @@ export class EntityInterestModel {
     }
 
     // Return
-    return entityInterest
+    return userInterestText
   }
 
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          interestTypeId: string | undefined,
-          qlooEntityId: string | null | undefined,
-          name: string | undefined) {
+          userProfileId: string | undefined,
+          text: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
 
     // Update record
     try {
-      return await prisma.entityInterest.update({
+      return await prisma.userInterestText.update({
         data: {
-          interestTypeId: interestTypeId,
-          qlooEntityId: qlooEntityId,
-          name: name
+          userProfileId: userProfileId,
+          text: text
         },
         where: {
           id: id
@@ -198,9 +163,8 @@ export class EntityInterestModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          interestTypeId: string | undefined,
-          qlooEntityId: string | null | undefined,
-          name: string | undefined) {
+          userProfileId: string | undefined,
+          text: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -209,17 +173,15 @@ export class EntityInterestModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        interestTypeId != null &&
-        name != null) {
+        userProfileId != null) {
 
-      const entityInterest = await
+      const userInterestText = await
               this.getByUniqueKey(
                 prisma,
-                interestTypeId,
-                name)
+                userProfileId)
 
-      if (entityInterest != null) {
-        id = entityInterest.id
+      if (userInterestText != null) {
+        id = userInterestText.id
       }
     }
 
@@ -227,28 +189,23 @@ export class EntityInterestModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (interestTypeId == null) {
-        console.error(`${fnName}: id is null and interestTypeId is null`)
+      if (userProfileId == null) {
+        console.error(`${fnName}: id is null and userProfileId is null`)
         throw 'Prisma error'
       }
 
-      if (qlooEntityId === undefined) {
-        console.error(`${fnName}: id is null and qlooEntityId is undefined`)
+      if (text == null) {
+        console.error(`${fnName}: id is null and text is null`)
         throw 'Prisma error'
       }
 
-      if (name == null) {
-        console.error(`${fnName}: id is null and name is null`)
-        throw 'Prisma error'
-      }
 
       // Create
       return await
                this.create(
                  prisma,
-                 interestTypeId,
-                 qlooEntityId,
-                 name)
+                 userProfileId,
+                 text)
     } else {
 
       // Update
@@ -256,9 +213,8 @@ export class EntityInterestModel {
                this.update(
                  prisma,
                  id,
-                 interestTypeId,
-                 qlooEntityId,
-                 name)
+                 userProfileId,
+                 text)
     }
   }
 }

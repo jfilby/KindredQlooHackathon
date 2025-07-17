@@ -18,6 +18,7 @@ import { getUserInterests } from './queries/user-interests'
 
 // Kindred mutations imports
 import { loadServerStartData } from './mutations/server-data-start'
+import { upsertUserInterestsByText } from './mutations/user-interests'
 
 // Code
 const Query = {
@@ -82,7 +83,8 @@ const Mutation = {
   // Kindred
   // ---
 
-  loadServerStartData
+  loadServerStartData,
+  upsertUserInterestsByText
 }
 
 const resolvers = { Query, Mutation }
