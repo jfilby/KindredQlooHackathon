@@ -57,8 +57,6 @@ export class UserInterestsMutateService {
     // Debug
     // console.log(`${fnName}: tech: ` + JSON.stringify(tech))
 
-    Consider using AIC for this
-
     // Define the prompt
     var prompt =
           `# General instructions\n` +

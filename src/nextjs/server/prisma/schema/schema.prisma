@@ -18,21 +18,23 @@ datasource db {
 // Kindred: Batch
 
 model BatchJob {
-  id                         String           @id @default(cuid())
-  instanceId                 String?          @map("instance_id")
-  instance                   Instance?        @relation(fields: [instanceId], references: [id])
-  userProfileId              String?          @map("user_profile_id")
-  userProfile                UserProfile?     @relation(fields: [userProfileId], references: [id])
-  runInATransaction          Boolean          @map("run_in_a_transaction")
-  status                     String           @db.Char(1)
-  progressPct                Int?             @map("progress_pct")
-  message                    String?
-  jobType                    String           @map("job_type")
-  refModel                   String?          @map("ref_model")
-  refId                      String?          @map("ref_id")
-  parameters                 String?          // Stringified JSON
-  created                    DateTime         @default(now())
-  updated                    DateTime         @updatedAt
+  id                           String           @id @default(cuid())
+  instanceId                   String?          @map("instance_id")
+  instance                     Instance?        @relation(fields: [instanceId], references: [id])
+  userProfileId                String?          @map("user_profile_id")
+  userProfile                  UserProfile?     @relation(fields: [userProfileId], references: [id])
+  runInATransaction            Boolean          @map("run_in_a_transaction")
+  status                       String           @db.Char(1)
+  progressPct                  Int?             @map("progress_pct")
+  message                      String?
+  jobType                      String           @map("job_type")
+  refModel                     String?          @map("ref_model")
+  refId                        String?          @map("ref_id")
+  parameters                   String?          // Stringified JSON
+  created                      DateTime         @default(now())
+  updated                      DateTime         @updatedAt
+
+  ofUserInterestTexts          UserInterestText[]
 
   @@index([refId])
   @@map("batch_job")
@@ -200,6 +202,8 @@ model UserInterestText {
   id                           String               @id @default(cuid())
   userProfileId                String               @map("user_profile_id") @unique
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  batchJobId                   String               @map("batch_job_id")
+  batchJob                     BatchJob             @relation(fields: [batchJobId], references: [id])
   text                         String
 
   @@map("user_interest_text")
