@@ -121,7 +121,8 @@ export class SummarizePostQueryService {
 
     // Build a map from postId to index
     const postOrderMap = new Map(
-      siteTopicListPosts.map((post, idx) => [post.postId, post.index ?? idx]))
+      siteTopicListPosts.map((post, idx) =>
+        [post.postId, post.index !== undefined ? post.index : idx]))
 
     // Sort postSummaries based on the original index
     const sortedPostSummaries = postSummaries.sort(
