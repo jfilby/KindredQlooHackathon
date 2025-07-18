@@ -1,13 +1,16 @@
-import { PrismaClient } from '@prisma/client'
+import { EntityInterest, InterestType, PrismaClient } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { EntityInterestModel } from '@/models/interests/entity-interest-model'
+import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { UserInterestModel } from '@/models/interests/user-interest-model'
 import { GetTechService } from '../llms/get-tech-service'
-import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 
 // Models
 const entityInterestModel = new EntityInterestModel()
+const interestTypeModel = new InterestTypeModel()
 const userInterestModel = new UserInterestModel()
 
 // Services
@@ -21,25 +24,6 @@ export class UserInterestsMutateService {
   clName = 'UserInterestsMutateService'
 
   // Code
-  groupEntityInterestsByInterestTypes(entityInterests: any[]) {
-
-    // Group by
-    const groupedByInterestType = entityInterests.reduce((acc, entityInterest) => {
-
-      const interestTypeName = entityInterest.interestType?.name ?? 'Unknown';
-
-      if (!acc[interestTypeName]) {
-        acc[interestTypeName] = []
-      }
-
-      acc[interestTypeName].push(entityInterest)
-      return acc
-    }, {} as Record<string, typeof entityInterests>)
-
-    // Return
-    return groupedByInterestType
-  }
-
   async upsertUserInterestsByText(
           prisma: PrismaClient,
           userProfileId: string,
@@ -60,34 +44,62 @@ export class UserInterestsMutateService {
     // Define the prompt
     var prompt =
           `# General instructions\n` +
-          `Generate a list of EntityInterests from the input text.` +
+          `- You must generate a list of interests grouped by interestType ` +
+          `  from the input text.\n` +
+          `- These will be the interests grouped by interest type. Don't ` +
+          `  generate an empty list if there are valid interests in the ` +
+          `  text.\n` +
+          `- Some items in the text could be abbreviated.\n` +
           `\n`
 
-    // Get a list of existing EntityInterests
-    const entityInterests = await
-            entityInterestModel.filter(
-              prisma,
-              undefined,  // interestTypeId
-              true)       // includeInterestTypes
+    // Get a list of interest types
+    const interestTypes = await
+            interestTypeModel.filter(prisma)
 
-    // Group by interestTypes
-    const entityInterestsByInterestType =
-            this.groupEntityInterestsByInterestTypes(entityInterests)
+    const interestTypeNames = interestTypes.map(
+            (interestTypeRecord: InterestType) => interestTypeRecord.name)
+
+    // Add interest types to the prompt
+    prompt +=
+      `# Interest types\n` +
+      `The list of interest types: ` + JSON.stringify(interestTypes) +
+      `\n\n`
 
     // Add to the prompt
     prompt +=
       `# Interests\n` +
-      JSON.stringify(entityInterestsByInterestType)
+      `Here are a list of known interests by interestType:\n`
+
+    for (const interestType of interestTypes) {
+
+      // Get a list of existing EntityInterests
+      const entityInterests = await
+              entityInterestModel.filter(
+                prisma,
+                interestType.id,
+                true)  // includeInterestTypes
+
+      const interests = entityInterests.map(
+              (entityInterest: EntityInterest) => entityInterest.name)
+
+      prompt += `${interestType.name}: ${interests}\n`
+    }
+
+    prompt += `\n`
 
     // Define the output
     prompt +=
       `# Results\n` +
+      `- The results must be in an array.\n` +
+      `- Only known interestTypes can be used. Interests should be reused ` +
+      `  where they already exist, but add more if needed.\n` +
+      `\n` +
       `The results should follow this JSON example:\n` +
       `\n` +
       `[\n` +
       `  {\n` +
-      `    "<InterestType.name>": [\n` +
-      `      "<EntityInterest.name>",` +
+      `    "<interestType>": [\n` +
+      `      "<interest>",` +
       `    ]\n` +
       `  }\n` +
       `]\n` +
@@ -96,7 +108,7 @@ export class UserInterestsMutateService {
     // Finish the prompt with the input text
     prompt +=
       `# Input\n` +
-      `The input text is: ` + text
+      `The input text to process is: ` + text
 
     // LLM request
     const queryResults = await
@@ -121,6 +133,68 @@ export class UserInterestsMutateService {
 
     // Debug
     console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+
+    // Upsert user interests
+    for (const interestsEntry of queryResults.json) {
+
+      // Debug
+      console.log(`${fnName}: interestsEntry: ` +
+                  JSON.stringify(interestsEntry))
+
+      // Iterate the interestsEntry map
+      for (const interestTypeName in interestsEntry) {
+
+        // Lookup the InterestType
+        const interestType = await
+                interestTypeModel.getByUniqueKey(
+                  prisma,
+                  interestTypeName)
+
+        // Get interests
+        const interests = interestsEntry[interestTypeName]
+
+        // Debug
+        console.log(`${fnName}: interestType: ${interestTypeName} - ` +
+                    `interests: ` + JSON.stringify(interests))
+
+        // Get/create EntityInterests and UserInterests
+        for (const interest of interests) {
+
+          // Get/create EntityInterest
+          var entityInterest = await
+                entityInterestModel.getByUniqueKey(
+                  prisma,
+                  interestType.id,
+                  interest)
+
+          if (entityInterest == null) {
+
+            entityInterest = await
+              entityInterestModel.create(
+                prisma,
+                interestType.id,
+                null,       // qlooEntityId
+                interest)
+          }
+
+          // Get/create UserInterest
+          var userInterest = await
+                userInterestModel.getByUniqueKey(
+                  prisma,
+                  userProfileId,
+                  entityInterest.id)
+
+          if (userInterest == null) {
+
+            userInterest = await
+              userInterestModel.create(
+                prisma,
+                userProfileId,
+                entityInterest.id)
+          }
+        }
+      }
+    }
 
     // Return
     return {

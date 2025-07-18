@@ -1,19 +1,24 @@
 import { PrismaClient, UserProfile } from '@prisma/client'
 import { QlooTests } from '../qloo/tests'
+import { UserInterestsMutateServiceTests } from '../interests/user-interests-mutate-service-tests'
 
+// Services
+const qlooTests = new QlooTests()
+const userInterestsMutateServiceTests = new UserInterestsMutateServiceTests()
+
+// Class
 export class Tests {
 
   // Consts
   clName = 'Tests'
 
-  qlooTest = 'qloo'
+  interestsTests = 'interests'
+  qlooTests = 'qloo'
 
   tests = [
-    this.qlooTest
+    this.interestsTests,
+    this.qlooTests
   ]
-
-  // Services
-  qlooTests = new QlooTests()
 
   // Code
   async run(prisma: PrismaClient,
@@ -27,9 +32,18 @@ export class Tests {
     // Run the test
     switch (test) {
 
-      case this.qlooTest: {
+      case this.interestsTests: {
 
-        await this.qlooTests.tests(prisma)
+        await userInterestsMutateServiceTests.tests(
+                prisma,
+                regularTestUserProfile.id)
+
+        break
+      }
+
+      case this.qlooTests: {
+
+        await qlooTests.tests(prisma)
         break
       }
 
