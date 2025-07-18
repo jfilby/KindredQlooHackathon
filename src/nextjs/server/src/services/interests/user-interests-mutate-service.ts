@@ -24,6 +24,84 @@ export class UserInterestsMutateService {
   clName = 'UserInterestsMutateService'
 
   // Code
+  async processQueryResults(
+          prisma: PrismaClient,
+          userProfileId: string,
+          queryResults: any) {
+
+    // Debug
+    const fnName = `${this.clName}.processQueryResults()`
+
+    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+
+    // Upsert user interests
+    for (const interestsEntry of queryResults.json) {
+
+      // Debug
+      console.log(`${fnName}: interestsEntry: ` +
+                  JSON.stringify(interestsEntry))
+
+      // Iterate the interestsEntry map
+      for (const interestTypeName in interestsEntry) {
+
+        // Lookup the InterestType
+        const interestType = await
+                interestTypeModel.getByUniqueKey(
+                  prisma,
+                  interestTypeName)
+
+        // Get interests
+        const interests = interestsEntry[interestTypeName]
+
+        // Debug
+        console.log(`${fnName}: interestType: ${interestTypeName} - ` +
+                    `interests: ` + JSON.stringify(interests))
+
+        // Get/create EntityInterests and UserInterests
+        for (const interest of interests) {
+
+          // Get/create EntityInterest
+          var entityInterest = await
+                entityInterestModel.getByUniqueKey(
+                  prisma,
+                  interestType.id,
+                  interest)
+
+          if (entityInterest == null) {
+
+            entityInterest = await
+              entityInterestModel.create(
+                prisma,
+                interestType.id,
+                null,       // qlooEntityId
+                interest)
+          }
+
+          // Get/create UserInterest
+          var userInterest = await
+                userInterestModel.getByUniqueKey(
+                  prisma,
+                  userProfileId,
+                  entityInterest.id)
+
+          if (userInterest == null) {
+
+            userInterest = await
+              userInterestModel.create(
+                prisma,
+                userProfileId,
+                entityInterest.id)
+          }
+        }
+      }
+    }
+
+    // Return
+    return {
+      status: true
+    }
+  }
+
   async upsertUserInterestsByText(
           prisma: PrismaClient,
           userProfileId: string,
@@ -131,74 +209,14 @@ export class UserInterestsMutateService {
       return
     }
 
-    // Debug
-    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
-
-    // Upsert user interests
-    for (const interestsEntry of queryResults.json) {
-
-      // Debug
-      console.log(`${fnName}: interestsEntry: ` +
-                  JSON.stringify(interestsEntry))
-
-      // Iterate the interestsEntry map
-      for (const interestTypeName in interestsEntry) {
-
-        // Lookup the InterestType
-        const interestType = await
-                interestTypeModel.getByUniqueKey(
-                  prisma,
-                  interestTypeName)
-
-        // Get interests
-        const interests = interestsEntry[interestTypeName]
-
-        // Debug
-        console.log(`${fnName}: interestType: ${interestTypeName} - ` +
-                    `interests: ` + JSON.stringify(interests))
-
-        // Get/create EntityInterests and UserInterests
-        for (const interest of interests) {
-
-          // Get/create EntityInterest
-          var entityInterest = await
-                entityInterestModel.getByUniqueKey(
-                  prisma,
-                  interestType.id,
-                  interest)
-
-          if (entityInterest == null) {
-
-            entityInterest = await
-              entityInterestModel.create(
-                prisma,
-                interestType.id,
-                null,       // qlooEntityId
-                interest)
-          }
-
-          // Get/create UserInterest
-          var userInterest = await
-                userInterestModel.getByUniqueKey(
-                  prisma,
-                  userProfileId,
-                  entityInterest.id)
-
-          if (userInterest == null) {
-
-            userInterest = await
-              userInterestModel.create(
-                prisma,
-                userProfileId,
-                entityInterest.id)
-          }
-        }
-      }
-    }
+    // Process
+    const results = await
+            this.processQueryResults(
+              prisma,
+              userProfileId,
+              queryResults)
 
     // Return
-    return {
-      status: true
-    }
+    return results
   }
 }
