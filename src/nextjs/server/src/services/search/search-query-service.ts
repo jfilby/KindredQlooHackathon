@@ -1,17 +1,16 @@
 import { PrismaClient } from '@prisma/client'
-import { TechModel } from '@/serene-core-server/models/tech/tech-model'
-import { AiTechDefs } from '@/serene-ai-server/types/tech-defs'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
-import { SearchQueryModel } from '@/models/search/search-query-model'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { SearchQueryModel } from '@/models/search/search-query-model'
+import { GetTechService } from '../llms/get-tech-service'
 
 // Models
 const searchQueryModel = new SearchQueryModel()
-const techModel = new TechModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
+const getTechService = new GetTechService()
 
 // Class
 export class SearchQueryService {
@@ -20,20 +19,6 @@ export class SearchQueryService {
   clName = 'SearchQueryService'
 
   // Code
-  async getTech(
-          prisma: PrismaClient,
-          userProfileId: string | null) {
-
-    // Get the default (GPT 4o)
-    const tech = await
-            techModel.getByVariantName(
-              prisma,
-              AiTechDefs.openRouter_MistralSmall3pt2_24b_Chutes)
-
-    // Return
-    return tech
-  }
-
   async search(
           prisma: PrismaClient,
           userProfile: any,
@@ -62,7 +47,7 @@ export class SearchQueryService {
 
     // Get the LLM
     const tech = await
-            this.getTech(
+            getTechService.getStandardLlmTech(
               prisma,
               userProfile.id)
 
