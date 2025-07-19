@@ -12,10 +12,10 @@ const postUrlsService = new PostUrlsService()
 const summarizePostMutateService = new SummarizePostMutateService()
 const summarizePostUrlService = new SummarizePostUrlService()
 
-export class SocialMediaPipelineService {
+export class SocialMediaBatchPipelineService {
 
   // Consts
-  clName = 'SocialMediaPipelineService'
+  clName = 'SocialMediaBatchPipelineService'
 
   // Code
   async importSite(
