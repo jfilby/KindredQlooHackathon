@@ -361,6 +361,8 @@ model Tech {
 
   ofLlmCaches                  LlmCache[]
 
+  ofEntityInterestGroups       EntityInterestGroup[]
+
   @@map("tech")
   @@schema("public")
 }

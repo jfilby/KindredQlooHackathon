@@ -167,10 +167,37 @@ model EntityInterest {
   name                         String               @unique
 
   // ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
+  ofEntityInterestItems        EntityInterestItem[]
   ofUserInterests              UserInterest[]
 
   @@unique([interestTypeId, name])
   @@map("entity_interest")
+  @@schema("public")
+}
+
+model EntityInterestGroup {
+  // Entity interest groups, typically assigned to a user, with embeddings for similarity search
+  id                           String               @id @default(cuid())
+  entityInterestsHash          String               @unique  // Unique hash based on the ids in EntityInterestItem for this group
+  embeddingTechId              String               @map("embedding_tech_id")
+  embeddingTech                Tech                 @relation(fields: [embeddingTechId], references: [id])
+  embedding                    Float[]
+
+  ofEntityInterestItems        EntityInterestItem[]
+
+  @@map("entity_interest_group")
+  @@schema("public")
+}
+
+model EntityInterestItem {
+  id                           String               @id @default(cuid())
+  entityInterestGroupId        String               @map("entity_interest_group_id")
+  entityInterestGroup          EntityInterestGroup  @relation(fields: [entityInterestGroupId], references: [id])
+  entityInterestId             String               @map("entity_interest_id")
+  entityInterest               EntityInterest       @relation(fields: [entityInterestId], references: [id])
+
+  @@unique([entityInterestGroupId, entityInterestId])
+  @@map("entity_interest_item")
   @@schema("public")
 }
 
