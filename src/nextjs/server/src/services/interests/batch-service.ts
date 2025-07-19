@@ -1,5 +1,10 @@
 import { BatchJob, PrismaClient } from '@prisma/client'
+import { InterestGroupService } from './interest-group-service'
 
+// Services
+const interestGroupService = new InterestGroupService()
+
+// Class
 export class InterestsBatchService {
 
   // Debug
@@ -27,8 +32,8 @@ export class InterestsBatchService {
 
   async groupInterests(prisma: PrismaClient) {
 
-    // Create any new interest groups
-    ;
+    // Get/create interest groups
+    await interestGroupService.getOrCreateMissingGroups(prisma)
 
     // Create embeddings missing for any interest groups
     ;

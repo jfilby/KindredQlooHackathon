@@ -1,12 +1,16 @@
 import { createHash } from 'crypto'
-import { EntityInterest, PrismaClient } from '@prisma/client'
+import { PrismaClient, UserEntityInterest, UserEntityInterestGroup } from '@prisma/client'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
+import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
+import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const entityInterestGroupModel = new EntityInterestGroupModel()
 const entityInterestItemModel = new EntityInterestItemModel()
+const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
+const userEntityInterestModel = new UserEntityInterestModel()
 
 // Services
 const getTechService = new GetTechService()
@@ -14,12 +18,51 @@ const getTechService = new GetTechService()
 // Class
 export class InterestGroupService {
 
+  async getOrCreateMissingGroups(prisma: PrismaClient) {
+
+    // Get a list of UserEntityInterestGroups missing an entityInterestGroupId
+    const userEntityInterestGroups = await
+            userEntityInterestGroupModel.filter(
+              prisma,
+              undefined,  // userProfileId
+              null)       // entityInterestGroupId
+
+    // Process each UserEntityInterestGroup
+    for (const userEntityInterestGroup of userEntityInterestGroups) {
+
+      const userEntityInterests = await
+              userEntityInterestModel.filter(
+                prisma,
+                userEntityInterestGroup.userProfileId,
+                undefined,
+                false)  // includeEntityInterests
+
+      // Get entityInterestIds
+      const entityInterestIds = userEntityInterests.map(
+        (userEntityInterest: UserEntityInterest) =>
+          userEntityInterest.entityInterestId)
+
+      // Get/create the missing group
+      const entityInterestGroup = await
+              this.getOrCreate(
+                prisma,
+                entityInterestIds)
+
+      // Assign to UserEntityInterestGroup
+      await userEntityInterestGroupModel.update(
+              prisma,
+              userEntityInterestGroup.id,
+              undefined,  // userProfileId
+              entityInterestGroup.id)
+    }
+  }
+
   async getOrCreate(
           prisma: PrismaClient,
-          entityInterests: EntityInterest[]) {
+          entityInterestIds: string[]) {
 
     // Get a unique hash
-    const uniqueHash = this.getUniqueHash(entityInterests)
+    const uniqueHash = this.getUniqueHash(entityInterestIds)
 
     // Try to find an existing record
     var entityInterestGroup = await
@@ -44,24 +87,23 @@ export class InterestGroupService {
         embeddingTech.id,
         [])  // embedding
 
-    for (const entityInterest of entityInterests) {
+    for (const entityInterestId of entityInterestIds) {
 
       const entityInterestItem = await
               entityInterestItemModel.create(
                 prisma,
                 entityInterestGroup.id,
-                entityInterest.id)
+                entityInterestId)
     }
+
+    // Return
+    return entityInterestGroup
   }
 
-  getUniqueHash(entityInterests: EntityInterest[]) {
-
-    // Extract the ids
-    const ids = entityInterests.map((entityInterest: EntityInterest) =>
-                  entityInterest.id)
+  getUniqueHash(entityInterestIds: string[]) {
 
     // Sort (to ensure uniquess)
-    const sorted = [...new Set(ids)].sort()
+    const sorted = [...new Set(entityInterestIds)].sort()
 
     const data = sorted.join('|')
     const hash = createHash('sha256').update(data).digest('hex')

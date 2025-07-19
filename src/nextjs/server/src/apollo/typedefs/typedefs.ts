@@ -167,7 +167,7 @@ export const typeDefs = `#graphql
     message: String
   }
 
-  type UserInterest {
+  type UserEntityInterest {
     id: String!
     userProfileId: String!
     entityInterest: EntityInterest
@@ -176,7 +176,7 @@ export const typeDefs = `#graphql
   type UserInterestsResults {
     status: Boolean!
     message: String
-    userInterests: [UserInterest]
+    userEntityInterests: [UserEntityInterest]
   }
 
   # Queries

@@ -8,13 +8,13 @@ import { QlooEntityCategory } from '@/types/qloo-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
-import { UserInterestModel } from '@/models/interests/user-interest-model'
+import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
-const userInterestModel = new UserInterestModel()
+const userEntityInterestModel = new UserEntityInterestModel()
 const userModel = new UserModel()
 
 // Services
@@ -163,8 +163,8 @@ export class GenTestUsersMutateService {
                     null,       // siteTopicId
                     interest)   // name
 
-          const userInterest = await
-                  userInterestModel.upsert(
+          const userEntityInterest = await
+                  userEntityInterestModel.upsert(
                     prisma,
                     undefined,  // id
                     testerUserProfile.id,

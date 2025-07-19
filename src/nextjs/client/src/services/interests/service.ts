@@ -1,4 +1,4 @@
-type UserInterest = {
+type UserEntityInterest = {
   id: string
   userProfileId: string
   entityInterest: {
@@ -13,11 +13,11 @@ type UserInterest = {
 
 export class InterestsService {
 
-  mapUserInterestsToText(userInterests: UserInterest[]): string {
+  mapUserEntityInterestsToText(userEntityInterests: UserEntityInterest[]): string {
 
     const grouped: Record<string, string[]> = {}
 
-    for (const ui of userInterests) {
+    for (const ui of userEntityInterests) {
       const type = ui.entityInterest.interestType.name
       const name = ui.entityInterest.name
 

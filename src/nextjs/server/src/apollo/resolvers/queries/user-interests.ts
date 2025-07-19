@@ -1,9 +1,9 @@
 import { CustomError } from '@/serene-core-server/types/errors'
 import { UsersService } from '@/serene-core-server/services/users/service'
-import { UserInterestModel } from '@/models/interests/user-interest-model'
+import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 
 // Models
-const userInterestModel = new UserInterestModel()
+const userEntityInterestModel = new UserEntityInterestModel()
 
 // Code
 export async function getUserInterests(
@@ -21,8 +21,8 @@ export async function getUserInterests(
   }
 
   // Filter
-  const userInterests = await
-          userInterestModel.filter(
+  const userEntityInterests = await
+          userEntityInterestModel.filter(
             prisma,
             args.userProfileId,
             undefined,  // entityInterestId
@@ -31,6 +31,6 @@ export async function getUserInterests(
   // Return
   return {
     status: true,
-    userInterests: userInterests
+    userEntityInterests: userEntityInterests
   }
 }

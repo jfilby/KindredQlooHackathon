@@ -5,13 +5,13 @@ import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
-import { UserInterestModel } from '@/models/interests/user-interest-model'
+import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
-const userInterestModel = new UserInterestModel()
+const userEntityInterestModel = new UserEntityInterestModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
@@ -79,16 +79,16 @@ export class UserInterestsMutateService {
           }
 
           // Get/create UserInterest
-          var userInterest = await
-                userInterestModel.getByUniqueKey(
+          var userEntityInterest = await
+                userEntityInterestModel.getByUniqueKey(
                   prisma,
                   userProfileId,
                   entityInterest.id)
 
-          if (userInterest == null) {
+          if (userEntityInterest == null) {
 
-            userInterest = await
-              userInterestModel.create(
+            userEntityInterest = await
+              userEntityInterestModel.create(
                 prisma,
                 userProfileId,
                 entityInterest.id)

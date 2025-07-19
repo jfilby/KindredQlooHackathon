@@ -168,7 +168,7 @@ model EntityInterest {
 
   // ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
   ofEntityInterestItems        EntityInterestItem[]
-  ofUserInterests              UserInterest[]
+  ofUserEntityInterests        UserEntityInterest[]
 
   @@unique([interestTypeId, name])
   @@map("entity_interest")
@@ -184,6 +184,7 @@ model EntityInterestGroup {
   embedding                    Float[]
 
   ofEntityInterestItems        EntityInterestItem[]
+  ofUserEntityInterestGroups   UserEntityInterestGroup[]
 
   @@map("entity_interest_group")
   @@schema("public")
@@ -216,7 +217,18 @@ model InterestType {
   @@schema("public")
 }
 
-model UserInterest {
+model UserEntityInterestGroup {
+  id                           String                @id @default(cuid())
+  userProfileId                String                @map("user_profile_id") @unique
+  userProfile                  UserProfile           @relation(fields: [userProfileId], references: [id])
+  entityInterestGroupId        String?               @map("entity_interest_group_id")
+  entityInterestGroup          EntityInterestGroup?  @relation(fields: [entityInterestGroupId], references: [id])
+
+  @@map("user_entity_interest_group")
+  @@schema("public")
+}
+
+model UserEntityInterest {
   id                           String               @id @default(cuid())
   userProfileId                String               @map("user_profile_id")
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
@@ -224,7 +236,7 @@ model UserInterest {
   entityInterest               EntityInterest       @relation(fields: [entityInterestId], references: [id])
 
   @@unique([userProfileId, entityInterestId])
-  @@map("user_interest")
+  @@map("user_entity_interest")
   @@schema("public")
 }
 

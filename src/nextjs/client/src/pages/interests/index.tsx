@@ -4,8 +4,8 @@ import { Box, Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
 import { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
-import LoadUserInterestsByFilter from '@/components/user-interests/load-by-filter'
-import ListUserInterests from '@/components/user-interests/list'
+import LoadUserEntityInterestsByFilter from '@/components/user-interests/load-by-filter'
+import ListUserEntityInterests from '@/components/user-interests/list'
 
 interface Props {
   userProfile: any
@@ -16,7 +16,7 @@ export default function InterestsPage({
                         }: Props) {
 
   // State
-  const [userInterests, setUserInterests] = useState<any[] | undefined>(undefined)
+  const [userEntityInterests, setUserEntityInterests] = useState<any[] | undefined>(undefined)
 
   // Render
   return (
@@ -31,10 +31,10 @@ export default function InterestsPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
-          {userInterests != null ?
-            <ListUserInterests
+          {userEntityInterests != null ?
+            <ListUserEntityInterests
               userProfileId={userProfile.id}
-              userInterests={userInterests} />
+              userEntityInterests={userEntityInterests} />
           :
             <Typography>
               Loading..
@@ -43,9 +43,9 @@ export default function InterestsPage({
         </Box>
       </Layout>
 
-      <LoadUserInterestsByFilter
+      <LoadUserEntityInterestsByFilter
         userProfileId={userProfile.id}
-        setUserInterests={setUserInterests} />
+        setUserEntityInterests={setUserEntityInterests} />
     </>
   )
 }

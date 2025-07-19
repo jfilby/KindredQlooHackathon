@@ -14,7 +14,7 @@ interface Props {
   userInterest: any
 }
 
-export default function ViewUserInterestCard({
+export default function ViewUserEntityInterestCard({
                           userProfileId,
                           userInterest
                         }: Props) {

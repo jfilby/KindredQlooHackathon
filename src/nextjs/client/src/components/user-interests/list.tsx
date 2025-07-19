@@ -1,20 +1,20 @@
 import { Typography } from '@mui/material'
-import ViewUserInterestCard from './card'
+import ViewUserEntityInterestCard from './card'
 
 interface Props {
   userProfileId: string
-  userInterests: any[]
+  userEntityInterests: any[]
 }
 
-export default function ListUserInterests({
+export default function ListUserEntityInterests({
                           userProfileId,
-                          userInterests
+                          userEntityInterests
                         }: Props) {
 
   // Render
   return (
     <div style={{ marginBottom: '2em' }}>
-      {userInterests != null ?
+      {userEntityInterests != null ?
         <>
           <div style={{ marginBottom: '2em' }}>
 
@@ -23,13 +23,13 @@ export default function ListUserInterests({
             </Typography>
           </div>
 
-          {userInterests.length > 0 ?
+          {userEntityInterests.length > 0 ?
             <>
-              {userInterests.map(userInterest => (
-                <ViewUserInterestCard
-                  key={userInterest.id}
+              {userEntityInterests.map(userEntityInterest => (
+                <ViewUserEntityInterestCard
+                  key={userEntityInterest.id}
                   userProfileId={userProfileId}
-                  userInterest={userInterest} />
+                  userInterest={userEntityInterest} />
               ))}
             </>
           :

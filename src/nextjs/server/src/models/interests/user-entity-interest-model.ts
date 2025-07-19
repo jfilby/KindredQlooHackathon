@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 
-export class UserInterestModel {
+export class UserEntityInterestModel {
 
   // Consts
-  clName = 'UserInterestModel'
+  clName = 'UserEntityInterestModel'
 
   // Code
   async create(
@@ -16,7 +16,7 @@ export class UserInterestModel {
 
     // Create record
     try {
-      return await prisma.userInterest.create({
+      return await prisma.userEntityInterest.create({
         data: {
           userProfileId: userProfileId,
           entityInterestId: entityInterestId
@@ -37,7 +37,7 @@ export class UserInterestModel {
 
     // Delete
     try {
-      return await prisma.userInterest.delete({
+      return await prisma.userEntityInterest.delete({
         where: {
           id: id
         }
@@ -54,16 +54,16 @@ export class UserInterestModel {
           prisma: PrismaClient,
           userProfileId: string | undefined,
           entityInterestId: string | undefined = undefined,
-          includeEntityInterest: boolean = false) {
+          includeEntityInterests: boolean = false) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
 
     // Query
     try {
-      return await prisma.userInterest.findMany({
+      return await prisma.userEntityInterest.findMany({
         include: {
-          entityInterest: includeEntityInterest ? {
+          entityInterest: includeEntityInterests ? {
             include: {
               interestType: true
             }
@@ -88,10 +88,10 @@ export class UserInterestModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var userInterest: any = null
+    var userEntityInterest: any = null
 
     try {
-      userInterest = await prisma.userInterest.findUnique({
+      userEntityInterest = await prisma.userEntityInterest.findUnique({
         where: {
           id: id
         }
@@ -104,7 +104,7 @@ export class UserInterestModel {
     }
 
     // Return
-    return userInterest
+    return userEntityInterest
   }
 
   async getByIds(
@@ -116,7 +116,7 @@ export class UserInterestModel {
 
     // Query
     try {
-      return await prisma.userInterest.findMany({
+      return await prisma.userEntityInterest.findMany({
         where: {
           id: {
             in: ids
@@ -151,10 +151,10 @@ export class UserInterestModel {
     }
 
     // Query
-    var userInterest: any = null
+    var userEntityInterest: any = null
 
     try {
-      userInterest = await prisma.userInterest.findFirst({
+      userEntityInterest = await prisma.userEntityInterest.findFirst({
         where: {
           userProfileId: userProfileId,
           entityInterestId: entityInterestId
@@ -168,7 +168,7 @@ export class UserInterestModel {
     }
 
     // Return
-    return userInterest
+    return userEntityInterest
   }
 
   async update(
@@ -182,7 +182,7 @@ export class UserInterestModel {
 
     // Update record
     try {
-      return await prisma.userInterest.update({
+      return await prisma.userEntityInterest.update({
         data: {
           userProfileId: userProfileId,
           entityInterestId: entityInterestId
@@ -213,14 +213,14 @@ export class UserInterestModel {
         userProfileId != null &&
         entityInterestId != null) {
 
-      const userInterest = await
+      const userEntityInterest = await
               this.getByUniqueKey(
                 prisma,
                 userProfileId,
                 entityInterestId)
 
-      if (userInterest != null) {
-        id = userInterest.id
+      if (userEntityInterest != null) {
+        id = userEntityInterest.id
       }
     }
 
