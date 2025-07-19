@@ -6,12 +6,26 @@ export class InterestsBatchService {
   clName = 'InterestsBatchService'
 
   // Code
-  async runCreateInterestsWithGroups(
+  async createInterests(
           prisma: PrismaClient,
           batchJob: BatchJob) {
 
     // Convert interests text to definite interests
     ;
+  }
+
+  async groupAndFindSimilarInterests(
+          prisma: PrismaClient,
+          batchJob: BatchJob) {
+
+    // Group interests
+    await this.groupInterests(prisma)
+
+    // Find similar interests
+    await this.findSimilarInterests(prisma)
+  }
+
+  async groupInterests(prisma: PrismaClient) {
 
     // Create any new interest groups
     ;
@@ -20,9 +34,7 @@ export class InterestsBatchService {
     ;
   }
 
-  async runFindSimilarInterests(
-          prisma: PrismaClient,
-          batchJob: BatchJob) {
+  async findSimilarInterests(prisma: PrismaClient) {
 
     // Identify groups that need similar interests to be found
     ;

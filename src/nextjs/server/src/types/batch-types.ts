@@ -8,7 +8,7 @@ export class BatchTypes {
 
   // Batch job names
   static createInterestsJobType = 'createInterests'
-  static findSimilarInterestsJobType = 'findSimilarInterests'
+  static groupAndFindSimilarInterestsJobType = 'groupAndFindSimilarInterests'
   static socialMediaPipelineJobType = 'socialMediaPipeline'
 
   // Ref models

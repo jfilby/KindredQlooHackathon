@@ -45,14 +45,14 @@ async function dispatchBatchJobByType(
 
       case BatchTypes.createInterestsJobType: {
 
-        return await interestsBatchService.runCreateInterestsWithGroups(
+        return await interestsBatchService.createInterests(
                        prismaForJob,
                        batchJob)
       }
 
-      case BatchTypes.findSimilarInterestsJobType: {
+      case BatchTypes.groupAndFindSimilarInterestsJobType: {
 
-        return await interestsBatchService.runFindSimilarInterests(
+        return await interestsBatchService.groupAndFindSimilarInterests(
                        prismaForJob,
                        batchJob)
       }
