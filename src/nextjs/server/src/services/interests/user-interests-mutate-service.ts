@@ -6,7 +6,7 @@ import { ServerOnlyTypes } from '@/types/server-only-types'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { UserInterestModel } from '@/models/interests/user-interest-model'
-import { GetTechService } from '../llms/get-tech-service'
+import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const entityInterestModel = new EntityInterestModel()

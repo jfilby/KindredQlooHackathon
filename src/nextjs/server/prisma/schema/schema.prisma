@@ -178,7 +178,7 @@ model EntityInterest {
 model EntityInterestGroup {
   // Entity interest groups, typically assigned to a user, with embeddings for similarity search
   id                           String               @id @default(cuid())
-  entityInterestsHash          String               @unique  // Unique hash based on the ids in EntityInterestItem for this group
+  uniqueHash                   String               @map("unique_hash") @unique  // Unique hash based on the ids in EntityInterestItem for this group
   embeddingTechId              String               @map("embedding_tech_id")
   embeddingTech                Tech                 @relation(fields: [embeddingTechId], references: [id])
   embedding                    Float[]

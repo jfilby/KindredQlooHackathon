@@ -8,7 +8,7 @@ import { PostModel } from '@/models/social-media/post-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
-import { GetTechService } from '@/services/llms/get-tech-service'
+import { GetTechService } from '@/services/tech/get-tech-service'
 
 // Models
 const commentModel = new CommentModel()

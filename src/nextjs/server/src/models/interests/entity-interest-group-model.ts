@@ -8,7 +8,7 @@ export class EntityInterestGroupModel {
   // Code
   async create(
           prisma: PrismaClient,
-          entityInterestsHash: string,
+          uniqueHash: string,
           embeddingTechId: string,
           embedding: number[]) {
 
@@ -19,7 +19,7 @@ export class EntityInterestGroupModel {
     try {
       return await prisma.entityInterestGroup.create({
         data: {
-          entityInterestsHash: entityInterestsHash,
+          uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
           embedding: embedding
         }
@@ -135,14 +135,15 @@ export class EntityInterestGroupModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          entityInterestsHash: string) {
+          uniqueHash: string,
+          includeEntityInterestItems: boolean = false) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (entityInterestsHash == null) {
-      console.error(`${fnName}: entityInterestsHash == null`)
+    if (uniqueHash == null) {
+      console.error(`${fnName}: uniqueHash == null`)
       throw 'Validation error'
     }
 
@@ -151,8 +152,11 @@ export class EntityInterestGroupModel {
 
     try {
       entityInterestGroup = await prisma.entityInterestGroup.findFirst({
+        include: {
+          ofEntityInterestItems: includeEntityInterestItems
+        },
         where: {
-          entityInterestsHash: entityInterestsHash
+          uniqueHash: uniqueHash
         }
       })
     } catch(error: any) {
@@ -169,7 +173,7 @@ export class EntityInterestGroupModel {
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          entityInterestsHash: string | undefined,
+          uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
           embedding: number[] | undefined) {
 
@@ -180,7 +184,7 @@ export class EntityInterestGroupModel {
     try {
       return await prisma.entityInterestGroup.update({
         data: {
-          entityInterestsHash: entityInterestsHash,
+          uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
           embedding: embedding
         },
@@ -197,7 +201,7 @@ export class EntityInterestGroupModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          entityInterestsHash: string | undefined,
+          uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
           embedding: number[] | undefined) {
 
@@ -208,12 +212,12 @@ export class EntityInterestGroupModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        entityInterestsHash != null) {
+        uniqueHash != null) {
 
       const entityInterestGroup = await
               this.getByUniqueKey(
                 prisma,
-                entityInterestsHash)
+                uniqueHash)
 
       if (entityInterestGroup != null) {
         id = entityInterestGroup.id
@@ -224,8 +228,8 @@ export class EntityInterestGroupModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (entityInterestsHash == null) {
-        console.error(`${fnName}: id is null and entityInterestsHash is null`)
+      if (uniqueHash == null) {
+        console.error(`${fnName}: id is null and uniqueHash is null`)
         throw 'Prisma error'
       }
 
@@ -243,7 +247,7 @@ export class EntityInterestGroupModel {
       return await
                this.create(
                  prisma,
-                 entityInterestsHash,
+                 uniqueHash,
                  embeddingTechId,
                  embedding)
     } else {
@@ -253,7 +257,7 @@ export class EntityInterestGroupModel {
                this.update(
                  prisma,
                  id,
-                 entityInterestsHash,
+                 uniqueHash,
                  embeddingTechId,
                  embedding)
     }

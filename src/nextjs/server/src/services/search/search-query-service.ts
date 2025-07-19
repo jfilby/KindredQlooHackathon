@@ -3,7 +3,7 @@ import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { SearchQueryModel } from '@/models/search/search-query-model'
-import { GetTechService } from '../llms/get-tech-service'
+import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const searchQueryModel = new SearchQueryModel()
