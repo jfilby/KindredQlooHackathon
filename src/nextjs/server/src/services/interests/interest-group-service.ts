@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import { PrismaClient, UserEntityInterest, UserEntityInterestGroup } from '@prisma/client'
+import { PrismaClient, UserEntityInterest } from '@prisma/client'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
