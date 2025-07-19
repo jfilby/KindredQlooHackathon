@@ -9,6 +9,7 @@ export class InterestTypeModel {
   async create(
           prisma: PrismaClient,
           qlooEntityType: string | null,
+          siteTopicId: string | null,
           name: string) {
 
     // Debug
@@ -19,6 +20,7 @@ export class InterestTypeModel {
       return await prisma.interestType.create({
         data: {
           qlooEntityType: qlooEntityType,
+          siteTopicId: siteTopicId,
           name: name
         }
       })
@@ -188,6 +190,7 @@ export class InterestTypeModel {
           prisma: PrismaClient,
           id: string | undefined,
           qlooEntityType: string | null | undefined,
+          siteTopicId: string | null | undefined,
           name: string | undefined) {
 
     // Debug
@@ -198,6 +201,7 @@ export class InterestTypeModel {
       return await prisma.interestType.update({
         data: {
           qlooEntityType: qlooEntityType,
+          siteTopicId: siteTopicId,
           name: name
         },
         where: {
@@ -214,6 +218,7 @@ export class InterestTypeModel {
           prisma: PrismaClient,
           id: string | undefined,
           qlooEntityType: string | null | undefined,
+          siteTopicId: string | null | undefined,
           name: string | undefined) {
 
     // Debug
@@ -244,6 +249,11 @@ export class InterestTypeModel {
         throw 'Prisma error'
       }
 
+      if (siteTopicId === undefined) {
+        console.error(`${fnName}: id is null and siteTopicId is undefined`)
+        throw 'Prisma error'
+      }
+
       if (name == null) {
         console.error(`${fnName}: id is null and name is null`)
         throw 'Prisma error'
@@ -254,6 +264,7 @@ export class InterestTypeModel {
                this.create(
                  prisma,
                  qlooEntityType,
+                 siteTopicId,
                  name)
     } else {
 
@@ -263,6 +274,7 @@ export class InterestTypeModel {
                  prisma,
                  id,
                  qlooEntityType,
+                 siteTopicId,
                  name)
     }
   }

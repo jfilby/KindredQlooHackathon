@@ -74,6 +74,7 @@ export class UserInterestsMutateService {
                 prisma,
                 interestType.id,
                 null,       // qlooEntityId
+                null,       // siteTopicId
                 interest)
           }
 
