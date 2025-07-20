@@ -111,6 +111,11 @@ export class UserInterestsMutateService {
     // Debug
     const fnName = `${this.clName}.upsertUserInterestsByText()`
 
+    // Validate
+    if (text == null) {
+      throw new CustomError(`${fnName}: text == null`)
+    }
+
     // Get the LLM
     const tech = await
             getTechService.getStandardLlmTech(
