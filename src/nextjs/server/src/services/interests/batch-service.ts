@@ -36,7 +36,7 @@ export class InterestsBatchService {
     await interestGroupService.getOrCreateMissingGroups(prisma)
 
     // Create embeddings missing for any interest groups
-    ;
+    await interestGroupService.creatingMissingEmbeddings(prisma)
   }
 
   async findSimilarInterests(prisma: PrismaClient) {

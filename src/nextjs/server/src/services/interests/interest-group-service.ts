@@ -1,7 +1,11 @@
 import { createHash } from 'crypto'
-import { PrismaClient, UserEntityInterest } from '@prisma/client'
+import { EntityInterest, EntityInterestItem, PrismaClient, UserEntityInterest } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
+import { TechModel } from '@/serene-core-server/models/tech/tech-model'
+import { OpenAiEmbeddingsService } from '@/serene-ai-server/services/llm-apis/openai/embeddings-api'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
+import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../tech/get-tech-service'
@@ -9,14 +13,100 @@ import { GetTechService } from '../tech/get-tech-service'
 // Models
 const entityInterestGroupModel = new EntityInterestGroupModel()
 const entityInterestItemModel = new EntityInterestItemModel()
+const entityInterestModel = new EntityInterestModel()
+const techModel = new TechModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 const userEntityInterestModel = new UserEntityInterestModel()
 
 // Services
 const getTechService = new GetTechService()
+const openAiEmbeddingsService = new OpenAiEmbeddingsService()
 
 // Class
 export class InterestGroupService {
+
+  // Consts
+  clName = 'InterestGroupService'
+
+  // Code
+  async creatingMissingEmbeddings(prisma: PrismaClient) {
+
+    // Debug
+    const fnName = `${this.clName}.creatingMissingEmbeddings()`
+
+    // Get records with missing embeddings
+    const entityInterestGroups = await
+            entityInterestGroupModel.filterByHasEmbedding(
+              prisma,
+              false,  // hasEmbedding
+              true)   // includeEntityInterestItems
+
+    // Validate
+    if (entityInterestGroups == null) {
+      throw new CustomError(`${fnName}: entityInterestGroups == null`)
+    }
+
+    // Process each group's embeddings
+    for (const entityInterestGroup of entityInterestGroups) {
+
+      // Get entityInterestIds
+      const entityInterestIds =
+              entityInterestGroup.ofEntityInterestItems.map(
+                (entityInterestItem: EntityInterestItem) =>
+                  entityInterestItem.entityInterestId)
+
+      // Get EntityInterests
+      const entityInterests = await
+              entityInterestModel.getByIds(
+                prisma,
+                entityInterestIds)
+
+      if (entityInterests == null) {
+        throw new CustomError(`${fnName}: entityInterests == null`)
+      }
+
+      // Get the text for the embedding
+      var entityInterestNames =
+              entityInterests.map((entityInterest: EntityInterest) =>
+                entityInterest.name)
+
+      entityInterestNames = entityInterestNames.sort()
+
+      // Get embedding tech
+      const embeddingsTech = await
+              techModel.getById(
+                prisma,
+                entityInterestGroup.embeddingTechId)
+
+      if (embeddingsTech == null) {
+        throw new CustomError(`${fnName}: embeddingsTech == null`)
+      }
+
+      // Create the embedding
+      const results = await
+              openAiEmbeddingsService.requestEmbedding(
+                prisma,
+                embeddingsTech,
+                entityInterestNames.join(', '))
+
+      // Validate
+      if (results == null) {
+        throw new CustomError(`${fnName}: results == null`)
+      }
+
+      if (results.embedding == null) {
+        throw new CustomError(`${fnName}: results.embedding == null`)
+      }
+
+      // Set the embedding
+      await entityInterestGroupModel.update(
+              prisma,
+              entityInterestGroup.id,
+              undefined,  // uniqueHash
+              undefined,  // embeddingTechId
+              results.embedding)
+    }
+  }
 
   async getOrCreateMissingGroups(prisma: PrismaClient) {
 

@@ -52,22 +52,26 @@ export class EntityInterestGroupModel {
     }
   }
 
-  async filter(
+  async filterByHasEmbedding(
           prisma: PrismaClient,
-          hasEmbedding: boolean) {
+          hasEmbedding: boolean,
+          includeEntityInterestItems: boolean) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
 
     // Validate
-    if (hasEmbedding == null) {
-      console.error(`${fnName}: hasEmbedding == null`)
+    if (hasEmbedding === null) {
+      console.error(`${fnName}: hasEmbedding === null`)
       throw 'Validation error'
     }
 
     // Query
     try {
       return await prisma.entityInterestGroup.findMany({
+        include: {
+          ofEntityInterestItems: includeEntityInterestItems,
+        },
         where: {
           embedding: hasEmbedding
           ? { hasSome: [0] }    // has at least one float
