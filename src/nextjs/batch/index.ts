@@ -61,9 +61,7 @@ async function dispatchBatchJobByType(
 
         return await socialMediaBatchPipelineService.run(
                        prismaForJob,
-                       batchJob.instanceId,
-                       batchJob.userProfileId,
-                       batchJob.refId)
+                       batchJob)
       }
 
       default: {

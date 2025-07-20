@@ -3,6 +3,7 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { SiteModel } from '@/models/social-media/site-model'
 import { HackerNewAlgoliaService } from '../site-specific/hn-algolia-service'
 import { PostUrlsService } from '../post-urls/post-urls-service'
 import { SummarizePostMutateService } from '@/services/social-media/summarized-posts/mutate-service'
@@ -10,6 +11,7 @@ import { SummarizePostUrlService } from '@/services/social-media/summarized-post
 
 // Models
 const batchJobModel = new BatchJobModel()
+const siteModel = new SiteModel()
 
 // Services
 const hackerNewAlgoliaService = new HackerNewAlgoliaService()
@@ -50,13 +52,33 @@ export class SocialMediaBatchPipelineService {
   }
 
   async run(prisma: PrismaClient,
-            userProfileId: string,
-            forUserProfileId: string,
-            site: Site,
             batchJob: BatchJob) {
 
     // Debug
     const fnName = `${this.clName}.run()`
+
+    // Validate
+    if (batchJob == null) {
+      throw new CustomError(`${fnName}: batchJob == null`)
+    }
+
+    if (batchJob.refId == null) {
+      throw new CustomError(`${fnName}: batchJob.refId == null`)
+    }
+
+    if (batchJob.userProfileId == null) {
+      throw new CustomError(`${fnName}: batchJob.userProfileId == null`)
+    }
+
+    // Determine user profile ids
+    const userProfileId = batchJob.userProfileId
+    const forUserProfileId = batchJob.userProfileId
+
+    // Get the site
+    const site = await
+            siteModel.getById(
+              prisma,
+              batchJob.refId)
 
     // Import
     await this.importSite(
