@@ -95,7 +95,13 @@ async function interval1h(prisma: any) {
   // Debug
   const fnName = 'interval1h'
 
-  // console.log(`${fnName}: starting..`)
+  console.log(`${fnName}: starting..`)
+
+  // Group and find similar interests
+  await interestsBatchService.groupAndFindSimilarInterests(prisma)
+
+  // Get any missing Qloo entities
+  await getQlooInsightsService.setMissingQlooEntityIds(prisma)
 }
 
 async function interval6h(prisma: any) {
@@ -109,12 +115,6 @@ async function interval6h(prisma: any) {
 
   // Social media batch pipeline
   await socialMediaBatchPipelineService.runForAllSites(prisma)
-
-  // Group and find similar interests
-  await interestsBatchService.groupAndFindSimilarInterests(prisma)
-
-  // Get any missing Qloo entities
-  await getQlooInsightsService.setMissingQlooEntityIds(prisma)
 }
 
 function sleep(ms: number) {
