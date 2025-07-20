@@ -9,11 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
     "@apollo/client": "^3.13.8",
     "@emotion/react": "^11.11.4",
     "@emotion/server": "^11.11.0",
@@ -31,11 +26,16 @@
     "cytoscape": "^3.32.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "next": "15.3.2",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.9.16",
+    "react": "^19.0.0",
     "react-device-detect": "2.2.3",
+    "react-dom": "^19.0.0",
     "react-markdown": "9.0.1",
     "socket.io-client": "^4.8.1",
     "typescript": "^5"
+  },
+  "devDependencies": {
   }
 }

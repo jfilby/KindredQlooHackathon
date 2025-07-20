@@ -425,7 +425,7 @@ model PostUrlSummary {
 
 // Kindred: Search
 
-model ResultUrl {
+/* model ResultUrl {
   id                           String               @id @default(cuid())
   url                          String               @unique
   title                        String
@@ -475,4 +475,4 @@ model SearchQueryResultUrl {
   @@unique([searchQueryResultId, resultUrlId])
   @@map("search_query_result_url")
   @@schema("public")
-}
+} */

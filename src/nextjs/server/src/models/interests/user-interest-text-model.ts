@@ -231,7 +231,7 @@ export class UserInterestTextModel {
                this.update(
                  prisma,
                  id,
-                 batchJobId,
+                 userProfileId,
                  text)
     }
   }

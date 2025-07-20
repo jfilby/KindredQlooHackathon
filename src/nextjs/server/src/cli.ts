@@ -9,7 +9,7 @@ import { GenTestUsersMutateService } from './services/tribes/gen-test-users-muta
 import { HackerNewAlgoliaTestsService } from './services/social-media/site-specific/hn-algolia-service-tests'
 import { PostUrlsService } from './services/social-media/post-urls/post-urls-service'
 import { ServerTestTypes } from './types/server-test-types'
-import { SearchQueryServiceTests } from './services/search/search-query-service-tests'
+// import { SearchQueryServiceTests } from '../archive/models/search/search/search-query-service-tests'
 import { SetupService } from './setup/setup'
 import { SummarizePostMutateService } from './services/social-media/summarized-posts/mutate-service'
 import { SummarizePostUrlService } from './services/social-media/summarized-post-urls/service'
@@ -26,7 +26,7 @@ import { Tests } from './services/tests/tests'
   const genTestUserCommand = 'gen-test-user'
   const getPostUrlsCommand = 'get-post-urls'
   const loadTechProviderApiKeysCommand = 'load-tech-provider-api-keys'
-  const searchCommand = 'search'
+  // const searchCommand = 'search'
   const setupCommand = 'setup'
   const summarizePostsCommand = 'summarize-posts'
   const summarizePostUrlsCommand = 'summarize-post-urls'
@@ -37,7 +37,7 @@ import { Tests } from './services/tests/tests'
           genTestUserCommand,
           getPostUrlsCommand,
           loadTechProviderApiKeysCommand,
-          searchCommand,
+          // searchCommand,
           setupCommand,
           summarizePostsCommand,
           summarizePostUrlsCommand,
@@ -53,7 +53,7 @@ import { Tests } from './services/tests/tests'
   const genTestUsersMutateService = new GenTestUsersMutateService()
   const hackerNewAlgoliaTestsService = new HackerNewAlgoliaTestsService()
   const postUrlsService = new PostUrlsService()
-  const searchQueryServiceTests = new SearchQueryServiceTests()
+  // const searchQueryServiceTests = new SearchQueryServiceTests()
   const setupService = new SetupService()
   const summarizePostMutateService = new SummarizePostMutateService()
   const summarizePostUrlService = new SummarizePostUrlService()
@@ -115,14 +115,14 @@ import { Tests } from './services/tests/tests'
       break
     }
 
-    case searchCommand: {
+    /* case searchCommand: {
 
       await searchQueryServiceTests.testInputSearch(
               prisma,
               regularTestUserProfile)
 
       break
-    }
+    } */
 
     case setupCommand: {
 
