@@ -1,3 +1,4 @@
+import { prisma } from '@/db'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BatchTypes } from '@/types/batch-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'

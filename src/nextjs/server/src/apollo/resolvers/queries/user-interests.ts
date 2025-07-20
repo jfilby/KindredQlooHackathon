@@ -1,3 +1,4 @@
+import { prisma } from '@/db'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
