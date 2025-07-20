@@ -56,12 +56,11 @@ export class SocialMediaBatchPipelineService {
     // Debug
     const fnName = `${this.clName}.runForAllSites()`
 
-    // Get admin UserProfile
-    const adminUserProfile = await
-            usersService.getOrCreateUserByEmail(
+    // Get anon user
+    const anonUserProfile = await
+            usersService.getUserProfileByEmail(
               prisma,
-              ServerTestTypes.adminUserEmail,
-              undefined)  // defaultUserPreferences
+              ServerTestTypes.anonUserEmail)
 
     // Get the sites to process
     const sites = await
@@ -77,7 +76,7 @@ export class SocialMediaBatchPipelineService {
 
       await this.runForSite(
               prisma,
-              adminUserProfile.id,
+              anonUserProfile.id,
               site)
     }
   }
