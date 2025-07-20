@@ -4,8 +4,8 @@ import { Box } from '@mui/material'
 // import { loadServerPage } from '@/services/page/load-server-page'
 // import { pageBodyWidthPlus } from '@/components/layout/full-height-layout'
 // import ToolpadLayout from '@/components/layout/toolpad-layout'
-import AiPersonaChatNavBar from '@/components/chats/ai-persona-chat-nav-bar'
-import ViewChatSession from '@/components/chats/view-session'
+import AiPersonaChatNavBar from '../../archive/components/chats/ai-persona-chat-nav-bar'
+import ViewChatSession from '../../archive/components/chats/view-session'
 import GraphTest from '@/components/cytoscape/graph'
 
 interface Props {

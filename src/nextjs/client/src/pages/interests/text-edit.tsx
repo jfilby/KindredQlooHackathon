@@ -16,7 +16,7 @@ export default function TextEditInterestsPage({
                         }: Props) {
 
   // State
-  const [userInterests, setUserInterests] = useState<any[] | undefined>(undefined)
+  const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
 
   // Render
   return (
@@ -31,10 +31,10 @@ export default function TextEditInterestsPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
-          {userInterests != null ?
+          {userInterestsText != null ?
             <TextEditUserInterests
               userProfileId={userProfile.id}
-              userInterests={userInterests} />
+              initialText={userInterestsText.text} />
           :
             <Typography>
               Loading..
@@ -45,7 +45,8 @@ export default function TextEditInterestsPage({
 
       <LoadUserInterestsByFilter
         userProfileId={userProfile.id}
-        setUserInterests={setUserInterests} />
+        setUserEntityInterests={undefined}
+        setUserInterestsText={setUserInterestsText} />
     </>
   )
 }

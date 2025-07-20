@@ -1,9 +1,10 @@
 import { CustomError } from '@/serene-core-server/types/errors'
-import { UsersService } from '@/serene-core-server/services/users/service'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
+import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 
 // Models
 const userEntityInterestModel = new UserEntityInterestModel()
+const userInterestsTextModel = new UserInterestsTextModel()
 
 // Code
 export async function getUserInterests(
@@ -20,6 +21,12 @@ export async function getUserInterests(
     throw new CustomError(`${fnName}: args.userProfileId == null`)
   }
 
+  // Get UserInterestsText if any
+  const userInterestsText = await
+          userInterestsTextModel.getByUniqueKey(
+            prisma,
+            args.userProfileId)
+
   // Filter
   const userEntityInterests = await
           userEntityInterestModel.filter(
@@ -31,6 +38,7 @@ export async function getUserInterests(
   // Return
   return {
     status: true,
-    userEntityInterests: userEntityInterests
+    userEntityInterests: userEntityInterests,
+    userInterestsText: userInterestsText
   }
 }

@@ -10,5 +10,5 @@ export class BatchTypes {
   static createInterestsJobType = 'createInterests'
 
   // Ref models
-  static userInterestTextModel = 'UserInterestText'
+  static userInterestsTextModel = 'UserInterestsText'
 }

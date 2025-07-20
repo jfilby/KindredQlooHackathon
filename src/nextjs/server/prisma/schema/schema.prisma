@@ -253,14 +253,14 @@ model UserEntityInterest {
   @@schema("public")
 }
 
-model UserInterestText {
+model UserInterestsText {
   // Used to save interest text before its resolved to UserInterests.
   id                           String               @id @default(cuid())
   userProfileId                String               @map("user_profile_id") @unique
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
   text                         String
 
-  @@map("user_interest_text")
+  @@map("user_interests_text")
   @@schema("public")
 }
 

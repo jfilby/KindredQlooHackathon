@@ -177,6 +177,7 @@ export const typeDefs = `#graphql
     status: Boolean!
     message: String
     userEntityInterests: [UserEntityInterest]
+    userInterestsText: String
   }
 
   # Queries

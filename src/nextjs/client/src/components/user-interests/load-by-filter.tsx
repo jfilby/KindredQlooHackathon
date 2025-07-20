@@ -5,11 +5,13 @@ import { getUserInterestsQuery } from '@/apollo/user-interests'
 interface Props {
   userProfileId: string
   setUserEntityInterests: any
+  setUserInterestsText: any
 }
 
 export default function LoadUserInterestsByFilter({
                           userProfileId,
-                          setUserEntityInterests
+                          setUserEntityInterests,
+                          setUserInterestsText
                         }: Props) {
 
   // GraphQL
@@ -39,7 +41,13 @@ export default function LoadUserInterestsByFilter({
 
     const results = fetchGetUserInterestsQueryData.data.getUserEntityInterests
 
-    setUserEntityInterests(results.userEntityInterests)
+    if (setUserEntityInterests != null) {
+      setUserEntityInterests(results.userEntityInterests)
+    }
+
+    if (setUserInterestsText != null) {
+      setUserInterestsText(results.userInterestsText)
+    }
   }
 
   // Effects

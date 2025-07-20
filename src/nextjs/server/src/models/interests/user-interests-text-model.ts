@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 
-export class UserInterestTextModel {
+export class UserInterestsTextModel {
 
   // Consts
-  clName = 'UserInterestTextModel'
+  clName = 'UserInterestsTextModel'
 
   // Code
   async create(
@@ -16,7 +16,7 @@ export class UserInterestTextModel {
 
     // Create record
     try {
-      return await prisma.userInterestText.create({
+      return await prisma.userInterestsText.create({
         data: {
           userProfileId: userProfileId,
           text: text
@@ -37,7 +37,7 @@ export class UserInterestTextModel {
 
     // Delete
     try {
-      return await prisma.userInterestText.delete({
+      return await prisma.userInterestsText.delete({
         where: {
           id: id
         }
@@ -57,7 +57,7 @@ export class UserInterestTextModel {
 
     // Query
     try {
-      return await prisma.userInterestText.findMany({
+      return await prisma.userInterestsText.findMany({
         where: {}
       })
     } catch(error: any) {
@@ -76,10 +76,10 @@ export class UserInterestTextModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var userInterestText: any = null
+    var userInterestsText: any = null
 
     try {
-      userInterestText = await prisma.userInterestText.findUnique({
+      userInterestsText = await prisma.userInterestsText.findUnique({
         where: {
           id: id
         }
@@ -92,7 +92,7 @@ export class UserInterestTextModel {
     }
 
     // Return
-    return userInterestText
+    return userInterestsText
   }
 
   async getByIds(
@@ -104,7 +104,7 @@ export class UserInterestTextModel {
 
     // Query
     try {
-      return await prisma.userInterestText.findMany({
+      return await prisma.userInterestsText.findMany({
         where: {
           id: {
             in: ids
@@ -133,10 +133,10 @@ export class UserInterestTextModel {
     }
 
     // Query
-    var userInterestText: any = null
+    var userInterestsText: any = null
 
     try {
-      userInterestText = await prisma.userInterestText.findFirst({
+      userInterestsText = await prisma.userInterestsText.findFirst({
         where: {
           userProfileId: userProfileId
         }
@@ -149,7 +149,7 @@ export class UserInterestTextModel {
     }
 
     // Return
-    return userInterestText
+    return userInterestsText
   }
 
   async update(
@@ -163,7 +163,7 @@ export class UserInterestTextModel {
 
     // Update record
     try {
-      return await prisma.userInterestText.update({
+      return await prisma.userInterestsText.update({
         data: {
           userProfileId: userProfileId,
           text: text
@@ -193,13 +193,13 @@ export class UserInterestTextModel {
     if (id == null &&
         userProfileId != null) {
 
-      const userInterestText = await
+      const userInterestsText = await
               this.getByUniqueKey(
                 prisma,
                 userProfileId)
 
-      if (userInterestText != null) {
-        id = userInterestText.id
+      if (userInterestsText != null) {
+        id = userInterestsText.id
       }
     }
 

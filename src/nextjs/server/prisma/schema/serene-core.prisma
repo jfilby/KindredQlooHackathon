@@ -89,11 +89,11 @@ model UserProfile {
 
   ofAiPersonas                AiPersona[]
   ofBatchJobs                 BatchJob[]
-  ofSearchQueries             SearchQuery[]
+  // ofSearchQueries             SearchQuery[]
   // ofUserDomainInterests       UserDomainInterest[]
   ofUserEntityInterests       UserEntityInterest[]
   ofUserEntityInterestGroups  UserEntityInterestGroup[]
-  ofUserInterestTexts         UserInterestText[]
+  ofUserInterestsTexts        UserInterestsText[]
 
   ofPostSummaries             PostSummary[]
   ofPostUrlSummaries          PostUrlSummary[]

@@ -1,12 +1,11 @@
 import { CustomError } from '@/serene-core-server/types/errors'
-import { BatchJobModel } from '@/models/batch/batch-job-model'
-import { UserInterestTextModel } from '@/models/interests/user-interest-text-model'
-import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { BatchTypes } from '@/types/batch-types'
+import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 
 // Models
 const batchJobModel = new BatchJobModel()
-const userInterestTextModel = new UserInterestTextModel()
+const userInterestsTextModel = new UserInterestsTextModel()
 
 // Code
 export async function upsertUserInterestsByText(
@@ -30,9 +29,9 @@ export async function upsertUserInterestsByText(
   // Run in a transaction
   await prisma.$transaction(async (transactionPrisma: any) => {
 
-    // Upsert UserInterestText
-    const userInterestText = await
-            userInterestTextModel.upsert(
+    // Upsert UserInterestsText
+    const userInterestsText = await
+            userInterestsTextModel.upsert(
               prisma,
               undefined,  // id
               args.userProfileId,
@@ -49,8 +48,8 @@ export async function upsertUserInterestsByText(
               0,          // progressPct
               null,       // message
               BatchTypes.createInterestsJobType,
-              BatchTypes.userInterestTextModel,
-              userInterestText.id,
+              BatchTypes.userInterestsTextModel,
+              userInterestsText.id,
               null,       // parameters
               null,       // results
               args.userProfileId)

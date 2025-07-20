@@ -1,23 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Alert, Box, Button, TextField } from '@mui/material'
-import { InterestsService } from '@/services/interests/service'
 import SaveUserInterestsText from './save-text'
 
 interface Props {
   userProfileId: string
-  userInterests: any[]
+  initialText: string
 }
 
 export default function TextEditUserInterests({
                           userProfileId,
-                          userInterests
+                          initialText
                         }: Props) {
-
-  // Services
-  const interestsService = new InterestsService()
-
-  // Consts
-  const initialText = interestsService.mapUserInterestsToText(userInterests)
 
   // State
   const [alertSeverity, setAlertSeverity] = useState<any>('')

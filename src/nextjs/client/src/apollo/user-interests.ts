@@ -18,6 +18,7 @@ export const getUserInterestsQuery = gql`
           name
         }
       }
+      userInterestsText
     }
   }
 `

@@ -1,4 +1,5 @@
 private-docs
+src/nextjs/client/archive
 src/nextjs/server/archive
 src/nextjs/shared/node_modules
 staging
