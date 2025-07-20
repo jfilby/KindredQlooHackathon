@@ -241,8 +241,8 @@ export class SummarizePostMutateService {
           `- If part1 would be redundant (of the title) ` +
           `  then skip it.\n` +
           `- Field part2 should be bullet points of the top insightful ` +
-          `  comments (3 at most, with context if needed). Each point ` +
-          `  should be two sentences at most.\n` +
+          `  comments (3 at most, each on a new line, with context if ` +
+          `  needed). Each point should be two sentences at most.\n` +
           `- Field part3 should be a summary about the remaining comments. ` +
           `  3 sentences at most and don't duplicate anything ` +
           `  already written.\n ` +
