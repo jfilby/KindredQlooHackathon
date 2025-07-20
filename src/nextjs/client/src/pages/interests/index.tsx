@@ -17,6 +17,7 @@ export default function InterestsPage({
 
   // State
   const [userEntityInterests, setUserEntityInterests] = useState<any[] | undefined>(undefined)
+  const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
 
   // Render
   return (
@@ -45,7 +46,8 @@ export default function InterestsPage({
 
       <LoadUserEntityInterestsByFilter
         userProfileId={userProfile.id}
-        setUserEntityInterests={setUserEntityInterests} />
+        setUserEntityInterests={setUserEntityInterests}
+        setUserInterestsText={setUserInterestsText} />
     </>
   )
 }
