@@ -271,7 +271,7 @@ export class SummarizePostMutateService {
       `}\n` +
       `\n` +
       `- Values for fields part1, part2 and part3 must be strings.\n` +
-      `- The part2 field isn't an array.\n` +
+      `- The part2 field isn't an array, just a string.\n` +
       `\n`
 
     // Existing summary post?
@@ -322,25 +322,43 @@ export class SummarizePostMutateService {
       `\n` +
       `The comments follow: ` + JSON.stringify(commentsJson)
 
-    // LLM request
-    const queryResults = await
-            agentLlmService.agentSingleShotLlmRequest(
-              prisma,
-              tech,
-              userProfileId,
-              null,       // instanceId
-              ServerOnlyTypes.defaultChatSettingsName,
-              BaseDataTypes.batchAgentRefId,
-              BaseDataTypes.batchAgentName,
-              BaseDataTypes.batchAgentRole,
-              prompt,
-              true)       // isJsonMode
+    // LLM request (try 5 times)
+    var queryResults: any = undefined
 
-    // Validate
-    if (queryResults == null) {
+    for (var i = 0; i < 5; i++) {
 
-      console.log(`${fnName}: queryResults == null`)
-      return
+      // LLM request
+      const queryResults = await
+              agentLlmService.agentSingleShotLlmRequest(
+                prisma,
+                tech,
+                userProfileId,
+                null,       // instanceId
+                ServerOnlyTypes.defaultChatSettingsName,
+                BaseDataTypes.batchAgentRefId,
+                BaseDataTypes.batchAgentName,
+                BaseDataTypes.batchAgentRole,
+                prompt,
+                true)       // isJsonMode
+
+      // Validate
+      if (queryResults == null) {
+
+        console.log(`${fnName}: queryResults == null`)
+        continue
+      }
+
+      // Common mistake LLMs sometimes make is to make the top comments into an
+      // array.
+      if (queryResults.json.part2 != null &&
+          Array.isArray(queryResults.json.part2)) {
+
+        console.log(`${fnName}: queryResults.json.part2 is an array`)
+        continue
+      }
+
+      // Passed validation
+      break
     }
 
     // Debug
