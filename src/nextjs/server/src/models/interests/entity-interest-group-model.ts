@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { EntityInterestGroup, PrismaClient } from '@prisma/client'
 
 export class EntityInterestGroupModel {
 
@@ -10,7 +10,8 @@ export class EntityInterestGroupModel {
           prisma: PrismaClient,
           uniqueHash: string,
           embeddingTechId: string,
-          embedding: number[]) {
+          embedding: number[],
+          lastSimilarFound: Date | null) {
 
     // Debug
     const fnName = `${this.clName}.create()`
@@ -21,7 +22,8 @@ export class EntityInterestGroupModel {
         data: {
           uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
-          embedding: embedding
+          embedding: embedding,
+          lastSimilarFound: lastSimilarFound
         }
       })
     } catch(error) {
@@ -84,6 +86,57 @@ export class EntityInterestGroupModel {
         throw 'Prisma error'
       }
     }
+  }
+
+  async filterByLastSimilarFound(
+          prisma: PrismaClient,
+          lteLastSimilarFound: Date | null) {
+
+    // Debug
+    const fnName = `${this.clName}.filterByLastSimilarFound()`
+
+    // Validate
+    if (lteLastSimilarFound === undefined) {
+      console.error(`${fnName}: startingLastSimilarFound === undefined`)
+      throw 'Validation error'
+    }
+
+    // Query
+    try {
+      return await prisma.entityInterestGroup.findMany({
+        where: {
+          lastSimilarFound: lteLastSimilarFound != null ? {
+            lte: lteLastSimilarFound
+          } : null
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
+  async findSimilar(
+          prisma: PrismaClient,
+          fromId: string) {
+
+    // Identify similar groups
+    const similarGroups = await
+            prisma.$queryRawUnsafe<EntityInterestGroup[]>(`
+              SELECT eig2.*
+              FROM entity_interest_group eig1,
+                   entity_interest_group eig2
+              WHERE eig1.id = $1
+                AND eig1.id != eig2.id
+              ORDER BY eig1.embedding <=> eig2.embedding
+              LIMIT 10;
+            `,
+            fromId)
+
+    // Return
+    return similarGroups
   }
 
   async getById(
@@ -179,7 +232,8 @@ export class EntityInterestGroupModel {
           id: string | undefined,
           uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
-          embedding: number[] | undefined) {
+          embedding: number[] | undefined,
+          lastSimilarFound: Date | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
@@ -190,7 +244,8 @@ export class EntityInterestGroupModel {
         data: {
           uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
-          embedding: embedding
+          embedding: embedding,
+          lastSimilarFound: lastSimilarFound
         },
         where: {
           id: id
@@ -207,7 +262,8 @@ export class EntityInterestGroupModel {
           id: string | undefined,
           uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
-          embedding: number[] | undefined) {
+          embedding: number[] | undefined,
+          lastSimilarFound: Date | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -247,13 +303,19 @@ export class EntityInterestGroupModel {
         throw 'Prisma error'
       }
 
+      if (lastSimilarFound === undefined) {
+        console.error(`${fnName}: id is null and lastSimilarFound is null`)
+        throw 'Prisma error'
+      }
+
       // Create
       return await
                this.create(
                  prisma,
                  uniqueHash,
                  embeddingTechId,
-                 embedding)
+                 embedding,
+                 lastSimilarFound)
     } else {
 
       // Update
@@ -263,7 +325,8 @@ export class EntityInterestGroupModel {
                  id,
                  uniqueHash,
                  embeddingTechId,
-                 embedding)
+                 embedding,
+                 lastSimilarFound)
     }
   }
 }

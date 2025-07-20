@@ -95,10 +95,7 @@ export class InterestsBatchService {
 
   async findSimilarInterests(prisma: PrismaClient) {
 
-    // Identify groups that need similar interests to be found
-    ;
-
     // Find and save similar interests for groups needing that
-    ;
+    await interestGroupService.findAndSetSimilarEntityInterests(prisma)
   }
 }

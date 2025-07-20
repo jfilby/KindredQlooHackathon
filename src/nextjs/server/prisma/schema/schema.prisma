@@ -182,9 +182,12 @@ model EntityInterestGroup {
   embeddingTechId              String               @map("embedding_tech_id")
   embeddingTech                Tech                 @relation(fields: [embeddingTechId], references: [id])
   embedding                    Float[]
+  lastSimilarFound             DateTime?            @map("last_similar_found")
 
-  ofEntityInterestItems        EntityInterestItem[]
-  ofUserEntityInterestGroups   UserEntityInterestGroup[]
+  ofEntityInterestItems          EntityInterestItem[]
+  ofSharedEntityInterestGroupsA  SharedEntityInterestGroup[]  @relation("a")
+  ofSharedEntityInterestGroupsB  SharedEntityInterestGroup[]  @relation("b")
+  ofUserEntityInterestGroups     UserEntityInterestGroup[]
 
   @@map("entity_interest_group")
   @@schema("public")
@@ -214,6 +217,18 @@ model InterestType {
   // ofUserDomainInterests        UserDomainInterest[]
 
   @@map("interest_type")
+  @@schema("public")
+}
+
+model SharedEntityInterestGroup {
+  id                           String               @id @default(cuid())
+  entityInterestGroupAId       String               @map("entity_interest_group_a_id")
+  entityInterestGroupA         EntityInterestGroup  @relation("a", fields: [entityInterestGroupAId], references: [id])
+  entityInterestGroupBId       String               @map("entity_interest_group_b_id")
+  entityInterestGroupB         EntityInterestGroup  @relation("b", fields: [entityInterestGroupBId], references: [id])
+
+  @@unique([entityInterestGroupAId, entityInterestGroupBId])
+  @@map("shared_entity_interest_group")
   @@schema("public")
 }
 

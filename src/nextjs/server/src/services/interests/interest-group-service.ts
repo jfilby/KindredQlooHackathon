@@ -1,11 +1,12 @@
 import { createHash } from 'crypto'
-import { EntityInterest, EntityInterestItem, PrismaClient, UserEntityInterest } from '@prisma/client'
+import { EntityInterest, EntityInterestGroup, EntityInterestItem, PrismaClient, UserEntityInterest } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { TechModel } from '@/serene-core-server/models/tech/tech-model'
 import { OpenAiEmbeddingsService } from '@/serene-ai-server/services/llm-apis/openai/embeddings-api'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
+import { SharedEntityInterestGroupModel } from '@/models/interests/shared-entity-interest-group-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../tech/get-tech-service'
@@ -14,6 +15,7 @@ import { GetTechService } from '../tech/get-tech-service'
 const entityInterestGroupModel = new EntityInterestGroupModel()
 const entityInterestItemModel = new EntityInterestItemModel()
 const entityInterestModel = new EntityInterestModel()
+const sharedEntityInterestGroupModel = new SharedEntityInterestGroupModel()
 const techModel = new TechModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 const userEntityInterestModel = new UserEntityInterestModel()
@@ -104,8 +106,85 @@ export class InterestGroupService {
               entityInterestGroup.id,
               undefined,  // uniqueHash
               undefined,  // embeddingTechId
-              results.embedding)
+              results.embedding,
+              undefined)  // lastSimilarFound
     }
+  }
+
+  async findAndSetSimilarEntityInterests(prisma: PrismaClient) {
+
+    // Debug
+    const fnName = `${this.clName}.setSimilarEntityInterests()`
+
+    // Look for entity interest groups have don't have similar interests groups
+    var entityInterestGroups = await
+          entityInterestGroupModel.filterByLastSimilarFound(
+            prisma,
+            null)  // lteLastSimilarFound
+
+    if (entityInterestGroups == null) {
+      throw new CustomError(`${fnName}: entityInterestGroups == null`)
+    }
+
+    // Find similar interests
+    for (const entityInterestGroup of entityInterestGroups) {
+
+      await this.findSimilarEntityInterests(
+              prisma,
+              entityInterestGroup)
+    }
+
+    // Look for entity interest groups that need to be updated
+    const now = new Date()
+    const sixMonthsAgo = new Date(now)
+    sixMonthsAgo.setMonth(now.getMonth() - 3)
+
+    entityInterestGroups = await
+      entityInterestGroupModel.filterByLastSimilarFound(
+        prisma,
+        null)  // lteLastSimilarFound
+
+    if (entityInterestGroups == null) {
+      throw new CustomError(`${fnName}: entityInterestGroups == null`)
+    }
+
+    // Find similar interests
+    for (const entityInterestGroup of entityInterestGroups) {
+
+      await this.findSimilarEntityInterests(
+              prisma,
+              entityInterestGroup)
+    }
+  }
+
+  async findSimilarEntityInterests(
+          prisma: PrismaClient,
+          entityInterestGroup: EntityInterestGroup) {
+
+    // Identify groups that need similar interests to be found
+    const similarEntityInterestGroups = await
+            entityInterestGroupModel.findSimilar(
+              prisma,
+              entityInterestGroup.id)
+
+    // Set similar interests
+    for (const similarEntityInterestGroup of similarEntityInterestGroups) {
+
+      await sharedEntityInterestGroupModel.getOrCreate(
+              prisma,
+              entityInterestGroup.id,
+              similarEntityInterestGroup.id)
+    }
+
+    // Set lastSimilarFound
+    entityInterestGroup = await
+      entityInterestGroupModel.update(
+        prisma,
+        entityInterestGroup.id,
+        undefined,   // uniqueHash
+        undefined,   // embeddingTechId
+        undefined,   // embedding
+        new Date())  // lastSimilarFound
   }
 
   async getOrCreateMissingGroups(prisma: PrismaClient) {
@@ -175,7 +254,8 @@ export class InterestGroupService {
         prisma,
         uniqueHash,
         embeddingTech.id,
-        [])  // embedding
+        [],    // embedding
+        null)  // lastSimilarFound
 
     for (const entityInterestId of entityInterestIds) {
 
