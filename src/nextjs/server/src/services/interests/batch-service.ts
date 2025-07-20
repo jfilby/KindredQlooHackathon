@@ -2,15 +2,19 @@ import { BatchJob, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BatchTypes } from '@/types/batch-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
 import { UserInterestTextModel } from '@/models/interests/user-interest-text-model'
+import { GetQlooInsightsService } from '../qloo/get-insights-service'
 import { InterestGroupService } from './interest-group-service'
 import { UserInterestsMutateService } from './user-interests-mutate-service'
 
 // Models
 const batchJobModel = new BatchJobModel()
+const qlooEntityModel = new QlooEntityModel()
 const userInterestTextModel = new UserInterestTextModel()
 
 // Services
+const getQlooInsightsService = new GetQlooInsightsService()
 const interestGroupService = new InterestGroupService()
 const userInterestsMutateService = new UserInterestsMutateService()
 

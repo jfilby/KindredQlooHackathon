@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { QlooEntityCategory } from '@/types/qloo-types'
 import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
 import { QlooUtilsFetchService } from './qloo-fetch-service'
 
@@ -107,5 +106,25 @@ export class GetQlooInsightsService {
                 result.popularity,
                 result)
     }
+  }
+
+  async setMissingQlooEntityIds(prisma: PrismaClient) {
+
+    // Get entities
+    const entities = await
+            qlooEntityModel.filter(
+              prisma,
+              undefined,  // isTrending
+              undefined)  // types
+
+    // Get entityIds
+    const qlooEntityIds = entities.map((entity: any) => entity.qlooEntityId)
+
+    // Query
+    await this.getAndSave(
+            prisma,
+            entities[0].types[0],
+            3,  // take
+            qlooEntityIds)
   }
 }

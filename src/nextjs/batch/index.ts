@@ -6,12 +6,14 @@ const { PrismaClient } = require('../server/node_modules/@prisma/client')
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BatchTypes } from '@/types/batch-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { GetQlooInsightsService } from '@/services/qloo/get-insights-service'
 import { InterestsBatchService } from '@/services/interests/batch-service'
 import { SocialMediaBatchPipelineService } from '@/services/social-media/pipeline/service'
 
 const prisma = new PrismaClient()
 
 // Services
+const getQlooInsightsService = new GetQlooInsightsService()
 const interestsBatchService = new InterestsBatchService()
 const socialMediaBatchPipelineService = new SocialMediaBatchPipelineService()
 
@@ -110,6 +112,9 @@ async function interval6h(prisma: any) {
 
   // Group and find similar interests
   await interestsBatchService.groupAndFindSimilarInterests(prisma)
+
+  // Get any missing Qloo entities
+  await getQlooInsightsService.setMissingQlooEntityIds(prisma)
 }
 
 function sleep(ms: number) {
