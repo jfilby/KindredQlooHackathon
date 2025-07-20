@@ -7,7 +7,7 @@
 3. Enable the pgvector extension: `CREATE EXTENSION IF NOT EXISTS vector;`
 
 
-## Setup
+## App setup
 
 1. Go to the server path and run the env script, e.g. `. scripts/dev.sh`.
 2. Run the general setup: `npm run ts-script setup`
