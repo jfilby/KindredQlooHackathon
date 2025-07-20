@@ -117,6 +117,11 @@ export class GetQlooInsightsService {
               undefined,  // isTrending
               undefined)  // types
 
+    // Return if no entities to process
+    if (entities.length === 0) {
+      return
+    }
+
     // Get entityIds
     const qlooEntityIds = entities.map((entity: any) => entity.qlooEntityId)
 
