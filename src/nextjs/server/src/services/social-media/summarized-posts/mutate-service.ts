@@ -328,23 +328,28 @@ export class SummarizePostMutateService {
     for (var i = 0; i < 5; i++) {
 
       // LLM request
-      const queryResults = await
-              agentLlmService.agentSingleShotLlmRequest(
-                prisma,
-                tech,
-                userProfileId,
-                null,       // instanceId
-                ServerOnlyTypes.defaultChatSettingsName,
-                BaseDataTypes.batchAgentRefId,
-                BaseDataTypes.batchAgentName,
-                BaseDataTypes.batchAgentRole,
-                prompt,
-                true)       // isJsonMode
+      queryResults = await
+        agentLlmService.agentSingleShotLlmRequest(
+          prisma,
+          tech,
+          userProfileId,
+          null,       // instanceId
+          ServerOnlyTypes.defaultChatSettingsName,
+          BaseDataTypes.batchAgentRefId,
+          BaseDataTypes.batchAgentName,
+          BaseDataTypes.batchAgentRole,
+          prompt,
+          true)       // isJsonMode
 
       // Validate
       if (queryResults == null) {
-
         console.log(`${fnName}: queryResults == null`)
+        continue
+      }
+
+      if (queryResults.json == null) {
+        console.log(`${fnName}: queryResults.json == null`)
+        console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
         continue
       }
 
