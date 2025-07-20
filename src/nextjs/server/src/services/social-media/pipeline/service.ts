@@ -1,8 +1,8 @@
-import { BatchJob, PrismaClient, Site } from '@prisma/client'
+import { PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { BatchTypes } from '@/types/batch-types'
+import { UsersService } from '@/serene-core-server/services/users/service'
 import { ServerOnlyTypes } from '@/types/server-only-types'
-import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { ServerTestTypes } from '@/types/server-test-types'
 import { SiteModel } from '@/models/social-media/site-model'
 import { HackerNewAlgoliaService } from '../site-specific/hn-algolia-service'
 import { PostUrlsService } from '../post-urls/post-urls-service'
@@ -10,7 +10,6 @@ import { SummarizePostMutateService } from '@/services/social-media/summarized-p
 import { SummarizePostUrlService } from '@/services/social-media/summarized-post-urls/service'
 
 // Models
-const batchJobModel = new BatchJobModel()
 const siteModel = new SiteModel()
 
 // Services
@@ -18,6 +17,7 @@ const hackerNewAlgoliaService = new HackerNewAlgoliaService()
 const postUrlsService = new PostUrlsService()
 const summarizePostMutateService = new SummarizePostMutateService()
 const summarizePostUrlService = new SummarizePostUrlService()
+const usersService = new UsersService()
 
 export class SocialMediaBatchPipelineService {
 
@@ -51,34 +51,47 @@ export class SocialMediaBatchPipelineService {
     }
   }
 
-  async run(prisma: PrismaClient,
-            batchJob: BatchJob) {
+  async runForAllSites(prisma: PrismaClient) {
 
     // Debug
-    const fnName = `${this.clName}.run()`
+    const fnName = `${this.clName}.runForAllSites()`
+
+    // Get admin UserProfile
+    const adminUserProfile = await
+            usersService.getOrCreateUserByEmail(
+              prisma,
+              ServerTestTypes.adminUserEmail,
+              undefined)  // defaultUserPreferences
+
+    // Get the sites to process
+    const sites = await
+            siteModel.filter(prisma)
 
     // Validate
-    if (batchJob == null) {
-      throw new CustomError(`${fnName}: batchJob == null`)
+    if (sites == null) {
+      throw new CustomError(`${fnName}: sites == null`)
     }
 
-    if (batchJob.refId == null) {
-      throw new CustomError(`${fnName}: batchJob.refId == null`)
-    }
+    // Process each site
+    for (const site of sites) {
 
-    if (batchJob.userProfileId == null) {
-      throw new CustomError(`${fnName}: batchJob.userProfileId == null`)
-    }
-
-    // Determine user profile ids
-    const userProfileId = batchJob.userProfileId
-    const forUserProfileId = batchJob.userProfileId
-
-    // Get the site
-    const site = await
-            siteModel.getById(
+      await this.runForSite(
               prisma,
-              batchJob.refId)
+              adminUserProfile.id,
+              site)
+    }
+  }
+
+  async runForSite(
+          prisma: PrismaClient,
+          userProfileId: string,
+          site: Site) {
+
+    // Debug
+    const fnName = `${this.clName}.runForSite()`
+
+    // All summarization is done for the admin user
+    const forUserProfileId = userProfileId
 
     // Import
     await this.importSite(
@@ -99,16 +112,5 @@ export class SocialMediaBatchPipelineService {
             prisma,
             userProfileId,
             forUserProfileId)
-
-    // Set the BatchJob status to completed
-    batchJob = await
-      batchJobModel.update(
-        prisma,
-        batchJob.id,
-        undefined,  // instanceId
-        undefined,  // runInATransaction
-        BatchTypes.completedBatchJobStatus,
-        100,        // progressPct
-        null)       // message
   }
 }

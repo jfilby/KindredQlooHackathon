@@ -28,29 +28,33 @@ export class InterestsBatchService {
     // Debug
     const fnName = `${this.clName}.createInterests()`
 
-    // Get all interests as text (to be processed)
-    const userInterestTexts = await
-            userInterestTextModel.filter(prisma)
+    // Validate
+    if (batchJob.refId == null) {
+      throw new CustomError(`${fnName}: batchJob.refId == null`)
+    }
 
-    if (userInterestTexts == null) {
-      throw new CustomError(`${fnName}: userInterestTexts == null`)
+    // Get the UserInterestText to be processed
+    const userInterestText = await
+            userInterestTextModel.getById(
+              prisma,
+              batchJob.refId)
+
+    if (userInterestText == null) {
+      throw new CustomError(`${fnName}: userInterestText == null`)
     }
 
     // Convert interests text to definite interests
-    for (const userInterestText of userInterestTexts) {
+    await userInterestsMutateService.upsertUserInterestsByText(
+            prisma,
+            userInterestText.userProfileId,
+            userInterestText.text)
 
-      await userInterestsMutateService.upsertUserInterestsByText(
-              prisma,
-              userInterestText.userProfileId,
-              userInterestText.text)
+    // Delete UserInterestText
+    await userInterestTextModel.deleteById(
+            prisma,
+            userInterestText.id)
 
-      // Delete UserInterestText
-      await userInterestTextModel.deleteById(
-              prisma,
-              userInterestText.id)
-    }
-
-    // Set the BatchJob status to completed
+    // Batch job completed
     batchJob = await
       batchJobModel.update(
         prisma,
@@ -58,30 +62,16 @@ export class InterestsBatchService {
         undefined,  // instanceId
         undefined,  // runInATransaction
         BatchTypes.completedBatchJobStatus,
-        100,        // progressPct
-        null)       // message
+        100)        // progressPct
   }
 
-  async groupAndFindSimilarInterests(
-          prisma: PrismaClient,
-          batchJob: BatchJob) {
+  async groupAndFindSimilarInterests(prisma: PrismaClient) {
 
     // Group interests
     await this.groupInterests(prisma)
 
     // Find similar interests
     await this.findSimilarInterests(prisma)
-
-    // Set the BatchJob status to completed
-    batchJob = await
-      batchJobModel.update(
-        prisma,
-        batchJob.id,
-        undefined,  // instanceId
-        undefined,  // runInATransaction
-        BatchTypes.completedBatchJobStatus,
-        100,        // progressPct
-        null)       // message
   }
 
   async groupInterests(prisma: PrismaClient) {

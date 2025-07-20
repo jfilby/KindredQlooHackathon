@@ -48,6 +48,24 @@ export class SiteModel {
     }
   }
 
+  async filter(prisma: PrismaClient) {
+
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Query
+    try {
+      return await prisma.site.findMany({
+        where: {}
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {

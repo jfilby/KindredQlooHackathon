@@ -23,7 +23,7 @@ const sleepSeconds = 1
 const seconds20InMs = 20 * 1000
 const minutes5InMs = 5 * 60 * 1000
 const hours1InMs = 1000 * 60 * 60
-const days1InMs = hours1InMs * 24
+const hours6InMs = 1000 * 60 * 60 * 6
 
 // Functions
 async function dispatchBatchJobByType(
@@ -46,20 +46,6 @@ async function dispatchBatchJobByType(
       case BatchTypes.createInterestsJobType: {
 
         return await interestsBatchService.createInterests(
-                       prismaForJob,
-                       batchJob)
-      }
-
-      case BatchTypes.groupAndFindSimilarInterestsJobType: {
-
-        return await interestsBatchService.groupAndFindSimilarInterests(
-                       prismaForJob,
-                       batchJob)
-      }
-
-      case BatchTypes.socialMediaPipelineJobType: {
-
-        return await socialMediaBatchPipelineService.run(
                        prismaForJob,
                        batchJob)
       }
@@ -110,15 +96,20 @@ async function interval1h(prisma: any) {
   // console.log(`${fnName}: starting..`)
 }
 
-async function interval1d(prisma: any) {
+async function interval6h(prisma: any) {
 
   // Debug
-  const fnName = 'interval1d'
+  const fnName = 'interval6h'
 
-  // console.log(`${fnName}: starting..`)
+  console.log(`${fnName}: starting..`)
 
   // Actions
-  ;
+
+  // Social media batch pipeline
+  await socialMediaBatchPipelineService.runForAllSites(prisma)
+
+  // Group and find similar interests
+  await interestsBatchService.groupAndFindSimilarInterests(prisma)
 }
 
 function sleep(ms: number) {
@@ -146,7 +137,7 @@ function sleep(ms: number) {
   await interval20s(prisma)
   await interval5m(prisma)
   await interval1h(prisma)
-  await interval1d(prisma)
+  await interval6h(prisma)
 
   // Batch loop
   while (true) {
@@ -185,9 +176,9 @@ function sleep(ms: number) {
       lastInterval1h = new Date().getTime()
     }
 
-    if (new Date().getTime() - lastInterval1d >= days1InMs) {
+    if (new Date().getTime() - lastInterval1d >= hours6InMs) {
 
-      await interval1d(prisma)
+      await interval6h(prisma)
       lastInterval1d = new Date().getTime()
     }
 

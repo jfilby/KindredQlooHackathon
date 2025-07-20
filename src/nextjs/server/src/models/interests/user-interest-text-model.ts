@@ -9,7 +9,6 @@ export class UserInterestTextModel {
   async create(
           prisma: PrismaClient,
           userProfileId: string,
-          batchJobId: string,
           text: string) {
 
     // Debug
@@ -20,7 +19,6 @@ export class UserInterestTextModel {
       return await prisma.userInterestText.create({
         data: {
           userProfileId: userProfileId,
-          batchJobId: batchJobId,
           text: text
         }
       })
@@ -158,7 +156,6 @@ export class UserInterestTextModel {
           prisma: PrismaClient,
           id: string | undefined,
           userProfileId: string | undefined,
-          batchJobId: string | undefined,
           text: string | undefined) {
 
     // Debug
@@ -169,7 +166,6 @@ export class UserInterestTextModel {
       return await prisma.userInterestText.update({
         data: {
           userProfileId: userProfileId,
-          batchJobId: batchJobId,
           text: text
         },
         where: {
@@ -186,7 +182,6 @@ export class UserInterestTextModel {
           prisma: PrismaClient,
           id: string | undefined,
           userProfileId: string | undefined,
-          batchJobId: string | undefined,
           text: string | undefined) {
 
     // Debug
@@ -217,11 +212,6 @@ export class UserInterestTextModel {
         throw 'Prisma error'
       }
 
-      if (batchJobId == null) {
-        console.error(`${fnName}: id is null and batchJobId is null`)
-        throw 'Prisma error'
-      }
-
       if (text == null) {
         console.error(`${fnName}: id is null and text is null`)
         throw 'Prisma error'
@@ -233,7 +223,6 @@ export class UserInterestTextModel {
                this.create(
                  prisma,
                  userProfileId,
-                 batchJobId,
                  text)
     } else {
 
@@ -242,7 +231,6 @@ export class UserInterestTextModel {
                this.update(
                  prisma,
                  id,
-                 userProfileId,
                  batchJobId,
                  text)
     }

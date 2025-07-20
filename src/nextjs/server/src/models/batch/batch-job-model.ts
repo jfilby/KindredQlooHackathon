@@ -8,7 +8,7 @@ export class BatchJobModel {
   // Code
   async create(
           prisma: any,
-          instanceId: string,
+          instanceId: string | null,
           runInATransaction: boolean,
           status: string,
           progressPct: number,
@@ -68,7 +68,7 @@ export class BatchJobModel {
 
   async exists(
           prisma: any,
-          instanceId: string,
+          instanceId: string | null,
           status: string,
           jobType: string,
           refModel: string,
@@ -103,7 +103,7 @@ export class BatchJobModel {
 
   async filter(
           prisma: any,
-          instanceId: string | undefined,
+          instanceId: string | null | undefined,
           statuses: string[] | undefined,
           jobType: string | undefined,
           refModel: string | null | undefined,
@@ -183,7 +183,7 @@ export class BatchJobModel {
 
   async getByStatusesAndJobTypeAndRefModelAndRefId(
           prisma: any,
-          instanceId: string,
+          instanceId: string | null,
           statuses: string[],
           jobType: string,
           refModel: string,
@@ -221,7 +221,7 @@ export class BatchJobModel {
 
   async getByInstanceAndStatus(
           prisma: any,
-          instanceId: string | undefined,
+          instanceId: string | null | undefined,
           status: string | undefined,
           limitBy: number | undefined) {
 
@@ -253,7 +253,7 @@ export class BatchJobModel {
 
   async getUniqueByStatus(
           prisma: any,
-          instanceId: string | undefined,
+          instanceId: string | null | undefined,
           status: string | undefined,
           limitBy: number | undefined) {
 
@@ -296,7 +296,7 @@ export class BatchJobModel {
   async update(
           prisma: any,
           id: string | undefined,
-          instanceId: string | undefined,
+          instanceId: string | null | undefined,
           runInATransaction: boolean | undefined,
           status: string | undefined,
           progressPct: number | undefined = undefined,
@@ -339,7 +339,7 @@ export class BatchJobModel {
 
   async upsert(prisma: any,
                id: string | undefined,
-               instanceId: string | undefined,
+               instanceId: string | null | undefined,
                runInATransaction: boolean | undefined,
                status: string | undefined,
                progressPct: number | undefined,
@@ -347,8 +347,8 @@ export class BatchJobModel {
                jobType: string | undefined,
                refModel: string | null | undefined,
                refId: string | null | undefined,
-               parameters: any | undefined,
-               results: any | undefined,
+               parameters: any | null | undefined,
+               results: any | null | undefined,
                userProfileId: string | undefined) {
 
     // Debug
@@ -358,8 +358,8 @@ export class BatchJobModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (instanceId == null) {
-        console.error(`${fnName}: id is null and instanceId is null`)
+      if (instanceId === undefined) {
+        console.error(`${fnName}: id is null and instanceId is undefined`)
         throw 'Prisma error'
       }
 

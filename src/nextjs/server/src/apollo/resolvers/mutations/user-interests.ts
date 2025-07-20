@@ -1,9 +1,12 @@
 import { CustomError } from '@/serene-core-server/types/errors'
-import { UsersService } from '@/serene-core-server/services/users/service'
-import { UserInterestsMutateService } from '@/services/interests/user-interests-mutate-service'
+import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { UserInterestTextModel } from '@/models/interests/user-interest-text-model'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { BatchTypes } from '@/types/batch-types'
 
-// Services
-const userInterestsMutateService = new UserInterestsMutateService()
+// Models
+const batchJobModel = new BatchJobModel()
+const userInterestTextModel = new UserInterestTextModel()
 
 // Code
 export async function upsertUserInterestsByText(
@@ -24,13 +27,37 @@ export async function upsertUserInterestsByText(
     throw new CustomError(`${fnName}: args.text == null`)
   }
 
-  // Call upsert UserInterests by text
-  const results = await
-          userInterestsMutateService.upsertUserInterestsByText(
-            prisma,
-            args.userProfileId,
-            args.text)
+  // Run in a transaction
+  await prisma.$transaction(async (transactionPrisma: any) => {
+
+    // Upsert UserInterestText
+    const userInterestText = await
+            userInterestTextModel.upsert(
+              prisma,
+              undefined,  // id
+              args.userProfileId,
+              args.text)
+
+    // Create a BatchJob to process the text
+    const batchJob = await
+            batchJobModel.upsert(
+              prisma,
+              undefined,  // id
+              null,       // instanceId
+              false,      // runInATransaction
+              BatchTypes.newBatchJobStatus,
+              0,          // progressPct
+              null,       // message
+              BatchTypes.createInterestsJobType,
+              BatchTypes.userInterestTextModel,
+              userInterestText.id,
+              null,       // parameters
+              null,       // results
+              args.userProfileId)
+  })
 
   // Return
-  return results
+  return {
+    status: true
+  }
 }

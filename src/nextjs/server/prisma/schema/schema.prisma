@@ -34,8 +34,6 @@ model BatchJob {
   created                      DateTime         @default(now())
   updated                      DateTime         @updatedAt
 
-  ofUserInterestTexts          UserInterestText[]
-
   @@index([refId])
   @@map("batch_job")
   @@schema("public")
@@ -260,8 +258,6 @@ model UserInterestText {
   id                           String               @id @default(cuid())
   userProfileId                String               @map("user_profile_id") @unique
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
-  batchJobId                   String               @map("batch_job_id")
-  batchJob                     BatchJob             @relation(fields: [batchJobId], references: [id])
   text                         String
 
   @@map("user_interest_text")
