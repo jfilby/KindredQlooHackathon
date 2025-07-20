@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { CommentModel } from '@/models/social-media/comment-model'
 import { PostModel } from '@/models/social-media/post-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
@@ -113,12 +114,13 @@ export class HackerNewAlgoliaService {
     const rankingType = 'front-page'
 
     // Create SiteTopicList
-    const siteTopicList = await
-            siteTopicListModel.create(
-              prisma,
-              siteTopic.id,
-              rankingType,
-              listed)
+    var siteTopicList = await
+          siteTopicListModel.create(
+            prisma,
+            siteTopic.id,
+            rankingType,
+            listed,
+            BaseDataTypes.newStatus)
 
     // Save each hit as a post
     var index = 0
@@ -235,5 +237,15 @@ export class HackerNewAlgoliaService {
         }
       }
     }
+
+    // Update SiteTopicList to Active
+    siteTopicList = await
+            siteTopicListModel.update(
+              prisma,
+              siteTopicList.id,
+              undefined,    // siteTopicId
+              undefined,    // rankingType
+              undefined,    // listed
+              BaseDataTypes.activeStatus)
   }
 }

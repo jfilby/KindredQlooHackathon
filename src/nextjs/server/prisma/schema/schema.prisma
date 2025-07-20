@@ -365,6 +365,7 @@ model SiteTopicList {
   siteTopic                    SiteTopic            @relation(fields: [siteTopicId], references: [id])
   rankingType                  String               @map("ranking_type")
   listed                       DateTime
+  status                       String               @db.Char(1)
 
   ofSiteTopicListPosts         SiteTopicListPost[]
 

@@ -10,7 +10,8 @@ export class SiteTopicListModel {
           prisma: PrismaClient,
           siteTopicId: string,
           rankingType: string,
-          listed: Date) {
+          listed: Date,
+          status: string) {
 
     // Debug
     const fnName = `${this.clName}.create()`
@@ -21,7 +22,8 @@ export class SiteTopicListModel {
         data: {
           siteTopicId: siteTopicId,
           rankingType: rankingType,
-          listed: listed
+          listed: listed,
+          status: status
         }
       })
     } catch(error) {
@@ -150,13 +152,14 @@ export class SiteTopicListModel {
     return siteTopicList
   }
 
-  async getLatestBySiteTopicId(
+  async getLatestBySiteTopicIdAndStatus(
           prisma: PrismaClient,
           siteTopicId: string,
-          rankingType: string) {
+          rankingType: string,
+          status: string) {
 
     // Debug
-    const fnName = `${this.clName}.getLatestBySiteId()`
+    const fnName = `${this.clName}.getLatestBySiteTopicIdAndStatus()`
 
     // Validate
     if (siteTopicId == null) {
@@ -169,6 +172,11 @@ export class SiteTopicListModel {
       throw 'Validation error'
     }
 
+    if (status == null) {
+      console.error(`${fnName}: status == null`)
+      throw 'Validation error'
+    }
+
     // Query
     var siteTopicList: any = null
 
@@ -176,7 +184,8 @@ export class SiteTopicListModel {
       siteTopicList = await prisma.siteTopicList.findFirst({
         where: {
           siteTopicId: siteTopicId,
-          rankingType: rankingType
+          rankingType: rankingType,
+          status: status
         },
         orderBy: [
           {
@@ -200,7 +209,8 @@ export class SiteTopicListModel {
           id: string | undefined,
           siteTopicId: string | undefined,
           rankingType: string | undefined,
-          listed: Date | undefined) {
+          listed: Date | undefined,
+          status: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
@@ -211,7 +221,8 @@ export class SiteTopicListModel {
         data: {
           siteTopicId: siteTopicId,
           rankingType: rankingType,
-          listed: listed
+          listed: listed,
+          status: status
         },
         where: {
           id: id
@@ -228,7 +239,8 @@ export class SiteTopicListModel {
           id: string | undefined,
           siteTopicId: string | undefined,
           rankingType: string | undefined,
-          listed: Date | undefined) {
+          listed: Date | undefined,
+          status: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -272,13 +284,19 @@ export class SiteTopicListModel {
         throw 'Prisma error'
       }
 
+      if (status == null) {
+        console.error(`${fnName}: id is null and status is null`)
+        throw 'Prisma error'
+      }
+
       // Create
       return await
                this.create(
                  prisma,
                  siteTopicId,
                  rankingType,
-                 listed)
+                 listed,
+                 status)
     } else {
 
       // Update
@@ -288,7 +306,8 @@ export class SiteTopicListModel {
                  id,
                  siteTopicId,
                  rankingType,
-                 listed)
+                 listed,
+                 status)
     }
   }
 }

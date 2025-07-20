@@ -1,5 +1,6 @@
 import { PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { SiteModel } from '@/models/social-media/site-model'
@@ -85,10 +86,11 @@ export class SummarizePostQueryService {
 
       // Get SiteTopicList
       const siteTopicList = await
-              siteTopicListModel.getLatestBySiteTopicId(
+              siteTopicListModel.getLatestBySiteTopicIdAndStatus(
                 prisma,
                 siteTopic.id,
-                'front-page')  // rankingType
+                'front-page',  // rankingType
+                BaseDataTypes.activeStatus)
 
       if (siteTopicList == null) {
 
