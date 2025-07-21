@@ -125,7 +125,7 @@ export const typeDefs = `#graphql
     status: String!
     socialMediaUrl: String
     postSummary: String
-    topComments: String
+    topCommentsString: String
     otherComments: String
     updated: String!
     post: Post!

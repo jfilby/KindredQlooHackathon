@@ -134,9 +134,9 @@ export default function ViewPostSummaryCard({
               <></>
             }
 
-            {postSummary.topComments != null ?
+            {postSummary.topCommentsString != null ?
               <Markdown>
-                {postSummary.topComments}
+                {postSummary.topCommentsString}
               </Markdown>
             :
               <></>

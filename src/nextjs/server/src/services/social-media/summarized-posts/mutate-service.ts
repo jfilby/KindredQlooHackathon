@@ -9,7 +9,6 @@ import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
 import { GetTechService } from '@/services/tech/get-tech-service'
-import { SummarizePostUtilsService } from './utils-service'
 
 // Models
 const commentModel = new CommentModel()
@@ -21,7 +20,6 @@ const siteModel = new SiteModel()
 // Services
 const agentLlmService = new AgentLlmService()
 const getTechService = new GetTechService()
-const summarizePostUtilsService = new SummarizePostUtilsService()
 
 // Class
 export class SummarizePostMutateService {
@@ -76,6 +74,30 @@ export class SummarizePostMutateService {
       hours: diffHours,
       days: diffDays,
     }
+  }
+
+  getTopCommentsAsString(topComments: any[]): string {
+
+    // Build the string
+    var text = ''
+
+    for (const topComment of topComments) {
+
+      if (topComment.name == null ||
+          topComment.description == null) {
+
+        continue
+      }
+
+      if (text.length > 0) {
+        text += `\n`
+      }
+
+      text += `- **${topComment.name}**: ${topComment.description}`
+    }
+
+    // Return
+    return text
   }
 
   async run(prisma: PrismaClient,
@@ -146,6 +168,7 @@ export class SummarizePostMutateService {
                 BaseDataTypes.inactiveStatus,
                 undefined,  // postSummary
                 undefined,  // topComments
+                undefined,  // topCommentsString
                 undefined)  // otherComments
 
         return
@@ -243,16 +266,14 @@ export class SummarizePostMutateService {
           `- If part1 would be redundant (of the title) then skip it, ` +
           `  unless the title is only a word or term (then you should ` +
           `  explain what it means, unless there's nothing to go on).\n` +
-          `- Field part2 should be bullet points of the top insightful ` +
-          `  comments (3 at most, each on a new line, with context if ` +
-          `  needed). Each point should be two sentences at most.\n` +
+          `- Field part2 should be an array of the top insightful comments ` +
+          `  (3 at most, each with a name and description). Each point's ` +
+          `  description should be two sentences at most.\n` +
           `- Field part3 should be a summary about the remaining comments. ` +
           `  3 sentences at most and don't duplicate anything ` +
           `  already written.\n ` +
           `- Don't consider comments that are too terse, unhelpful or ` +
-          `  proven wrong by follow-on comments.\n` +
-          `- Bulleted points should start with bold terms that are key to ` +
-          `  scanning the summary quickly, e.g.: **Tech**: this is ...\n`
+          `  proven wrong by follow-on comments.\n`
 
     // Existing summary post?
     if (postSummary != null) {
@@ -269,12 +290,16 @@ export class SummarizePostMutateService {
       `Format your results as follows:\n` +
       `{\n` +
       `  "part1": "...\n",\n` +
-      `  "part2": "- ...\n- ...\n- ...\n",\n` +
+      `  "part2": [\n` +
+      `    {\n` +
+      `      name: "insight 1",\n` +
+      `      description: "..",\n` +
+      `    {\n` +
+      `  ],\n` +
       `  "part3": "...\n"\n` +
       `}\n` +
       `\n` +
       `- Values for fields part1, part2 and part3 must be strings.\n` +
-      `- The part2 field isn't an array, just a string.\n` +
       `\n`
 
     // Existing summary post?
@@ -284,13 +309,13 @@ export class SummarizePostMutateService {
       prompt +=
         `## Existing post summary\n` +
         `### Part 1 (post summary)` +
-        `${postSummary.postSummary ?? ''}` +
+        `${postSummary.postSummary ?? ''}\n` +
         `\n` +
-        `### Part 2 (top comments)` +
-        `${postSummary.topComments ?? ''}` +
+        `### Part 2 (top comments)\n` +
+        `${JSON.stringify(postSummary.topComments)}\n` +
         `\n` +
-        `### Part 3 (other comments)` +
-        `${postSummary.otherComments ?? ''}` +
+        `### Part 3 (other comments)\n` +
+        `${postSummary.otherComments ?? ''}\n` +
         `\n\n`
     }
 
@@ -300,7 +325,7 @@ export class SummarizePostMutateService {
       post.title +
       `\n` +
       `The post is: ` + JSON.stringify(postJson) +
-      `\n`
+      `\n\n`
 
     if (postUrl != null) {
 
@@ -356,12 +381,11 @@ export class SummarizePostMutateService {
         continue
       }
 
-      // Common mistake LLMs sometimes make is to make the top comments into an
-      // array.
+      // Part 2 must be an array
       if (queryResults.json.part2 != null &&
-          Array.isArray(queryResults.json.part2)) {
+          !Array.isArray(queryResults.json.part2)) {
 
-        console.log(`${fnName}: queryResults.json.part2 is an array`)
+        console.log(`${fnName}: queryResults.json.part2 isn't an array`)
         continue
       }
 
@@ -383,7 +407,8 @@ export class SummarizePostMutateService {
 
     // Extract the summary texts
     var part1 = ''
-    var part2 = ''
+    var part2: any = null
+    var part2String: string | null = null
     var part3 = ''
 
     if (queryResults.json.part1 != null) {
@@ -391,9 +416,8 @@ export class SummarizePostMutateService {
     }
 
     if (queryResults.json.part2 != null) {
-
-      part2 =
-        summarizePostUtilsService.fixBulletedPoints(queryResults.json.part2)
+      part2 = queryResults.json.part2
+      part2String = this.getTopCommentsAsString(part2)
     }
 
     if (queryResults.json.part3 != null) {
@@ -410,6 +434,7 @@ export class SummarizePostMutateService {
         BaseDataTypes.activeStatus,
         part1,
         part2,
+        part2String,
         part3)
   }
 }

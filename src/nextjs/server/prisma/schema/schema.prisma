@@ -398,7 +398,8 @@ model PostSummary {
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
   status                       String               @db.Char(1)
   postSummary                  String?              @map("post_summary")
-  topComments                  String?              @map("top_comments")
+  topComments                  Json?                @map("top_comments") @db.JsonB
+  topCommentsString            String?              @map("top_comments_string")
   otherComments                String?              @map("other_comments")
   created                      DateTime             @default(now())
   updated                      DateTime             @updatedAt

@@ -12,7 +12,8 @@ export class PostSummaryModel {
           userProfileId: string,
           status: string,
           postSummary: string | null,
-          topComments: string | null,
+          topComments: any | null,
+          topCommentsString: string | null,
           otherComments: string | null) {
 
     // Debug
@@ -27,6 +28,7 @@ export class PostSummaryModel {
           status: status,
           postSummary: postSummary,
           topComments: topComments,
+          topCommentsString: topCommentsString,
           otherComments: otherComments
         }
       })
@@ -184,7 +186,8 @@ export class PostSummaryModel {
           userProfileId: string | undefined,
           status: string | undefined,
           postSummary: string | null | undefined,
-          topComments: string | null | undefined,
+          topComments: any | null | undefined,
+          topCommentsString: string | null | undefined,
           otherComments: string | null | undefined) {
 
     // Debug
@@ -199,6 +202,7 @@ export class PostSummaryModel {
           status: status,
           postSummary: postSummary,
           topComments: topComments,
+          topCommentsString: topCommentsString,
           otherComments: otherComments
         },
         where: {
@@ -218,7 +222,8 @@ export class PostSummaryModel {
           userProfileId: string | undefined,
           status: string | undefined,
           postSummary: string | null | undefined,
-          topComments: string | null | undefined,
+          topComments: any | null | undefined,
+          topCommentsString: string | null | undefined,
           otherComments: string | null | undefined) {
 
     // Debug
@@ -269,6 +274,11 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
 
+      if (topCommentsString === undefined) {
+        console.error(`${fnName}: id is null and topCommentsString is undefined`)
+        throw 'Prisma error'
+      }
+
       if (otherComments === undefined) {
         console.error(`${fnName}: id is null and otherComments is undefined`)
         throw 'Prisma error'
@@ -283,6 +293,7 @@ export class PostSummaryModel {
                  status,
                  postSummary,
                  topComments,
+                 topCommentsString,
                  otherComments)
     } else {
 
@@ -296,6 +307,7 @@ export class PostSummaryModel {
                  status,
                  postSummary,
                  topComments,
+                 topCommentsString,
                  otherComments)
     }
   }

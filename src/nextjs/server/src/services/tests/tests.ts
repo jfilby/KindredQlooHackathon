@@ -1,11 +1,9 @@
 import { PrismaClient, UserProfile } from '@prisma/client'
 import { QlooTests } from '../qloo/tests'
-import { SummarizePostUtilsServiceTests } from '../social-media/summarized-posts/utils-service-tests'
 import { UserInterestsMutateServiceTests } from '../interests/user-interests-mutate-service-tests'
 
 // Services
 const qlooTests = new QlooTests()
-const summarizePostUtilsServiceTests = new SummarizePostUtilsServiceTests()
 const userInterestsMutateServiceTests = new UserInterestsMutateServiceTests()
 
 // Class
@@ -41,13 +39,6 @@ export class Tests {
         await userInterestsMutateServiceTests.tests(
                 prisma,
                 regularTestUserProfile.id)
-
-        break
-      }
-
-      case this.postSummaryTests: {
-
-        await summarizePostUtilsServiceTests.tests()
 
         break
       }

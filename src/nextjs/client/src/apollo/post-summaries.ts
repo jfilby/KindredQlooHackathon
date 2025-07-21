@@ -20,7 +20,7 @@ export const getPostSummariesQuery = gql`
         status
         socialMediaUrl
         postSummary
-        topComments
+        topCommentsString
         otherComments
         updated
         post {
