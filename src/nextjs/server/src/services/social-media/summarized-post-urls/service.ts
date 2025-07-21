@@ -64,10 +64,16 @@ export class SummarizePostUrlService {
     const fnName = `${this.clName}.summarizePostUrl()`
 
     // Validate
+    if (postUrl == null) {
+      throw new CustomError(`${fnName}: postUrl == null`)
+    }
+
     if (postUrl.title == null &&
         postUrl.text == null) {
 
-      console.error(`${fnName}: title and text are both null (skipping)`)
+      console.error(`${fnName}: title and text are both null for postUrl: ` +
+                    `${postUrl.id} (skipping)`)
+
       return
     }
 

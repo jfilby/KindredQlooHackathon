@@ -121,9 +121,9 @@ export class SummarizePostMutateService {
             post.id,
             forUserProfileId)
 
-    if (postSummary == null) {
+    /* if (postSummary == null) {
       console.log(`${fnName}: postSummary == null for postId: ` + post.id)
-    }
+    } */
 
     if (postSummary != null) {
 
@@ -131,7 +131,7 @@ export class SummarizePostMutateService {
       const duration = this.getDurationFrom(postSummary.updated)
 
       // Debug
-      console.log(`${fnName}: duration: ` + JSON.stringify(duration))
+      // console.log(`${fnName}: duration: ` + JSON.stringify(duration))
 
       // Don't summarize anymore after 1 day
       if (duration.days >= 1) {
@@ -156,7 +156,7 @@ export class SummarizePostMutateService {
     }
 
     // Debug
-    console.log(`${fnName}: proceeding to summarize..`)
+    // console.log(`${fnName}: proceeding to summarize..`)
 
     // Get Site
     const site = await
@@ -190,8 +190,8 @@ export class SummarizePostMutateService {
     // Debug
     const fnName = `${this.clName}.summarizePostWithLlm()`
 
-    console.log(`${fnName}: starting with postSummary: ` +
-                JSON.stringify(postSummary))
+    // console.log(`${fnName}: starting with postSummary: ` +
+    //             JSON.stringify(postSummary))
 
     // Get the LLM
     const tech = await
@@ -238,8 +238,9 @@ export class SummarizePostMutateService {
           `  the post. It should be 1-3 sentences at most, written in ` +
           `  clear, concise language that doesn't waffle and shouldn't ` +
           `  include anything not obvious from reading the title.\n` +
-          `- If part1 would be redundant (of the title) ` +
-          `  then skip it.\n` +
+          `- If part1 would be redundant (of the title) then skip it, ` +
+          `  unless the title is only a word or term (then you should ` +
+          `  explain what it means, unless there's nothing to go on).\n` +
           `- Field part2 should be bullet points of the top insightful ` +
           `  comments (3 at most, each on a new line, with context if ` +
           `  needed). Each point should be two sentences at most.\n` +
@@ -367,7 +368,7 @@ export class SummarizePostMutateService {
     }
 
     // Debug
-    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+    // console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Extract the summary texts
     var part1 = ''
