@@ -56,6 +56,40 @@ export class CommentModel {
     }
   }
 
+  async existsById(
+          prisma: PrismaClient,
+          id: string) {
+
+    // Debug
+    const fnName = `${this.clName}.existsById()`
+
+    // Query
+    var comment: any = null
+
+    try {
+      comment = await prisma.comment.findFirst({
+        select: {
+          id: true
+        },
+        where: {
+          id: id
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+
+    // Return
+    if (comment != null) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   async filter(
           prisma: PrismaClient,
           postId: string) {

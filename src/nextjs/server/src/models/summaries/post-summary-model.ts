@@ -12,8 +12,6 @@ export class PostSummaryModel {
           userProfileId: string,
           status: string,
           postSummary: string | null,
-          topComments: any | null,
-          topCommentsString: string | null,
           otherComments: string | null) {
 
     // Debug
@@ -27,8 +25,6 @@ export class PostSummaryModel {
           userProfileId: userProfileId,
           status: status,
           postSummary: postSummary,
-          topComments: topComments,
-          topCommentsString: topCommentsString,
           otherComments: otherComments
         }
       })
@@ -125,9 +121,24 @@ export class PostSummaryModel {
         include: {
           post: {
             include: {
-              postUrl: true
+              postUrl: true,
+              site: true
             }
-          }
+          },
+          ofPostSummaryInsights: {
+            include: {
+              _count: {
+                select: {
+                  ofPostSummaryInsightComments: true
+                }
+              }
+            },
+            orderBy: [
+              {
+                index: 'asc'
+              }
+            ]
+          },
         },
         where: {
           postId: {
@@ -181,13 +192,11 @@ export class PostSummaryModel {
 
   async update(
           prisma: PrismaClient,
-          id: string | undefined,
+          id: string,
           postId: string | undefined,
           userProfileId: string | undefined,
           status: string | undefined,
           postSummary: string | null | undefined,
-          topComments: any | null | undefined,
-          topCommentsString: string | null | undefined,
           otherComments: string | null | undefined) {
 
     // Debug
@@ -201,8 +210,6 @@ export class PostSummaryModel {
           userProfileId: userProfileId,
           status: status,
           postSummary: postSummary,
-          topComments: topComments,
-          topCommentsString: topCommentsString,
           otherComments: otherComments
         },
         where: {
@@ -222,8 +229,6 @@ export class PostSummaryModel {
           userProfileId: string | undefined,
           status: string | undefined,
           postSummary: string | null | undefined,
-          topComments: any | null | undefined,
-          topCommentsString: string | null | undefined,
           otherComments: string | null | undefined) {
 
     // Debug
@@ -269,16 +274,6 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
 
-      if (topComments === undefined) {
-        console.error(`${fnName}: id is null and topComments is undefined`)
-        throw 'Prisma error'
-      }
-
-      if (topCommentsString === undefined) {
-        console.error(`${fnName}: id is null and topCommentsString is undefined`)
-        throw 'Prisma error'
-      }
-
       if (otherComments === undefined) {
         console.error(`${fnName}: id is null and otherComments is undefined`)
         throw 'Prisma error'
@@ -292,8 +287,6 @@ export class PostSummaryModel {
                  userProfileId,
                  status,
                  postSummary,
-                 topComments,
-                 topCommentsString,
                  otherComments)
     } else {
 
@@ -306,8 +299,6 @@ export class PostSummaryModel {
                  userProfileId,
                  status,
                  postSummary,
-                 topComments,
-                 topCommentsString,
                  otherComments)
     }
   }

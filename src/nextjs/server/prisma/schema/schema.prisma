@@ -276,7 +276,8 @@ model Comment {
   externalId                   String?
   posted                       DateTime
 
-  ofComments                   Comment[]            @relation("parent")
+  ofComments                     Comment[]                    @relation("parent")
+  ofPostSummaryInsightComments   PostSummaryInsightComment[]
 
   @@unique([postId, externalId])
   @@map("comment")
@@ -398,14 +399,43 @@ model PostSummary {
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
   status                       String               @db.Char(1)
   postSummary                  String?              @map("post_summary")
-  topComments                  Json?                @map("top_comments") @db.JsonB
-  topCommentsString            String?              @map("top_comments_string")
   otherComments                String?              @map("other_comments")
   created                      DateTime             @default(now())
   updated                      DateTime             @updatedAt
 
+  ofPostSummaryInsights        PostSummaryInsight[]
+
   @@unique([postId, userProfileId])
   @@map("post_summary")
+  @@schema("public")
+}
+
+model PostSummaryInsight {
+  id                           String               @id @default(cuid())
+  postSummaryId                String               @map("post_summary_id")
+  postSummary                  PostSummary          @relation(fields: [postSummaryId], references: [id])
+  index                        Int
+  name                         String
+  description                  String
+
+  ofPostSummaryInsightComments    PostSummaryInsightComment[]
+
+  @@unique([postSummaryId, index])
+  @@map("post_summary_insight")
+  @@schema("public")
+}
+
+model PostSummaryInsightComment {
+  id                           String               @id @default(cuid())
+  postSummaryInsightId         String               @map("post_summary_id")
+  postSummaryInsight           PostSummaryInsight   @relation(fields: [postSummaryInsightId], references: [id])
+  commentId                    String?              @map("comment_id")
+  comment                      Comment?             @relation(fields: [commentId], references: [id])
+  index                        Int
+
+  @@unique([postSummaryInsightId, commentId])
+  @@unique([postSummaryInsightId, index])
+  @@map("post_summary_insight_comment")
   @@schema("public")
 }
 

@@ -112,20 +112,32 @@ export const typeDefs = `#graphql
   }
 
   type Post {
+    site: Site!
     title: String!
     posted: String!
     postUrl: PostUrl!
   }
 
+  type PostSummaryInsight {
+    id: String!
+    name: String!
+    description: String!
+    commentsCount: Int!
+  }
+
+  type PostSummaryInsightComment {
+    id: String!
+    commentId: String
+  }
+
   type PostSummary {
     id: String!
-    site: Site!
     postId: String!
     userProfileId: String
     status: String!
     socialMediaUrl: String
     postSummary: String
-    topCommentsString: String
+    insights: [PostSummaryInsight]
     otherComments: String
     updated: String!
     post: Post!

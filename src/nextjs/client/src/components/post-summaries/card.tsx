@@ -5,6 +5,7 @@ import { StringUtilsService } from '@/serene-core-client/services/utils/string'
 import DeleteDialog from '../dialogs/delete-dialog'
 import UndeleteDialog from '../dialogs/undelete-dialog'
 import Markdown from 'react-markdown'
+import ListPostSummaryInsights from '../post-summary-insights/list'
 
 interface Props {
   userProfileId: string
@@ -142,10 +143,10 @@ export default function ViewPostSummaryCard({
               <></>
             }
 
-            {postSummary.otherComments != null ?
-              <Markdown>
-                {postSummary.otherComments}
-              </Markdown>
+            {postSummary.insights != null ?
+              <ListPostSummaryInsights
+                userProfileId={userProfileId}
+                insights={postSummary.insights} />
             :
               <></>
             }

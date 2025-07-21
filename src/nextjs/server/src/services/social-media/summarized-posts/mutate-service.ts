@@ -1,10 +1,12 @@
-import { Post, PostSummary, PostUrl, PrismaClient, Site } from '@prisma/client'
+import { Post, PostUrl, PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { CommentModel } from '@/models/social-media/comment-model'
 import { PostModel } from '@/models/social-media/post-model'
+import { PostSummaryInsightCommentModel } from '@/models/summaries/post-summary-insight-comment-model'
+import { PostSummaryInsightModel } from '@/models/summaries/post-summary-insight-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
@@ -13,6 +15,8 @@ import { GetTechService } from '@/services/tech/get-tech-service'
 // Models
 const commentModel = new CommentModel()
 const postModel = new PostModel()
+const postSummaryInsightCommentModel = new PostSummaryInsightCommentModel()
+const postSummaryInsightModel = new PostSummaryInsightModel()
 const postSummaryModel = new PostSummaryModel()
 const postUrlModel = new PostUrlModel()
 const siteModel = new SiteModel()
@@ -100,6 +104,103 @@ export class SummarizePostMutateService {
     return text
   }
 
+  async processResults(
+          prisma: PrismaClient,
+          forUserProfileId: string,
+          postId: string,
+          queryResults: any) {
+
+    // Extract the summary texts
+    var part1 = ''
+    var part2: any = null
+    var part3 = ''
+
+    if (queryResults.json.part1 != null) {
+      part1 = queryResults.json.part1
+    }
+
+    if (queryResults.json.part2 != null) {
+      part2 = queryResults.json.part2
+    }
+
+    if (queryResults.json.part3 != null) {
+      part3 = queryResults.json.part3
+    }
+
+    // Upsert the PostSummary
+    const postSummary = await
+            postSummaryModel.upsert(
+              prisma,
+              undefined,  // id
+              postId,
+              forUserProfileId,
+              BaseDataTypes.activeStatus,
+              part1,
+              part3)
+
+    // Upserts into PostSummaryInsight
+    if (part2 != null) {
+
+      var insightIndex = 0
+
+      for (const insight of part2) {
+
+        // Debug
+        // console.log(`${fnName}: insight: ` + JSON.stringify(insight))
+
+        // Upsert
+        const postSummaryInsight = await
+                postSummaryInsightModel.upsert(
+                  prisma,
+                  undefined,  // id
+                  postSummary.id,
+                  insightIndex,
+                  insight.name,
+                  insight.description)
+
+        // Comments?
+        if (insight.commentIds != null) {
+
+          // Upsert comments
+          var commentIndex = 0
+          var commentIds: string[] = []
+
+          for (const commentId of insight.commentIds) {
+
+            // Already processed for this insight?
+            if (commentIds.includes(commentId)) {
+              continue
+            }
+
+            commentIds.push(commentId)
+
+            // Verify comment id
+            const commentExists = await
+                    commentModel.existsById(
+                      prisma,
+                      commentId)
+
+            if (commentExists === true) {
+
+              const comment = await
+                      postSummaryInsightCommentModel.upsert(
+                        prisma,
+                        undefined,  // id
+                        postSummaryInsight.id,
+                        commentId,
+                        commentIndex)
+
+              commentIndex += 1
+            }
+          }
+        }
+
+        // Inc insightIndex
+        insightIndex += 1
+      }
+    }
+  }
+
   async run(prisma: PrismaClient,
             userProfileId: string,
             forUserProfileId: string) {
@@ -167,8 +268,6 @@ export class SummarizePostMutateService {
                 forUserProfileId,
                 BaseDataTypes.inactiveStatus,
                 undefined,  // postSummary
-                undefined,  // topComments
-                undefined,  // topCommentsString
                 undefined)  // otherComments
 
         return
@@ -210,7 +309,7 @@ export class SummarizePostMutateService {
           forUserProfileId: string,
           site: Site,
           post: Post,
-          postSummary: PostSummary | null) {
+          postSummary: any | null) {
 
     // Debug
     const fnName = `${this.clName}.summarizePostWithLlm()`
@@ -267,8 +366,10 @@ export class SummarizePostMutateService {
           `  unless the title is only a word or term (then you should ` +
           `  explain what it means, unless there's nothing to go on).\n` +
           `- Field part2 should be an array of the top insightful comments ` +
-          `  (3 at most, each with a name and description). Each point's ` +
-          `  description should be two sentences at most.\n` +
+          `  or points (3 at most, each with a name and description). Each ` +
+          `  point's description should be two sentences at most.\n` +
+          `  Each insight in part2 should be backed up by up to 5 ` +
+          `  commentIds (get from the id field of the comments).\n` +
           `- Field part3 should be a summary about the remaining comments. ` +
           `  3 sentences at most and don't duplicate anything ` +
           `  already written.\n ` +
@@ -294,6 +395,7 @@ export class SummarizePostMutateService {
       `    {\n` +
       `      name: "insight 1",\n` +
       `      description: "..",\n` +
+      `      commentIds: [ "clid349538458" ]\n` +
       `    {\n` +
       `  ],\n` +
       `  "part3": "...\n"\n` +
@@ -312,7 +414,7 @@ export class SummarizePostMutateService {
         `${postSummary.postSummary ?? ''}\n` +
         `\n` +
         `### Part 2 (top comments)\n` +
-        `${JSON.stringify(postSummary.topComments)}\n` +
+        `${JSON.stringify(postSummary.ofPostSummaryComments)}\n` +
         `\n` +
         `### Part 3 (other comments)\n` +
         `${postSummary.otherComments ?? ''}\n` +
@@ -405,36 +507,11 @@ export class SummarizePostMutateService {
       return
     }
 
-    // Extract the summary texts
-    var part1 = ''
-    var part2: any = null
-    var part2String: string | null = null
-    var part3 = ''
-
-    if (queryResults.json.part1 != null) {
-      part1 = queryResults.json.part1
-    }
-
-    if (queryResults.json.part2 != null) {
-      part2 = queryResults.json.part2
-      part2String = this.getTopCommentsAsString(part2)
-    }
-
-    if (queryResults.json.part3 != null) {
-      part3 = queryResults.json.part3
-    }
-
-    // Upsert the PostSummary
-    postSummary = await
-      postSummaryModel.upsert(
-        prisma,
-        undefined,  // id
-        post.id,
-        forUserProfileId,
-        BaseDataTypes.activeStatus,
-        part1,
-        part2,
-        part2String,
-        part3)
+    // Process results
+    await this.processResults(
+            prisma,
+            forUserProfileId,
+            post.id,
+            queryResults)
   }
 }

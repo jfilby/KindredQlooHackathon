@@ -128,16 +128,38 @@ export class SummarizePostQueryService {
     console.log(`${fnName}: postIds: ` + JSON.stringify(postIds))
 
     // Get post summaries
-    const postSummaries = await
-            postSummaryModel.getByPostIdsAndUserProfileId(
-              prisma,
-              postIds,
-              forUserProfileId)
+    var postSummaries = await
+          postSummaryModel.getByPostIdsAndUserProfileId(
+            prisma,
+            postIds,
+            forUserProfileId)
 
     // Validate
     if (postSummaries == null) {
       throw new CustomError(`${fnName}: postSummaries == null`)
     }
+
+    // Debug: output the 1st post summary
+    if (postSummaries.length > 0) {
+      console.log(`${fnName}: postSummaries[0]: ` +
+                  JSON.stringify(postSummaries[0]))
+    }
+
+    // Rename sortedPostSummaries.ofPostSummaryInsights to .insights
+    const renamedPostSummaries1 =
+            postSummaries.map(
+              ({ ofPostSummaryInsights, ...rest }) => ({
+                ...rest,
+                insights: ofPostSummaryInsights}))
+
+    const renamedPostSummaries2 =
+            renamedPostSummaries1.map(post => ({
+              ...post,
+              insights: post.insights.map(({ _count, ...rest }) => ({
+                ...rest,
+                commentsCount: _count.ofPostSummaryInsightComments
+              }))
+            }))
 
     // Add social media links
     this.addSocialMediaDetails(
@@ -153,10 +175,9 @@ export class SummarizePostQueryService {
         [post.postId, post.index !== undefined ? post.index : idx]))
 
     // Sort postSummaries based on the original index
-    const sortedPostSummaries = postSummaries.sort(
+    const sortedPostSummaries = renamedPostSummaries2.sort(
       (a, b) =>
-        (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0)
-    )
+        (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0))
 
     // Debug
     console.log(`${fnName}: sortedPostSummaries: ${sortedPostSummaries.length}`)
@@ -168,6 +189,12 @@ export class SummarizePostQueryService {
 
     // Debug
     console.log(`${fnName}: sortedPostIds: ` + JSON.stringify(sortedPostIds))
+
+    // Debug: output the 1st post summary
+    if (sortedPostSummaries.length > 0) {
+      console.log(`${fnName}: sortedPostSummaries[0]: ` +
+                  JSON.stringify(sortedPostSummaries[0]))
+    }
 
     // Return
     return {
