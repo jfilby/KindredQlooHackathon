@@ -174,7 +174,12 @@ export class PostModel {
           posted: {
             gte: xDaysAgo
           }
-        }
+        },
+        orderBy: [
+          {
+            posted: 'desc'
+          }
+        ]
       })
     } catch(error: any) {
       if (!(error instanceof error.NotFound)) {
