@@ -93,7 +93,7 @@ export class HackerNewAlgoliaService {
     }
 
     // Debug
-    console.log(`${fnName}: results: ` + JSON.stringify(results))
+    // console.log(`${fnName}: results: ` + JSON.stringify(results))
 
     // Get the SiteTopic for HN front-page
     const siteTopic = await
@@ -183,8 +183,8 @@ export class HackerNewAlgoliaService {
         }
 
         // Debug
-        console.log(`${fnName}: commentsResults: ` +
-                    JSON.stringify(commentsResults))
+        // console.log(`${fnName}: commentsResults: ` +
+        //             JSON.stringify(commentsResults))
 
         // Children
         if (commentsResults.children == null) {

@@ -213,8 +213,6 @@ export class CommentModel {
     // Debug
     const fnName = `${this.clName}.upsert()`
 
-    console.log(`${fnName}: starting..`)
-
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
         postId != null &&
