@@ -40,7 +40,7 @@ export class SummarizePostQueryService {
     }
   }
 
-  async filter(
+  async filterLatest(
           prisma: PrismaClient,
           forUserProfileId: string,
           inSiteTopicListId: string | undefined) {
@@ -103,6 +103,9 @@ export class SummarizePostQueryService {
       // Set siteTopicListId
       siteTopicListId = siteTopicList.id
     }
+
+    // Debug
+    console.log(`${fnName}: siteTopicListId: ${siteTopicListId}`)
 
     // Get posts for the site topic list
     const siteTopicListPosts = await

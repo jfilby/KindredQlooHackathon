@@ -34,7 +34,7 @@ export async function getPostSummaries(
 
   // Filter
   const results = await
-          summarizePostQueryService.filter(
+          summarizePostQueryService.filterLatest(
             prisma,
             forUserProfileId,
             args.siteTopicListId)

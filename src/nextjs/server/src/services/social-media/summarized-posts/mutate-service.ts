@@ -87,7 +87,7 @@ export class SummarizePostMutateService {
     const posts = await
             postModel.getLatest(
               prisma,
-              3)  // startingDaysAgo
+              7)  // startingDaysAgo
 
     // Validate
     if (posts == null) {
