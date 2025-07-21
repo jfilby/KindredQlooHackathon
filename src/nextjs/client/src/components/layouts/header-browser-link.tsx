@@ -15,9 +15,13 @@ export function HeaderBrowserLink({
   return (
     <>
       {highLevelLink === linkName ?
-        <Link href={`/${linkName}`} style={{ fontWeight: '600' }} underline='hover'>{name}</Link>
+        <Link href={`/${linkName}`} style={{ color: 'black', fontWeight: '600' }} underline='hover'>
+          {name}
+        </Link>
       :
-        <Link href={`/${linkName}`} underline='hover'>{name}</Link>
+        <Link href={`/${linkName}`} style={{ color: 'black' }} underline='hover'>
+          {name}
+        </Link>
       }
     </>
   )

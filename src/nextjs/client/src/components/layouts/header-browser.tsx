@@ -26,16 +26,12 @@ export function HeaderBrowser({ highLevelLink }: Props) {
     <Box height={HEADER_HEIGHT}>
       <Grid container spacing={2} style={{ marginTop: '0.5em' }}>
         <Grid size={9} style={{ textAlign: 'left' }}>
-          <Typography variant='body1'>
+          <Typography
+            style={{ marginTop: '-0.2em' }}
+            variant='h6'>
             <HeaderBrowserLink
               name={process.env.NEXT_PUBLIC_APP_NAME}
               linkName=''
-              highLevelLink={highLevelLink} />
-            &nbsp;
-            &nbsp;
-            <HeaderBrowserLink
-              name='Instances'
-              linkName='instances'
               highLevelLink={highLevelLink} />
             &nbsp;
             &nbsp;
@@ -43,12 +39,6 @@ export function HeaderBrowser({ highLevelLink }: Props) {
         </Grid>
         <Grid size={3} style={{ textAlign: 'right' }}>
           <Typography variant='body1'>
-            <HeaderBrowserLink
-              name='Docs'
-              linkName='docs'
-              highLevelLink={highLevelLink} />
-            &nbsp;
-            &nbsp;
             <HeaderBrowserLink
               name='About'
               linkName='about'
@@ -64,18 +54,26 @@ export function HeaderBrowser({ highLevelLink }: Props) {
             &nbsp;
             &nbsp;
             { session &&
-              <Link href='#' onClick={(e) => {
-                e.preventDefault()
-                signOut()
-              }} className='btn-signin'>
+              <Link
+                href='#'
+                onClick={(e) => {
+                  e.preventDefault()
+                  signOut()
+                }}
+                style={{ color: 'black' }}
+                underline='hover'>
                 Sign out
               </Link>
             }
             { !session &&
-              <Link href='#' onClick={(e) => {
-                e.preventDefault()
-                signIn()
-              }} className='btn-signin'>
+              <Link
+                href='#'
+                onClick={(e) => {
+                  e.preventDefault()
+                  signIn()
+                }}
+                style={{ color: 'black' }}
+                underline='hover'>
                 Sign in
               </Link>
             }

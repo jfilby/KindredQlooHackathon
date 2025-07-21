@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer className='footer'>
-      <p>Copyright &copy; 2024 Navigator Data</p>
+      <p>Copyright &copy; Jason Filby</p>
     </footer>
   )
 }
