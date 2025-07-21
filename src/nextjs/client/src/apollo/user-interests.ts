@@ -6,7 +6,7 @@ export const getUserInterestsQuery = gql`
 
       status
       message
-      userInterests {
+      userEntityInterests {
         id
         userProfileId
         entityInterest {
