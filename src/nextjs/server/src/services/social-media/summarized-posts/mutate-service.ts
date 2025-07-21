@@ -9,6 +9,7 @@ import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
 import { GetTechService } from '@/services/tech/get-tech-service'
+import { SummarizePostUtilsService } from './utils-service'
 
 // Models
 const commentModel = new CommentModel()
@@ -20,6 +21,7 @@ const siteModel = new SiteModel()
 // Services
 const agentLlmService = new AgentLlmService()
 const getTechService = new GetTechService()
+const summarizePostUtilsService = new SummarizePostUtilsService()
 
 // Class
 export class SummarizePostMutateService {
@@ -389,7 +391,9 @@ export class SummarizePostMutateService {
     }
 
     if (queryResults.json.part2 != null) {
-      part2 = queryResults.json.part2
+
+      part2 =
+        summarizePostUtilsService.fixBulletedPoints(queryResults.json.part2)
     }
 
     if (queryResults.json.part3 != null) {
