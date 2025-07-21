@@ -266,9 +266,9 @@ export class SummarizePostMutateService {
       `## Results\n` +
       `Format your results as follows:\n` +
       `{\n` +
-      `  "part1": "...",\n` +
-      `  "part2": "...",\n` +
-      `  "part3": "..."\n` +
+      `  "part1": "...\n",\n` +
+      `  "part2": "- ...\n- ...\n- ...\n",\n` +
+      `  "part3": "...\n"\n` +
       `}\n` +
       `\n` +
       `- Values for fields part1, part2 and part3 must be strings.\n` +
