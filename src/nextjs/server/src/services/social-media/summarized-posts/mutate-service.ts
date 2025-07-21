@@ -370,6 +370,15 @@ export class SummarizePostMutateService {
     // Debug
     // console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
+    // Time-out?
+    if (queryResults == null) {
+
+      console.warn(`${fnName}: timed-out trying to summarize post: ` +
+                   `${post.id} with an LLM`)
+
+      return
+    }
+
     // Extract the summary texts
     var part1 = ''
     var part2 = ''
