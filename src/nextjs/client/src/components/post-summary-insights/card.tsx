@@ -25,7 +25,11 @@ export default function ViewPostSummaryInsightCard({
   return (
     <>
       <div style={{ display: 'flex', paddingTop: '1em' }}>
-        <Typography variant='body1'>
+
+        <Typography
+          onClick={(e) => setShowComments(!showComments)}
+          style={{ cursor: 'pointer' }}
+          variant='body1'>
 
           <span style={{ fontWeight: 'bold', marginRight: '0.5em' }}>
             {insight.name}
@@ -34,8 +38,7 @@ export default function ViewPostSummaryInsightCard({
           {insight.description}
 
           <span
-            onClick={(e) => setShowComments(!showComments)}
-            style={{ color: 'grey', cursor: 'pointer', float: 'right' }}>
+            style={{ color: 'grey', float: 'right' }}>
             [{insight.commentsCount}]
           </span>
         </Typography>
