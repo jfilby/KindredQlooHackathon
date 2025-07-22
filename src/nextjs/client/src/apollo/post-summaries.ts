@@ -18,6 +18,7 @@ export const getPostSummariesQuery = gql`
         socialMediaUrl
         postSummary
         insights {
+          id
           name
           description
           commentsCount

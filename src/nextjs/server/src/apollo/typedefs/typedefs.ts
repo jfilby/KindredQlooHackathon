@@ -42,6 +42,12 @@ export const typeDefs = `#graphql
     chatSession: ChatSession
   }
 
+  type Comment {
+    id: String!
+    url: String!
+    text: String!
+  }
+
   type ExistsResults {
     status: Boolean!
     message: String
@@ -127,7 +133,7 @@ export const typeDefs = `#graphql
 
   type PostSummaryInsightComment {
     id: String!
-    commentId: String
+    comment: Comment!
   }
 
   type PostSummary {
@@ -147,6 +153,12 @@ export const typeDefs = `#graphql
     status: Boolean!
     message: String
     postSummaries: [PostSummary]
+  }
+
+  type PostSummaryInsightCommentResults {
+    status: Boolean!
+    message: String
+    postSummaryInsightComments: [PostSummaryInsightComment]
   }
 
   type PostUrl {
@@ -250,6 +262,8 @@ export const typeDefs = `#graphql
     getPostSummaries(
       userProfileId: String!,
       siteTopicListId: String): PostSummaryResults!
+    getPostSummaryInsightComments(
+      postSummaryInsightId: String!): PostSummaryInsightCommentResults!
 
     # Interests
     getUserInterests(userProfileId: String!): UserInterestsResults!

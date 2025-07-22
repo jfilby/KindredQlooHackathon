@@ -139,11 +139,11 @@ export class SummarizePostQueryService {
       throw new CustomError(`${fnName}: postSummaries == null`)
     }
 
-    // Debug: output the 1st post summary
+    /* Debug: output the 1st post summary
     if (postSummaries.length > 0) {
       console.log(`${fnName}: postSummaries[0]: ` +
                   JSON.stringify(postSummaries[0]))
-    }
+    } */
 
     // Rename sortedPostSummaries.ofPostSummaryInsights to .insights
     const renamedPostSummaries1 =
@@ -190,11 +190,11 @@ export class SummarizePostQueryService {
     // Debug
     console.log(`${fnName}: sortedPostIds: ` + JSON.stringify(sortedPostIds))
 
-    // Debug: output the 1st post summary
+    /* Debug: output the 1st post summary
     if (sortedPostSummaries.length > 0) {
       console.log(`${fnName}: sortedPostSummaries[0]: ` +
                   JSON.stringify(sortedPostSummaries[0]))
-    }
+    } */
 
     // Return
     return {

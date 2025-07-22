@@ -52,6 +52,43 @@ export class PostSummaryInsightCommentModel {
     }
   }
 
+  async filter(
+          prisma: PrismaClient,
+          postSummaryInsightId: string,
+          includeComments: boolean) {
+
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Query
+    try {
+      return await prisma.postSummaryInsightComment.findMany({
+        include: {
+          comment: includeComments ? {
+            include: {
+              post: {
+                include: {
+                  site: true
+                }
+              }
+            }
+          } : undefined
+        },
+        where: {
+          postSummaryInsightId: postSummaryInsightId
+        },
+        orderBy: {
+          index: 'asc'
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {
