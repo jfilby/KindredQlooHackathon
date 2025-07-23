@@ -500,18 +500,24 @@ export class SummarizePostMutateService {
     for (var i = 0; i < 5; i++) {
 
       // LLM request
-      queryResults = await
-        agentLlmService.agentSingleShotLlmRequest(
-          prisma,
-          tech,
-          userProfileId,
-          null,       // instanceId
-          ServerOnlyTypes.defaultChatSettingsName,
-          BaseDataTypes.batchAgentRefId,
-          BaseDataTypes.batchAgentName,
-          BaseDataTypes.batchAgentRole,
-          prompt,
-          true)       // isJsonMode
+      try {
+        queryResults = await
+          agentLlmService.agentSingleShotLlmRequest(
+            prisma,
+            tech,
+            userProfileId,
+            null,       // instanceId
+            ServerOnlyTypes.defaultChatSettingsName,
+            BaseDataTypes.batchAgentRefId,
+            BaseDataTypes.batchAgentName,
+            BaseDataTypes.batchAgentRole,
+            prompt,
+            true)       // isJsonMode
+      } catch(e: any) {
+
+        // For now skip the post summary if the LLM call fails
+        continue
+      }
 
       // Validate
       if (queryResults == null) {
