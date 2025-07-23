@@ -49,7 +49,7 @@ export default function SaveUserInterestsText({
         })
 
     // Get results and set fields
-    const results = sendUpsertUserInterestsTextData.data.upsertUserInterestsText
+    const results = sendUpsertUserInterestsTextData.data.upsertUserInterestsByText
 
     if (results.status === true) {
       setAlertSeverity('success')

@@ -1,4 +1,5 @@
 import { BatchTypes } from '@/types/batch-types'
+import { connect } from 'http2'
 
 export class BatchJobModel {
 
@@ -27,7 +28,11 @@ export class BatchJobModel {
     try {
       return await prisma.batchJob.create({
         data: {
-          instanceId: instanceId,
+          instance: instanceId != null ? {
+            connect: {
+              id: instanceId
+            }
+          } : undefined,
           runInATransaction: runInATransaction,
           status: status,
           progressPct: progressPct,

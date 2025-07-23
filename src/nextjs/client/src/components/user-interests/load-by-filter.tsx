@@ -39,7 +39,7 @@ export default function LoadUserInterestsByFilter({
           }
         })
 
-    const results = fetchGetUserInterestsQueryData.data.getUserEntityInterests
+    const results = fetchGetUserInterestsQueryData.data.getUserInterests
 
     if (setUserEntityInterests != null) {
       setUserEntityInterests(results.userEntityInterests)

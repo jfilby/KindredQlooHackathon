@@ -18,7 +18,10 @@ export const getUserInterestsQuery = gql`
           name
         }
       }
-      userInterestsText
+      userInterestsText {
+        id
+        text
+      }
     }
   }
 `

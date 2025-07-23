@@ -25,7 +25,8 @@ export default function TextEditUserInterests({
 
     // On save completed successfully
     if (saveCompleted === true) {
-      window.location.href = '/interests'
+      setAlertSeverity('success')
+      setMessage('Saved! It might take about an hour for changes to take effect.')
     }
 
   }, [saveCompleted])

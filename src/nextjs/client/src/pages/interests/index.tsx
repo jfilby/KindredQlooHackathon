@@ -5,7 +5,7 @@ import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
 import { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
 import LoadUserEntityInterestsByFilter from '@/components/user-interests/load-by-filter'
-import ListUserEntityInterests from '@/components/user-interests/list'
+import TextEditUserInterests from '@/components/user-interests/text-edit'
 
 interface Props {
   userProfile: any
@@ -16,7 +16,6 @@ export default function InterestsPage({
                         }: Props) {
 
   // State
-  const [userEntityInterests, setUserEntityInterests] = useState<any[] | undefined>(undefined)
   const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
 
   // Render
@@ -32,10 +31,12 @@ export default function InterestsPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
-          {userEntityInterests != null ?
-            <ListUserEntityInterests
-              userProfileId={userProfile.id}
-              userEntityInterests={userEntityInterests} />
+          {userInterestsText !== undefined ?
+            <>
+              <TextEditUserInterests
+                userProfileId={userProfile.id}
+                initialText={userInterestsText?.text ?? ''} />
+            </>
           :
             <Typography>
               Loading..
@@ -46,7 +47,7 @@ export default function InterestsPage({
 
       <LoadUserEntityInterestsByFilter
         userProfileId={userProfile.id}
-        setUserEntityInterests={setUserEntityInterests}
+        setUserEntityInterests={undefined}
         setUserInterestsText={setUserInterestsText} />
     </>
   )
