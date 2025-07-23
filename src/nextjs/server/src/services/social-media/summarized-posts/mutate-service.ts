@@ -113,7 +113,6 @@ export class SummarizePostMutateService {
     // Extract the summary texts
     var part1 = ''
     var part2: any = null
-    var part3 = ''
 
     if (queryResults.json.part1 != null) {
       part1 = queryResults.json.part1
@@ -121,10 +120,6 @@ export class SummarizePostMutateService {
 
     if (queryResults.json.part2 != null) {
       part2 = queryResults.json.part2
-    }
-
-    if (queryResults.json.part3 != null) {
-      part3 = queryResults.json.part3
     }
 
     // Upsert the PostSummary
@@ -135,8 +130,7 @@ export class SummarizePostMutateService {
               postId,
               forUserProfileId,
               BaseDataTypes.activeStatus,
-              part1,
-              part3)
+              part1)
 
     // Upserts into PostSummaryInsight
     if (part2 != null) {
@@ -267,8 +261,7 @@ export class SummarizePostMutateService {
                 post.id,
                 forUserProfileId,
                 BaseDataTypes.inactiveStatus,
-                undefined,  // postSummary
-                undefined)  // otherComments
+                undefined)  // postSummary
 
         return
       }
@@ -353,7 +346,7 @@ export class SummarizePostMutateService {
           `# Prompt\n` +
           `\n` +
           `## General instructions\n` +
-          `- Summarize the following post into 3 parts, each a markdown ` +
+          `- Summarize the following post into 2 parts, each a markdown ` +
           `  string, but don't mention that it's a summary or that it's in ` +
           `  markdown.\n` +
           `- Write in the style of a ${site.name} top commenter.\n` +
@@ -370,9 +363,6 @@ export class SummarizePostMutateService {
           `  point's description should be two sentences at most.\n` +
           `  Each insight in part2 should be backed up by up to 5 ` +
           `  commentIds (get from the id field of the comments).\n` +
-          `- Field part3 should be a summary about the remaining comments. ` +
-          `  3 sentences at most and don't duplicate anything ` +
-          `  already written.\n ` +
           `- Don't consider comments that are too terse, unhelpful or ` +
           `  proven wrong by follow-on comments.\n`
 
@@ -398,10 +388,9 @@ export class SummarizePostMutateService {
       `      commentIds: [ "clid349538458" ]\n` +
       `    {\n` +
       `  ],\n` +
-      `  "part3": "...\n"\n` +
       `}\n` +
       `\n` +
-      `- Values for fields part1, part2 and part3 must be strings.\n` +
+      `- The value part1 must be a string.\n` +
       `\n`
 
     // Existing summary post?
@@ -415,9 +404,6 @@ export class SummarizePostMutateService {
         `\n` +
         `### Part 2 (top comments)\n` +
         `${JSON.stringify(postSummary.ofPostSummaryComments)}\n` +
-        `\n` +
-        `### Part 3 (other comments)\n` +
-        `${postSummary.otherComments ?? ''}\n` +
         `\n\n`
     }
 

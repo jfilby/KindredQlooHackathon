@@ -367,6 +367,8 @@ model SiteTopicList {
   rankingType                  String               @map("ranking_type")
   listed                       DateTime
   status                       String               @db.Char(1)
+  techId                       String?              @map("tech_id")
+  tech                         Tech?                @relation(fields: [techId], references: [id])
 
   ofSiteTopicListPosts         SiteTopicListPost[]
 
@@ -392,14 +394,17 @@ model SiteTopicListPost {
 // Kindred: LLM-generated summaries
 
 model PostSummary {
+  // Track techId per post summary in case free LLMs are rate-limited and must
+  // be swapped.
   id                           String               @id @default(cuid())
   postId                       String               @map("post_id")
   post                         Post                 @relation(fields: [postId], references: [id])
   userProfileId                String               @map("user_profile_id")
   userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  techId                       String?              @map("tech_id")
+  tech                         Tech?                @relation(fields: [techId], references: [id])
   status                       String               @db.Char(1)
   postSummary                  String?              @map("post_summary")
-  otherComments                String?              @map("other_comments")
   created                      DateTime             @default(now())
   updated                      DateTime             @updatedAt
 

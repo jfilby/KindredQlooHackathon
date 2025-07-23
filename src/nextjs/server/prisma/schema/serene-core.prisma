@@ -363,6 +363,8 @@ model Tech {
   ofLlmCaches                  LlmCache[]
 
   ofEntityInterestGroups       EntityInterestGroup[]
+  ofPostSummaries              PostSummary[]
+  ofSiteTopicLists             SiteTopicList[]
 
   @@map("tech")
   @@schema("public")

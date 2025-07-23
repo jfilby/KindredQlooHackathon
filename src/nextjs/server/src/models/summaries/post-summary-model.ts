@@ -11,8 +11,7 @@ export class PostSummaryModel {
           postId: string,
           userProfileId: string,
           status: string,
-          postSummary: string | null,
-          otherComments: string | null) {
+          postSummary: string | null) {
 
     // Debug
     const fnName = `${this.clName}.create()`
@@ -24,8 +23,7 @@ export class PostSummaryModel {
           postId: postId,
           userProfileId: userProfileId,
           status: status,
-          postSummary: postSummary,
-          otherComments: otherComments
+          postSummary: postSummary
         }
       })
     } catch(error) {
@@ -196,8 +194,7 @@ export class PostSummaryModel {
           postId: string | undefined,
           userProfileId: string | undefined,
           status: string | undefined,
-          postSummary: string | null | undefined,
-          otherComments: string | null | undefined) {
+          postSummary: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
@@ -209,8 +206,7 @@ export class PostSummaryModel {
           postId: postId,
           userProfileId: userProfileId,
           status: status,
-          postSummary: postSummary,
-          otherComments: otherComments
+          postSummary: postSummary
         },
         where: {
           id: id
@@ -228,8 +224,7 @@ export class PostSummaryModel {
           postId: string | undefined,
           userProfileId: string | undefined,
           status: string | undefined,
-          postSummary: string | null | undefined,
-          otherComments: string | null | undefined) {
+          postSummary: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -274,11 +269,6 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
 
-      if (otherComments === undefined) {
-        console.error(`${fnName}: id is null and otherComments is undefined`)
-        throw 'Prisma error'
-      }
-
       // Create
       return await
                this.create(
@@ -286,8 +276,7 @@ export class PostSummaryModel {
                  postId,
                  userProfileId,
                  status,
-                 postSummary,
-                 otherComments)
+                 postSummary)
     } else {
 
       // Update
@@ -298,8 +287,7 @@ export class PostSummaryModel {
                  postId,
                  userProfileId,
                  status,
-                 postSummary,
-                 otherComments)
+                 postSummary)
     }
   }
 }
