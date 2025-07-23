@@ -216,8 +216,8 @@ export class UserEntityInterestGroupModel {
         throw 'Prisma error'
       }
 
-      if (entityInterestGroupId == null) {
-        console.error(`${fnName}: id is null and entityInterestGroupId is null`)
+      if (entityInterestGroupId === undefined) {
+        console.error(`${fnName}: id is null and entityInterestGroupId is undefined`)
         throw 'Prisma error'
       }
 
