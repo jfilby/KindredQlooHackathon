@@ -24,6 +24,7 @@ const sleepSeconds = 1
 // Consts
 const seconds20InMs = 20 * 1000
 const minutes5InMs = 5 * 60 * 1000
+const minutes15InMs = 5 * 60 * 1000 * 15
 const hours1InMs = 1000 * 60 * 60
 const hours6InMs = 1000 * 60 * 60 * 6
 
@@ -90,10 +91,10 @@ async function interval5m(prisma: any) {
   ;
 }
 
-async function interval1h(prisma: any) {
+async function interval15m(prisma: any) {
 
   // Debug
-  const fnName = 'interval1h'
+  const fnName = 'interval15m'
 
   console.log(`${fnName}: starting..`)
 
@@ -122,7 +123,7 @@ function sleep(ms: number) {
   // Vars
   var lastInterval20s = new Date().getTime()
   var lastInterval5m = new Date().getTime()
-  var lastInterval1h = new Date().getTime()
+  var lastInterval15m = new Date().getTime()
   var lastInterval1d = new Date().getTime()
 
   // Models
@@ -131,7 +132,7 @@ function sleep(ms: number) {
   // Immediate housekeeping (later runs will be every x minutes)
   await interval20s(prisma)
   await interval5m(prisma)
-  await interval1h(prisma)
+  await interval15m(prisma)
 
   // Batch loop
   while (true) {
@@ -164,10 +165,10 @@ function sleep(ms: number) {
       }
     }
 
-    if (new Date().getTime() - lastInterval1h >= hours1InMs) {
+    if (new Date().getTime() - lastInterval15m >= minutes15InMs) {
 
-      await interval1h(prisma)
-      lastInterval1h = new Date().getTime()
+      await interval15m(prisma)
+      lastInterval15m = new Date().getTime()
     }
 
     // Get batch jobs as promises to run
