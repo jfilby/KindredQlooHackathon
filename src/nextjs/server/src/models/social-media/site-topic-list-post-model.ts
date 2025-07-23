@@ -10,6 +10,7 @@ export class SiteTopicListPostModel {
           prisma: PrismaClient,
           siteTopicListId: string,
           postId: string,
+          postSummaryId: string | null,
           index: number) {
 
     // Debug
@@ -21,6 +22,7 @@ export class SiteTopicListPostModel {
         data: {
           siteTopicListId: siteTopicListId,
           postId: postId,
+          postSummaryId: postSummaryId,
           index: index
         }
       })
@@ -54,7 +56,9 @@ export class SiteTopicListPostModel {
 
   async filter(
           prisma: PrismaClient,
-          siteTopicListId: string) {
+          siteTopicListId: string,
+          includePosts: boolean = false,
+          includePostSummaries: boolean = false) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
@@ -62,7 +66,10 @@ export class SiteTopicListPostModel {
     // Query
     try {
       return await prisma.siteTopicListPost.findMany({
-        take: 20,
+        include: {
+          post: includePosts,
+          postSummary: includePostSummaries
+        },
         where: {
           siteTopicListId: siteTopicListId
         },
@@ -176,6 +183,7 @@ export class SiteTopicListPostModel {
           id: string | undefined,
           siteTopicListId: string | undefined,
           postId: string | undefined,
+          postSummaryId: string | null | undefined,
           index: number | undefined) {
 
     // Debug
@@ -187,6 +195,7 @@ export class SiteTopicListPostModel {
         data: {
           siteTopicListId: siteTopicListId,
           postId: postId,
+          postSummaryId: postSummaryId,
           index: index
         },
         where: {
@@ -204,6 +213,7 @@ export class SiteTopicListPostModel {
           id: string | undefined,
           siteTopicListId: string | undefined,
           postId: string | undefined,
+          postSummaryId: string | null | undefined,
           index: number | undefined) {
 
     // Debug
@@ -241,6 +251,11 @@ export class SiteTopicListPostModel {
         throw 'Prisma error'
       }
 
+      if (postSummaryId == undefined) {
+        console.error(`${fnName}: id is null and postSummaryId is undefined`)
+        throw 'Prisma error'
+      }
+
       if (index == null) {
         console.error(`${fnName}: id is null and index is null`)
         throw 'Prisma error'
@@ -252,6 +267,7 @@ export class SiteTopicListPostModel {
                  prisma,
                  siteTopicListId,
                  postId,
+                 postSummaryId,
                  index)
     } else {
 
@@ -262,6 +278,7 @@ export class SiteTopicListPostModel {
                  id,
                  siteTopicListId,
                  postId,
+                 postSummaryId,
                  index)
     }
   }

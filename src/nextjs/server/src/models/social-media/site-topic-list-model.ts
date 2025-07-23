@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
 
 export class SiteTopicListModel {
 
@@ -152,6 +153,50 @@ export class SiteTopicListModel {
 
     // Return
     return siteTopicList
+  }
+
+  async getLatestByNewStatusAndDaysAgo(
+          prisma: PrismaClient,
+          startingDaysAgo: number) {
+
+    // Debug
+    const fnName = `${this.clName}.getLatestByNewStatusAndDaysAgo()`
+
+    // Validate
+    if (startingDaysAgo == null) {
+      console.error(`${fnName}: startingDaysAgo == null`)
+      throw 'Validation error'
+    }
+
+    // Starting date
+    const now = new Date();
+    const xDaysAgo = new Date(now)
+    xDaysAgo.setDate(now.getDate() - startingDaysAgo)
+
+    // Query
+    try {
+      return await prisma.siteTopicList.findMany({
+        include: {
+          tech: true
+        },
+        where: {
+          status: BaseDataTypes.newStatus,
+          listed: {
+            gte: xDaysAgo
+          }
+        },
+        orderBy: [
+          {
+            listed: 'desc'
+          }
+        ]
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
   }
 
   async getLatestBySiteTopicIdAndStatus(

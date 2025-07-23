@@ -182,6 +182,7 @@ export class HackerNewAlgoliaService {
               prisma,
               siteTopicList.id,
               post.id,
+              null,  // postSummaryId
               index)
 
       // Inc index

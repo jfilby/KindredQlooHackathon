@@ -149,46 +149,6 @@ export class PostModel {
     return post
   }
 
-  async getLatest(
-          prisma: PrismaClient,
-          startingDaysAgo: number) {
-
-    // Debug
-    const fnName = `${this.clName}.getLatest()`
-
-    // Validate
-    if (startingDaysAgo == null) {
-      console.error(`${fnName}: startingDaysAgo == null`)
-      throw 'Validation error'
-    }
-
-    // Starting date
-    const now = new Date();
-    const xDaysAgo = new Date(now)
-    xDaysAgo.setDate(now.getDate() - startingDaysAgo)
-
-    // Query
-    try {
-      return await prisma.post.findMany({
-        where: {
-          posted: {
-            gte: xDaysAgo
-          }
-        },
-        orderBy: [
-          {
-            posted: 'desc'
-          }
-        ]
-      })
-    } catch(error: any) {
-      if (!(error instanceof error.NotFound)) {
-        console.error(`${fnName}: error: ${error}`)
-        throw 'Prisma error'
-      }
-    }
-  }
-
   async update(
           prisma: PrismaClient,
           id: string | undefined,

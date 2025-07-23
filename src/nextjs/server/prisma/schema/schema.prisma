@@ -383,10 +383,13 @@ model SiteTopicListPost {
   siteTopicList                SiteTopicList        @relation(fields: [siteTopicListId], references: [id])
   postId                       String               @map("post_id")
   post                         Post                 @relation(fields: [postId], references: [id])
+  postSummaryId                String?              @map("post_summary_id")
+  postSummary                  PostSummary?         @relation(fields: [postSummaryId], references: [id])
   index                        Int
 
-  @@unique([siteTopicListId, postId])
   @@unique([siteTopicListId, index])
+  @@unique([siteTopicListId, postId])
+  @@unique([siteTopicListId, postSummaryId])
   @@map("site_topic_list_post")
   @@schema("public")
 }
@@ -409,8 +412,8 @@ model PostSummary {
   updated                      DateTime             @updatedAt
 
   ofPostSummaryInsights        PostSummaryInsight[]
+  ofSiteTopicListPosts         SiteTopicListPost[]
 
-  @@unique([postId, userProfileId])
   @@map("post_summary")
   @@schema("public")
 }

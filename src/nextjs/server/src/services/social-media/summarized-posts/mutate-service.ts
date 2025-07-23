@@ -1,29 +1,30 @@
-import { Post, PostUrl, PrismaClient, Site } from '@prisma/client'
+import { Post, PostUrl, PrismaClient, Site, SiteTopicList } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { CommentModel } from '@/models/social-media/comment-model'
-import { PostModel } from '@/models/social-media/post-model'
 import { PostSummaryInsightCommentModel } from '@/models/summaries/post-summary-insight-comment-model'
 import { PostSummaryInsightModel } from '@/models/summaries/post-summary-insight-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
+import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
+import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
 import { GetTechService } from '@/services/tech/get-tech-service'
 
 // Models
 const commentModel = new CommentModel()
-const postModel = new PostModel()
 const postSummaryInsightCommentModel = new PostSummaryInsightCommentModel()
 const postSummaryInsightModel = new PostSummaryInsightModel()
 const postSummaryModel = new PostSummaryModel()
 const postUrlModel = new PostUrlModel()
 const siteModel = new SiteModel()
+const siteTopicListModel = new SiteTopicListModel()
+const siteTopicListPostModel = new SiteTopicListPostModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
-const getTechService = new GetTechService()
 
 // Class
 export class SummarizePostMutateService {
@@ -195,6 +196,9 @@ export class SummarizePostMutateService {
         insightIndex += 1
       }
     }
+
+    // Return
+    return postSummary
   }
 
   async run(prisma: PrismaClient,
@@ -204,31 +208,50 @@ export class SummarizePostMutateService {
     // Debug
     const fnName = `${this.clName}.run()`
 
-    // Get all recent posts
-    const posts = await
-            postModel.getLatest(
+    // Get SiteTopicLists to summarize posts for.
+    const siteTopicLists = await
+            siteTopicListModel.getLatestByNewStatusAndDaysAgo(
               prisma,
               7)  // startingDaysAgo
 
     // Validate
-    if (posts == null) {
-      throw new CustomError(`${fnName}: posts == null`)
+    if (siteTopicLists == null) {
+      throw new CustomError(`${fnName}: siteTopicLists == null`)
     }
 
-    // Summarize posts without being user specific
-    for (const post of posts) {
+    // Summarize posts for each list
+    for (const siteTopicList of siteTopicLists) {
 
-      await this.summarizePost(
-              prisma,
-              post,
-              userProfileId,
-              forUserProfileId)
+      // Get posts to summarize
+      const siteTopicListPosts = await
+              siteTopicListPostModel.filter(
+                prisma,
+                siteTopicList.id,
+                true,  // includePosts
+                true)  // includePostSummaries
+
+      // Validate
+      if (siteTopicListPosts == null) {
+        throw new CustomError(`${fnName}: siteTopicListPosts == null`)
+      }
+
+      // Summarize posts without being user specific
+      for (const siteTopicListPost of siteTopicListPosts) {
+
+        await this.summarizePost(
+                prisma,
+                siteTopicList,
+                siteTopicListPost,
+                userProfileId,
+                forUserProfileId)
+      }
     }
   }
 
   async summarizePost(
           prisma: PrismaClient,
-          post: Post,
+          siteTopicList: SiteTopicList,
+          siteTopicListPost: any,
           userProfileId: string,
           forUserProfileId: string) {
 
@@ -236,20 +259,11 @@ export class SummarizePostMutateService {
     const fnName = `${this.clName}.summarizePost()`
 
     // Skip those with existing summaries, or recently summarized
-    var postSummary = await
-          postSummaryModel.getByUniqueKey(
-            prisma,
-            post.id,
-            forUserProfileId)
-
-    /* if (postSummary == null) {
-      console.log(`${fnName}: postSummary == null for postId: ` + post.id)
-    } */
-
-    if (postSummary != null) {
+    if (siteTopicListPost.postSummary != null) {
 
       // Get the time since last summarized
-      const duration = this.getDurationFrom(postSummary.updated)
+      const duration =
+              this.getDurationFrom(siteTopicListPost.postSummary.updated)
 
       // Debug
       // console.log(`${fnName}: duration: ` + JSON.stringify(duration))
@@ -259,8 +273,8 @@ export class SummarizePostMutateService {
 
         await postSummaryModel.update(
                 prisma,
-                postSummary.id,
-                post.id,
+                siteTopicListPost.postSummary.id,
+                siteTopicListPost.post.id,
                 forUserProfileId,
                 undefined,  // techId
                 BaseDataTypes.inactiveStatus,
@@ -282,7 +296,7 @@ export class SummarizePostMutateService {
     const site = await
             siteModel.getById(
               prisma,
-              post.siteId)
+              siteTopicListPost.post.siteId)
 
     // Validate
     if (site == null) {
@@ -290,17 +304,35 @@ export class SummarizePostMutateService {
     }
 
     // Summarize post
-    await this.summarizePostWithLlm(
-            prisma,
-            userProfileId,
-            forUserProfileId,
-            site,
-            post,
-            postSummary)
+    const postSummary = await
+            this.summarizePostWithLlm(
+              prisma,
+              siteTopicList,
+              userProfileId,
+              forUserProfileId,
+              site,
+              siteTopicListPost.post,
+              siteTopicListPost.postSummary)
+
+    // Validate
+    if (postSummary == null) {
+      throw new CustomError(`${fnName}: postSummary == null`)
+    }
+
+    // Update SiteTopicListPost
+    siteTopicListPost = await
+      siteTopicListPostModel.update(
+        prisma,
+        siteTopicListPost.id,
+        undefined,  // siteTopicListId
+        undefined,  // postId
+        postSummary.id,
+        undefined)  // index
   }
 
   async summarizePostWithLlm(
           prisma: PrismaClient,
+          siteTopicList: SiteTopicList,
           userProfileId: string,
           forUserProfileId: string,
           site: Site,
@@ -313,11 +345,13 @@ export class SummarizePostMutateService {
     // console.log(`${fnName}: starting with postSummary: ` +
     //             JSON.stringify(postSummary))
 
-    // Get the LLM
-    const tech = await
-            getTechService.getStandardLlmTech(
-              prisma,
-              userProfileId)
+    // Get tech from the listing
+    const tech = (siteTopicList as any).tech
+
+    // Validate
+    if (tech == null) {
+      throw new CustomError(`${fnName}: tech == null`)
+    }
 
     // Debug
     // console.log(`${fnName}: tech: ` + JSON.stringify(tech))
@@ -497,11 +531,15 @@ export class SummarizePostMutateService {
     }
 
     // Process results
-    await this.processResults(
-            prisma,
-            forUserProfileId,
-            tech.id,
-            post.id,
-            queryResults)
+    postSummary = await
+      this.processResults(
+        prisma,
+        forUserProfileId,
+        tech.id,
+        post.id,
+        queryResults)
+
+    // Return
+    return postSummary
   }
 }
