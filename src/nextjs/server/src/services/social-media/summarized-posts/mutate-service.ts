@@ -374,7 +374,8 @@ export class SummarizePostMutateService {
 
     // Validate
     if (postSummary == null) {
-      throw new CustomError(`${fnName}: postSummary == null`)
+      // Skip, could have been due to PROHIBITED_CONTENT (Gemini)
+      return
     }
 
     // Update SiteTopicListPost
