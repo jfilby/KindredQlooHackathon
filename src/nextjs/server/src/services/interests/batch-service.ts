@@ -67,6 +67,11 @@ export class InterestsBatchService {
         undefined,  // runInATransaction
         BatchTypes.completedBatchJobStatus,
         100)        // progressPct
+
+    // Return
+    return {
+      status: true
+    }
   }
 
   async groupAndFindSimilarInterests(prisma: PrismaClient) {
