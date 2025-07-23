@@ -52,6 +52,28 @@ export class PostSummaryInsightCommentModel {
     }
   }
 
+  async deleteByPostSummaryInsightId(
+          prisma: PrismaClient,
+          postSummaryInsightId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.deleteByPostSummaryInsightId()`
+
+    // Delete
+    try {
+      return await prisma.postSummaryInsightComment.deleteMany({
+        where: {
+          postSummaryInsightId: postSummaryInsightId
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async filter(
           prisma: PrismaClient,
           postSummaryInsightId: string,

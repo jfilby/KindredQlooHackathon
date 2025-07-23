@@ -157,6 +157,11 @@ export class SummarizePostMutateService {
         // Comments?
         if (insight.commentIds != null) {
 
+          // Delete any existing comments
+          await postSummaryInsightCommentModel.deleteByPostSummaryInsightId(
+                  prisma,
+                  postSummaryInsight.id)
+
           // Upsert comments
           var commentIndex = 0
           var commentIds: string[] = []
