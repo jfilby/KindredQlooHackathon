@@ -143,7 +143,8 @@ export class PostSummaryInsightCommentModel {
   async getByUniqueKey(
           prisma: PrismaClient,
           postSummaryInsightId: string,
-          index: number) {
+          commentId: string | undefined,
+          index: number | undefined) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
@@ -154,8 +155,8 @@ export class PostSummaryInsightCommentModel {
       throw 'Validation error'
     }
 
-    if (index == null) {
-      console.error(`${fnName}: index == null`)
+    if (commentId == null && index == null) {
+      console.error(`${fnName}: commentId == null && index == null`)
       throw 'Validation error'
     }
 
@@ -166,6 +167,7 @@ export class PostSummaryInsightCommentModel {
       postSummaryInsightComment = await prisma.postSummaryInsightComment.findFirst({
         where: {
           postSummaryInsightId: postSummaryInsightId,
+          commentId: commentId,
           index: index
         }
       })
@@ -221,12 +223,14 @@ export class PostSummaryInsightCommentModel {
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
         postSummaryInsightId != null &&
-        index != null) {
+        (commentId != null ||
+         index != null)) {
 
       const post = await
               this.getByUniqueKey(
                 prisma,
                 postSummaryInsightId,
+                commentId,
                 index)
 
       if (post != null) {
