@@ -160,6 +160,7 @@ export class HackerNewAlgoliaService {
 
       // Get/create PostUrl
       var postUrl: any = null
+      var postUrlId: string | null = null
 
       if (hit.url != null) {
 
@@ -178,6 +179,8 @@ export class HackerNewAlgoliaService {
               null,   // title
               null)   // text
         }
+
+        postUrlId = postUrl.id
       }
 
       // Upsert Post
@@ -186,7 +189,7 @@ export class HackerNewAlgoliaService {
                 prisma,
                 undefined,  // id
                 siteId,
-                postUrl.id,
+                postUrlId,
                 hit.objectID,
                 hit.title,
                 hit.created_at,
