@@ -149,6 +149,10 @@ export class PostSummaryInsightCommentModel {
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
+    // console.log(
+    //   `${fnName}: starting with postSummaryInsightId: ` +
+    //   `${postSummaryInsightId} commentId: ${commentId} index: ${index}`)
+
     // Validate
     if (postSummaryInsightId == null) {
       console.error(`${fnName}: postSummaryInsightId == null`)
@@ -160,14 +164,39 @@ export class PostSummaryInsightCommentModel {
       throw 'Validation error'
     }
 
-    // Query
+    // Debug
+    // console.log(`${fnName}: trying 1st unique key..`)
+
+    // Query 1st unique key
     var postSummaryInsightComment: any = null
 
     try {
       postSummaryInsightComment = await prisma.postSummaryInsightComment.findFirst({
         where: {
           postSummaryInsightId: postSummaryInsightId,
-          commentId: commentId,
+          commentId: commentId
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+
+    // Return if found
+    if (postSummaryInsightComment != null) {
+      return postSummaryInsightComment
+    }
+
+    // Debug
+    // console.log(`${fnName}: trying 2nd unique key..`)
+
+    // Query 2nd unique key
+    try {
+      postSummaryInsightComment = await prisma.postSummaryInsightComment.findFirst({
+        where: {
+          postSummaryInsightId: postSummaryInsightId,
           index: index
         }
       })
@@ -220,21 +249,25 @@ export class PostSummaryInsightCommentModel {
     // Debug
     const fnName = `${this.clName}.upsert()`
 
+    // console.log(
+    //   `${fnName}: starting with postSummaryInsightId: ` +
+    //   `${postSummaryInsightId} commentId: ${commentId} index: ${index}`)
+
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
         postSummaryInsightId != null &&
         (commentId != null ||
          index != null)) {
 
-      const post = await
+      const postSummaryInsightComment = await
               this.getByUniqueKey(
                 prisma,
                 postSummaryInsightId,
                 commentId,
                 index)
 
-      if (post != null) {
-        id = post.id
+      if (postSummaryInsightComment != null) {
+        id = postSummaryInsightComment.id
       }
     }
 

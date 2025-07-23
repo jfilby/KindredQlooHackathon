@@ -435,7 +435,7 @@ model PostSummaryInsight {
 
 model PostSummaryInsightComment {
   id                           String               @id @default(cuid())
-  postSummaryInsightId         String               @map("post_summary_id")
+  postSummaryInsightId         String               @map("post_summary_insight_id")
   postSummaryInsight           PostSummaryInsight   @relation(fields: [postSummaryInsightId], references: [id])
   commentId                    String?              @map("comment_id")
   comment                      Comment?             @relation(fields: [commentId], references: [id])
