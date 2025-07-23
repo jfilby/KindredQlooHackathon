@@ -180,7 +180,8 @@ model EntityInterestGroup {
   uniqueHash                   String               @map("unique_hash") @unique  // Unique hash based on the ids in EntityInterestItem for this group
   embeddingTechId              String               @map("embedding_tech_id")
   embeddingTech                Tech                 @relation(fields: [embeddingTechId], references: [id])
-  embedding                    Float[]
+  embedding                    Unsupported("vector(1536)")?
+  embeddingGenerated           DateTime?            @map("embedding_generated")
   lastSimilarFound             DateTime?            @map("last_similar_found")
 
   ofEntityInterestItems          EntityInterestItem[]

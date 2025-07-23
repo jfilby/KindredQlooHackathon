@@ -101,13 +101,10 @@ export class InterestGroupService {
       }
 
       // Set the embedding
-      await entityInterestGroupModel.update(
+      await entityInterestGroupModel.setEmbedding(
               prisma,
               entityInterestGroup.id,
-              undefined,  // uniqueHash
-              undefined,  // embeddingTechId
-              results.embedding,
-              undefined)  // lastSimilarFound
+              results.embedding)
     }
   }
 
@@ -161,6 +158,11 @@ export class InterestGroupService {
           prisma: PrismaClient,
           entityInterestGroup: EntityInterestGroup) {
 
+    // Debug
+    const fnName = `${this.clName}.findSimilarEntityInterests()`
+
+    console.log(`${fnName}: starting..`)
+
     // Identify groups that need similar interests to be found
     const similarEntityInterestGroups = await
             entityInterestGroupModel.findSimilar(
@@ -183,11 +185,17 @@ export class InterestGroupService {
         entityInterestGroup.id,
         undefined,   // uniqueHash
         undefined,   // embeddingTechId
-        undefined,   // embedding
         new Date())  // lastSimilarFound
+
+    console.log(`${fnName}: returning..`)
   }
 
   async getOrCreateMissingGroups(prisma: PrismaClient) {
+
+    // Debug
+    const fnName = `${this.clName}.getOrCreateMissingGroups()`
+
+    console.log(`${fnName}: starting..`)
 
     // Get a list of UserEntityInterestGroups missing an entityInterestGroupId
     const userEntityInterestGroups = await
@@ -230,6 +238,11 @@ export class InterestGroupService {
           prisma: PrismaClient,
           entityInterestIds: string[]) {
 
+    // Debug
+    const fnName = `${this.clName}.getOrCreate()`
+
+    console.log(`${fnName}: starting..`)
+
     // Get a unique hash
     const uniqueHash = this.getUniqueHash(entityInterestIds)
 
@@ -254,7 +267,6 @@ export class InterestGroupService {
         prisma,
         uniqueHash,
         embeddingTech.id,
-        [],    // embedding
         null)  // lastSimilarFound
 
     for (const entityInterestId of entityInterestIds) {

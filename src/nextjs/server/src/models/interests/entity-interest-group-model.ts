@@ -10,7 +10,6 @@ export class EntityInterestGroupModel {
           prisma: PrismaClient,
           uniqueHash: string,
           embeddingTechId: string,
-          embedding: number[],
           lastSimilarFound: Date | null) {
 
     // Debug
@@ -22,7 +21,6 @@ export class EntityInterestGroupModel {
         data: {
           uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
-          embedding: embedding,
           lastSimilarFound: lastSimilarFound
         }
       })
@@ -75,9 +73,7 @@ export class EntityInterestGroupModel {
           ofEntityInterestItems: includeEntityInterestItems,
         },
         where: {
-          embedding: hasEmbedding
-          ? { hasSome: [0] }    // has at least one float
-          : { equals: [] },     // embedding is exactly empty
+          embeddingGenerated: hasEmbedding ? { not: null } : null
         }
       })
     } catch(error: any) {
@@ -122,6 +118,11 @@ export class EntityInterestGroupModel {
           prisma: PrismaClient,
           fromId: string) {
 
+    // Debug
+    const fnName = `${this.clName}.findSimilar()`
+
+    console.log(`${fnName}: starting with fromId: ${fromId}`)
+
     // Identify similar groups
     const similarGroups = await
             prisma.$queryRawUnsafe<EntityInterestGroup[]>(`
@@ -134,6 +135,9 @@ export class EntityInterestGroupModel {
               LIMIT 10;
             `,
             fromId)
+
+    // Debug
+    console.log(`${fnName}: returning..`)
 
     // Return
     return similarGroups
@@ -227,12 +231,40 @@ export class EntityInterestGroupModel {
     return entityInterestGroup
   }
 
+  async setEmbedding(
+          prisma: any,
+          id: string,
+          embedding: any) {
+
+    // Debug
+    const fnName = `${this.clName}.setEmbedding()`
+
+    console.log(`${fnName}: embedding: ` + JSON.stringify(embedding))
+
+    // Handle blank embeddings as null (to leave out of search results)
+    if (embedding.length === 0) {
+      embedding = null
+    }
+
+    // Update embedding
+    const results = await
+      prisma.$executeRaw`UPDATE entity_interest_group SET embedding = ${embedding}, embedding_generated = now() WHERE id = ${id};`
+
+    // console.log(`${fnName}: results: ` + JSON.stringify(results))
+
+    if (results === 0) {
+      console.warn(`${fnName}: no rows updated`)
+    } else if (results > 1) {
+      console.warn(`${fnName}: multiple records (${results} updated for id: ` +
+                   `${id}`)
+    }
+  }
+
   async update(
           prisma: PrismaClient,
           id: string | undefined,
           uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
-          embedding: number[] | undefined,
           lastSimilarFound: Date | null | undefined) {
 
     // Debug
@@ -244,7 +276,6 @@ export class EntityInterestGroupModel {
         data: {
           uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
-          embedding: embedding,
           lastSimilarFound: lastSimilarFound
         },
         where: {
@@ -262,7 +293,7 @@ export class EntityInterestGroupModel {
           id: string | undefined,
           uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
-          embedding: number[] | undefined,
+          embedding: number[] | null | undefined,
           lastSimilarFound: Date | null | undefined) {
 
     // Debug
@@ -314,7 +345,6 @@ export class EntityInterestGroupModel {
                  prisma,
                  uniqueHash,
                  embeddingTechId,
-                 embedding,
                  lastSimilarFound)
     } else {
 
@@ -325,7 +355,6 @@ export class EntityInterestGroupModel {
                  id,
                  uniqueHash,
                  embeddingTechId,
-                 embedding,
                  lastSimilarFound)
     }
   }

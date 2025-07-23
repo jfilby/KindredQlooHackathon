@@ -39,12 +39,13 @@ export async function upsertUserInterestsByText(
               args.text)
 
     // Create a BatchJob to process the text
+    // runInATransaction is true to prevent missing vital record processing
     const batchJob = await
             batchJobModel.upsert(
               prisma,
               undefined,  // id
               null,       // instanceId
-              false,      // runInATransaction
+              true,       // runInATransaction
               BatchTypes.newBatchJobStatus,
               0,          // progressPct
               null,       // message
