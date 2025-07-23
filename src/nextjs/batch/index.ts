@@ -102,16 +102,6 @@ async function interval1h(prisma: any) {
 
   // Get any missing Qloo entities
   await getQlooInsightsService.setMissingQlooEntityIds(prisma)
-}
-
-async function interval6h(prisma: any) {
-
-  // Debug
-  const fnName = 'interval6h'
-
-  console.log(`${fnName}: starting..`)
-
-  // Actions
 
   // Social media batch pipeline
   await socialMediaBatchPipelineService.runForAllSites(prisma)
@@ -142,7 +132,6 @@ function sleep(ms: number) {
   await interval20s(prisma)
   await interval5m(prisma)
   await interval1h(prisma)
-  await interval6h(prisma)
 
   // Batch loop
   while (true) {
@@ -179,12 +168,6 @@ function sleep(ms: number) {
 
       await interval1h(prisma)
       lastInterval1h = new Date().getTime()
-    }
-
-    if (new Date().getTime() - lastInterval1d >= hours6InMs) {
-
-      await interval6h(prisma)
-      lastInterval1d = new Date().getTime()
     }
 
     // Get batch jobs as promises to run

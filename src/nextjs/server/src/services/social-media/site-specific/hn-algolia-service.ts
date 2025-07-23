@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { ServerOnlyTypes } from '@/types/server-only-types'
 import { CommentModel } from '@/models/social-media/comment-model'
 import { PostModel } from '@/models/social-media/post-model'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
@@ -128,15 +129,29 @@ export class HackerNewAlgoliaService {
     // Define the ranking type
     const rankingType = 'front-page'
 
-    // Create SiteTopicList
+    // Check if this has been done recently, if so skip creating a new
+    // SiteTopicList.
     var siteTopicList = await
-          siteTopicListModel.create(
+          siteTopicListModel.getRecentlyCreated(
             prisma,
             siteTopic.id,
             tech.id,
             rankingType,
-            listed,
-            BaseDataTypes.newStatus)
+            ServerOnlyTypes.listingFreqInHours)  // hoursAgo
+
+    if (siteTopicList != null) {
+      return
+    }
+
+    // Create SiteTopicList
+    siteTopicList = await
+      siteTopicListModel.create(
+        prisma,
+        siteTopic.id,
+        tech.id,
+        rankingType,
+        listed,
+        BaseDataTypes.newStatus)
 
     // Save each hit as a post
     var index = 0

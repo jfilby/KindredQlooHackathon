@@ -21,4 +21,7 @@ export class ServerOnlyTypes {
   static socialMediaCommentUrls = {
     [this.hnSiteName]: `https://news.ycombinator.com/item?id={externalId}`
   }
+
+  // Frequency to create listings
+  static listingFreqInHours = 6
 }

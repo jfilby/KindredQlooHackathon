@@ -373,7 +373,7 @@ model SiteTopicList {
 
   ofSiteTopicListPosts         SiteTopicListPost[]
 
-  @@unique([siteTopicId, rankingType, listed])
+  @@unique([siteTopicId, techId, rankingType, listed])
   @@map("site_topic_list")
   @@schema("public")
 }

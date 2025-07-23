@@ -251,6 +251,50 @@ export class SiteTopicListModel {
     return siteTopicList
   }
 
+  async getRecentlyCreated(
+          prisma: PrismaClient,
+          siteTopicId: string,
+          techId: string,
+          rankingType: string,
+          hoursAgo: number) {
+
+    // Debug
+    const fnName = `${this.clName}.create()`
+
+    // Starting date
+    const now = new Date();
+    const xHoursAgo = new Date(now)
+    xHoursAgo.setHours(now.getHours() - hoursAgo)
+
+    // Create record
+    try {
+      return await prisma.siteTopicList.findFirst({
+        where: {
+          siteTopicId: siteTopicId,
+          techId: techId,
+          rankingType: rankingType,
+          listed: {
+            gte: xHoursAgo
+          },
+          status: {
+            in: [
+              BaseDataTypes.newStatus,
+              BaseDataTypes.activeStatus
+            ]
+          }
+        },
+        orderBy: [
+          {
+            listed: 'desc'
+          }
+        ]
+      })
+    } catch(error) {
+      console.error(`${fnName}: error: ${error}`)
+      throw 'Prisma error'
+    }
+  }
+
   async update(
           prisma: PrismaClient,
           id: string | undefined,
