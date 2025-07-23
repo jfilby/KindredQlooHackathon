@@ -62,7 +62,7 @@ export class GetQlooInsightsService {
             qlooUtilsFetchService.fetch(uri)
 
     // Debug
-    console.log(`${fnName}: results: ` + JSON.stringify(results))
+    // console.log(`${fnName}: results: ` + JSON.stringify(results))
 
     // Return
     return results
