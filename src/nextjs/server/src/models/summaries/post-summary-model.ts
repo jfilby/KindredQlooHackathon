@@ -10,6 +10,7 @@ export class PostSummaryModel {
           prisma: PrismaClient,
           postId: string,
           userProfileId: string,
+          techId: string,
           status: string,
           postSummary: string | null) {
 
@@ -22,6 +23,7 @@ export class PostSummaryModel {
         data: {
           postId: postId,
           userProfileId: userProfileId,
+          techId: techId,
           status: status,
           postSummary: postSummary
         }
@@ -193,6 +195,7 @@ export class PostSummaryModel {
           id: string,
           postId: string | undefined,
           userProfileId: string | undefined,
+          techId: string | undefined,
           status: string | undefined,
           postSummary: string | null | undefined) {
 
@@ -205,6 +208,7 @@ export class PostSummaryModel {
         data: {
           postId: postId,
           userProfileId: userProfileId,
+          techId: techId,
           status: status,
           postSummary: postSummary
         },
@@ -223,6 +227,7 @@ export class PostSummaryModel {
           id: string | undefined,
           postId: string | undefined,
           userProfileId: string | undefined,
+          techId: string | undefined,
           status: string | undefined,
           postSummary: string | null | undefined) {
 
@@ -259,6 +264,11 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
 
+      if (techId === undefined) {
+        console.error(`${fnName}: id is null and techId is undefined`)
+        throw 'Prisma error'
+      }
+
       if (status == null) {
         console.error(`${fnName}: id is null and status is null`)
         throw 'Prisma error'
@@ -275,6 +285,7 @@ export class PostSummaryModel {
                  prisma,
                  postId,
                  userProfileId,
+                 techId,
                  status,
                  postSummary)
     } else {
@@ -286,6 +297,7 @@ export class PostSummaryModel {
                  id,
                  postId,
                  userProfileId,
+                 techId,
                  status,
                  postSummary)
     }

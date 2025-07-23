@@ -7,6 +7,7 @@ import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
 import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
 import { SiteTopicModel } from '@/models/social-media/site-topic-model'
+import { GetTechService } from '@/services/tech/get-tech-service'
 
 // Models
 const commentModel = new CommentModel()
@@ -15,6 +16,9 @@ const postUrlModel = new PostUrlModel()
 const siteTopicModel = new SiteTopicModel()
 const siteTopicListModel = new SiteTopicListModel()
 const siteTopicListPostModel = new SiteTopicListPostModel()
+
+// Services
+const getTechService = new GetTechService()
 
 // Class
 export class HackerNewAlgoliaService {
@@ -107,6 +111,17 @@ export class HackerNewAlgoliaService {
       throw new CustomError(`${fnName}: siteTopic == null`)
     }
 
+    // Get the LLM
+    const tech = await
+            getTechService.getStandardLlmTech(
+              prisma,
+              undefined)
+
+    // Validate
+    if (tech == null) {
+      throw new CustomError(`${fnName}: tech == null`)
+    }
+
     // Define the listing date/time
     const listed = new Date()
 
@@ -118,6 +133,7 @@ export class HackerNewAlgoliaService {
           siteTopicListModel.create(
             prisma,
             siteTopic.id,
+            tech.id,
             rankingType,
             listed,
             BaseDataTypes.newStatus)
@@ -244,6 +260,7 @@ export class HackerNewAlgoliaService {
               prisma,
               siteTopicList.id,
               undefined,    // siteTopicId
+              undefined,    // techId
               undefined,    // rankingType
               undefined,    // listed
               BaseDataTypes.activeStatus)

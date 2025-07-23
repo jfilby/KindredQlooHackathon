@@ -9,6 +9,7 @@ export class SiteTopicListModel {
   async create(
           prisma: PrismaClient,
           siteTopicId: string,
+          techId: string,
           rankingType: string,
           listed: Date,
           status: string) {
@@ -21,6 +22,7 @@ export class SiteTopicListModel {
       return await prisma.siteTopicList.create({
         data: {
           siteTopicId: siteTopicId,
+          techId: techId,
           rankingType: rankingType,
           listed: listed,
           status: status
@@ -208,6 +210,7 @@ export class SiteTopicListModel {
           prisma: PrismaClient,
           id: string | undefined,
           siteTopicId: string | undefined,
+          techId: string | undefined,
           rankingType: string | undefined,
           listed: Date | undefined,
           status: string | undefined) {
@@ -220,6 +223,7 @@ export class SiteTopicListModel {
       return await prisma.siteTopicList.update({
         data: {
           siteTopicId: siteTopicId,
+          techId: techId,
           rankingType: rankingType,
           listed: listed,
           status: status
@@ -238,6 +242,7 @@ export class SiteTopicListModel {
           prisma: PrismaClient,
           id: string | undefined,
           siteTopicId: string | undefined,
+          techId: string | undefined,
           rankingType: string | undefined,
           listed: Date | undefined,
           status: string | undefined) {
@@ -274,6 +279,11 @@ export class SiteTopicListModel {
         throw 'Prisma error'
       }
 
+      if (techId === undefined) {
+        console.error(`${fnName}: id is null and techId is undefined`)
+        throw 'Prisma error'
+      }
+
       if (rankingType == null) {
         console.error(`${fnName}: id is null and rankingType is null`)
         throw 'Prisma error'
@@ -294,6 +304,7 @@ export class SiteTopicListModel {
                this.create(
                  prisma,
                  siteTopicId,
+                 techId,
                  rankingType,
                  listed,
                  status)
@@ -305,6 +316,7 @@ export class SiteTopicListModel {
                  prisma,
                  id,
                  siteTopicId,
+                 techId,
                  rankingType,
                  listed,
                  status)

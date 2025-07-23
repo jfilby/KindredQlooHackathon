@@ -364,11 +364,11 @@ model SiteTopicList {
   id                           String               @id @default(cuid())
   siteTopicId                  String               @map("site_topic_id")
   siteTopic                    SiteTopic            @relation(fields: [siteTopicId], references: [id])
+  techId                       String?              @map("tech_id")
+  tech                         Tech?                @relation(fields: [techId], references: [id])
   rankingType                  String               @map("ranking_type")
   listed                       DateTime
   status                       String               @db.Char(1)
-  techId                       String?              @map("tech_id")
-  tech                         Tech?                @relation(fields: [techId], references: [id])
 
   ofSiteTopicListPosts         SiteTopicListPost[]
 

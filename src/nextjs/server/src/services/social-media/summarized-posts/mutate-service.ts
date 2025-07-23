@@ -107,6 +107,7 @@ export class SummarizePostMutateService {
   async processResults(
           prisma: PrismaClient,
           forUserProfileId: string,
+          techId: string,
           postId: string,
           queryResults: any) {
 
@@ -129,6 +130,7 @@ export class SummarizePostMutateService {
               undefined,  // id
               postId,
               forUserProfileId,
+              techId,
               BaseDataTypes.activeStatus,
               part1)
 
@@ -260,6 +262,7 @@ export class SummarizePostMutateService {
                 postSummary.id,
                 post.id,
                 forUserProfileId,
+                undefined,  // techId
                 BaseDataTypes.inactiveStatus,
                 undefined)  // postSummary
 
@@ -497,6 +500,7 @@ export class SummarizePostMutateService {
     await this.processResults(
             prisma,
             forUserProfileId,
+            tech.id,
             post.id,
             queryResults)
   }

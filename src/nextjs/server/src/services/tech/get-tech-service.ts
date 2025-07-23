@@ -39,7 +39,7 @@ export class GetTechService {
 
   async getStandardLlmTech(
           prisma: PrismaClient,
-          userProfileId: string | null) {
+          userProfileId: string | undefined = undefined) {
 
     // Debug
     const fnName = `${this.clName}.getStandardLlmTech()`
