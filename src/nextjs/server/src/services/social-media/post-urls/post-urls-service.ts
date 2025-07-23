@@ -18,20 +18,38 @@ export class PostUrlsService {
   // Code
   async extractArticle(url: string) {
 
+    // Debug
+    const fnName = `${this.clName}.extractArticle()`
+
     // Get content with Puppeteer
     const browser = await puppeteer.launch({ headless: true })
-    const page = await browser.newPage()
 
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 })
+    // Wrapped in a try/catch block to prevent zombie processes left in case of
+    // failure.
+    var article: any = undefined
 
-    const html = await page.content()
-    await browser.close()
+    try {
+      const page = await browser.newPage()
 
-    const doc = new JSDOM(html, { url })
+      await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 })
 
-    // Parse with Readability
-    const reader = new Readability(doc.window.document)
-    const article = reader.parse()
+      const html = await page.content()
+      await browser.close()
+
+      const doc = new JSDOM(html, { url })
+
+      // Parse with Readability
+      const reader = new Readability(doc.window.document)
+      article = reader.parse()
+
+    } catch(e) {
+      // Gracefully handle the exception
+      console.error(`${fnName}: e: ` + JSON.stringify(e))
+      return {
+        title: null,
+        content: null
+      }
+    }
 
     // Remove redundant tab chars
     if (article != null &&
