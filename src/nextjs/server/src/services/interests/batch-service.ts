@@ -53,11 +53,6 @@ export class InterestsBatchService {
             userInterestsText.userProfileId,
             userInterestsText.text)
 
-    // Delete UserInterestsText
-    await userInterestsTextModel.deleteById(
-            prisma,
-            userInterestsText.id)
-
     // Batch job completed
     batchJob = await
       batchJobModel.update(
