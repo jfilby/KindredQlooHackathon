@@ -43,12 +43,13 @@ export class PostUrlsService {
       article = reader.parse()
 
     } catch(e) {
+
       // Gracefully handle the exception
       console.error(`${fnName}: e: ` + JSON.stringify(e))
-      return {
-        title: null,
-        content: null
-      }
+
+    } finally {
+      // Always close the browser
+      await browser?.close()
     }
 
     // Remove redundant tab chars
