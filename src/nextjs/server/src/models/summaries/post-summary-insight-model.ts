@@ -54,6 +54,28 @@ export class PostSummaryInsightModel {
     }
   }
 
+  async filter(
+          prisma: PrismaClient,
+          postSummaryId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Query
+    try {
+      return await prisma.postSummaryInsight.findMany({
+        where: {
+          postSummaryId: postSummaryId
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {

@@ -32,6 +32,39 @@ export class SummarizePostMutateService {
   clName = 'SummarizePostMutateService'
 
   // Code
+  async deleteInsightsWithComments(
+          prisma: PrismaClient,
+          postSummaryId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.deleteInsightsWithComments()`
+
+    // Get existing insights, if any
+    const postSummaryInsights = await
+            postSummaryInsightModel.filter(
+              prisma,
+              postSummaryId)
+
+    // Validate
+    if (postSummaryInsights == null) {
+      throw new CustomError(`${fnName}: postSummaryInsights == null`)
+    }
+
+    // Delete them
+    for (const postSummaryInsight of postSummaryInsights) {
+
+      // Delete any existing comments
+      await postSummaryInsightCommentModel.deleteByPostSummaryInsightId(
+              prisma,
+              postSummaryInsight.id)
+
+      // Delete the insight
+      await postSummaryInsightModel.deleteById(
+              prisma,
+              postSummaryInsight.id)
+    }
+  }
+
   async getCommentsJson(
           prisma: PrismaClient,
           postId: string) {
@@ -134,6 +167,12 @@ export class SummarizePostMutateService {
               BaseDataTypes.activeStatus,
               part1)
 
+    // Delete any exising insights and comments, to prevent conflicts from a
+    // previous summary
+    await this.deleteInsightsWithComments(
+            prisma,
+            postSummary.id)
+
     // Upserts into PostSummaryInsight
     if (part2 != null) {
 
@@ -156,11 +195,6 @@ export class SummarizePostMutateService {
 
         // Comments?
         if (insight.commentIds != null) {
-
-          // Delete any existing comments
-          await postSummaryInsightCommentModel.deleteByPostSummaryInsightId(
-                  prisma,
-                  postSummaryInsight.id)
 
           // Upsert comments
           var commentIndex = 0
