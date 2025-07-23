@@ -254,16 +254,5 @@ export class HackerNewAlgoliaService {
         }
       }
     }
-
-    // Update SiteTopicList to Active
-    siteTopicList = await
-            siteTopicListModel.update(
-              prisma,
-              siteTopicList.id,
-              undefined,    // siteTopicId
-              undefined,    // techId
-              undefined,    // rankingType
-              undefined,    // listed
-              BaseDataTypes.activeStatus)
   }
 }

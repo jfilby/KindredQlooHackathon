@@ -11,7 +11,6 @@ import { PostUrlModel } from '@/models/social-media/post-url-model'
 import { SiteModel } from '@/models/social-media/site-model'
 import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
 import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
-import { GetTechService } from '@/services/tech/get-tech-service'
 
 // Models
 const commentModel = new CommentModel()
@@ -219,6 +218,9 @@ export class SummarizePostMutateService {
       throw new CustomError(`${fnName}: siteTopicLists == null`)
     }
 
+    // Debug
+    console.log(`${fnName}: siteTopicLists: ${siteTopicLists.length}`)
+
     // Summarize posts for each list
     for (const siteTopicList of siteTopicLists) {
 
@@ -235,6 +237,10 @@ export class SummarizePostMutateService {
         throw new CustomError(`${fnName}: siteTopicListPosts == null`)
       }
 
+      // Debug
+      console.log(`${fnName}: siteTopicListPosts for siteTopicListId: ` +
+                  `${siteTopicList.id}: ${siteTopicListPosts.length}`)
+
       // Summarize posts without being user specific
       for (const siteTopicListPost of siteTopicListPosts) {
 
@@ -245,6 +251,17 @@ export class SummarizePostMutateService {
                 userProfileId,
                 forUserProfileId)
       }
+
+      // Update SiteTopicList to Active
+      const updatedSiteTopicList = await
+              siteTopicListModel.update(
+                prisma,
+                siteTopicList.id,
+                undefined,    // siteTopicId
+                undefined,    // techId
+                undefined,    // rankingType
+                undefined,    // listed
+                BaseDataTypes.activeStatus)
     }
   }
 
@@ -257,6 +274,8 @@ export class SummarizePostMutateService {
 
     // Debug
     const fnName = `${this.clName}.summarizePost()`
+
+    console.log(`${fnName}: siteTopicListPost.id: ${siteTopicListPost.id}`)
 
     // Skip those with existing summaries, or recently summarized
     if (siteTopicListPost.postSummary != null) {
