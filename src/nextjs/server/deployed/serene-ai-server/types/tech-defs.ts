@@ -76,6 +76,7 @@ export class AiTechDefs {
   static openAi_TextEmedding3Small = 'OpenAI text-embedding-3-small'
 
   // OpenRouter
+  static openRouter_DeepSeekv3_0324_Chutes = 'DeepSeek v3 0324'
   static openRouter_MistralSmall3pt2_24b_Chutes = 'Mistral Small 3.2 24B'
 
   // Model names
@@ -95,6 +96,7 @@ export class AiTechDefs {
 
   static openAi_TextEmedding3Small_ModelName = 'text-embedding-3-small'
 
+  static openRouter_DeepSeekv3_0324_Chutes_ModelName = 'deepseek/deepseek-chat-v3-0324:free'
   static openRouter_MistralSmall3pt2_24b_Chutes_ModelName = 'mistralai/mistral-small-3.2-24b-instruct-2506:free'
 
   // Context sizes
@@ -278,6 +280,18 @@ export class AiTechDefs {
       isAdminOnly: false
     },
     // OpenRouter: LLMs
+    {
+      provider: this.openRouterProvider,
+      variantName: this.openRouter_DeepSeekv3_0324_Chutes,
+      resource: this.llmsResource,
+      model: this.openRouter_DeepSeekv3_0324_Chutes_ModelName,
+      protocol: this.openAiProtocol,
+      pricingTier: SereneCoreServerTypes.free,
+      inputTokens: 163840,   // Note: this is really a combined input+output size
+      outputTokens: 163840,
+      default: false,
+      isAdminOnly: false
+    },
     {
       provider: this.openRouterProvider,
       variantName: this.openRouter_MistralSmall3pt2_24b_Chutes,
