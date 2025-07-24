@@ -191,10 +191,10 @@ function sleep(ms: number) {
         // Run in a transaction
         await prisma.$transaction(async (transactionPrisma: any) => {
           results = await
-          dispatchBatchJobByType(
-            transactionPrisma,
-            batchJobModel,
-            batchJobPending)
+            dispatchBatchJobByType(
+              transactionPrisma,
+              batchJobModel,
+              batchJobPending)
         },
         {
           maxWait: 5 * 60000, // default: 5m
