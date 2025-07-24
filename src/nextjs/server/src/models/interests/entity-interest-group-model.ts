@@ -124,9 +124,10 @@ export class EntityInterestGroupModel {
     console.log(`${fnName}: starting with fromId: ${fromId}`)
 
     // Identify similar groups
+    // SELECT eig2.id, eig2.unique_hash, eig2.embedding_tech_id, eig2.embedding::text, eig2.last_similar_found
     const similarGroups = await
             prisma.$queryRawUnsafe<EntityInterestGroup[]>(`
-              SELECT eig2.*
+              SELECT eig2.id, eig2.unique_hash, eig2.embedding_tech_id, eig2.last_similar_found
               FROM entity_interest_group eig1,
                    entity_interest_group eig2
               WHERE eig1.id = $1
@@ -137,7 +138,7 @@ export class EntityInterestGroupModel {
             fromId)
 
     // Debug
-    console.log(`${fnName}: returning..`)
+    console.log(`${fnName}: similarGroups: ` + JSON.stringify(similarGroups))
 
     // Return
     return similarGroups
