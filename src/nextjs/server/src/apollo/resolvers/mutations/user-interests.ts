@@ -1,12 +1,9 @@
 import { prisma } from '@/db'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { BatchTypes } from '@/types/batch-types'
-import { BatchJobModel } from '@/models/batch/batch-job-model'
-import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
+import { UserInterestsMutateService } from '@/services/interests/user-interests-mutate-service'
 
-// Models
-const batchJobModel = new BatchJobModel()
-const userInterestsTextModel = new UserInterestsTextModel()
+// Services
+const userInterestsMutateService = new UserInterestsMutateService()
 
 // Code
 export async function upsertUserInterestsByText(
@@ -30,31 +27,10 @@ export async function upsertUserInterestsByText(
   // Run in a transaction
   await prisma.$transaction(async (transactionPrisma: any) => {
 
-    // Upsert UserInterestsText
-    const userInterestsText = await
-            userInterestsTextModel.upsert(
-              prisma,
-              undefined,  // id
-              args.userProfileId,
-              args.text)
-
-    // Create a BatchJob to process the text
-    // runInATransaction is true to prevent missing vital record processing
-    const batchJob = await
-            batchJobModel.upsert(
-              prisma,
-              undefined,  // id
-              null,       // instanceId
-              true,       // runInATransaction
-              BatchTypes.newBatchJobStatus,
-              0,          // progressPct
-              null,       // message
-              BatchTypes.createInterestsJobType,
-              BatchTypes.userInterestsTextModel,
-              userInterestsText.id,
-              null,       // parameters
-              null,       // results
-              args.userProfileId)
+    await userInterestsMutateService.processUpdatedUserInterestsText(
+            transactionPrisma,
+            args.userProfileId,
+            args.text)
   })
 
   // Return

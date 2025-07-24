@@ -2,18 +2,23 @@ import { EntityInterest, InterestType, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
+import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
+const batchJobModel = new BatchJobModel()
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
 const userEntityInterestModel = new UserEntityInterestModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
+const userInterestsTextModel = new UserInterestsTextModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
@@ -117,6 +122,54 @@ export class UserInterestsMutateService {
     // Return
     return {
       status: true
+    }
+  }
+
+  async processUpdatedUserInterestsText(
+          prisma: PrismaClient,
+          userProfileId: string,
+          text: string) {
+
+    // Debug
+    const fnName = `${this.clName}.processUpdatedUserInterestsText()`
+
+    // Upsert UserInterestsText
+    const userInterestsText = await
+            userInterestsTextModel.upsert(
+              prisma,
+              undefined,  // id
+              userProfileId,
+              text)
+
+    // Determine if a BatchJob has already been created
+    var batchJob = await
+          batchJobModel.getByStatusesAndJobTypeAndRefModelAndRefId(
+            prisma,
+            null,  // instanceId
+            [BatchTypes.newBatchJobStatus],
+            BatchTypes.createInterestsJobType,
+            BatchTypes.userInterestsTextModel,
+            userInterestsText.id)
+
+    if (batchJob == null) {
+
+      // Create a BatchJob to process the text
+      // runInATransaction is true to prevent missing vital record processing
+      batchJob = await
+        batchJobModel.upsert(
+          prisma,
+          undefined,  // id
+          null,       // instanceId
+          true,       // runInATransaction
+          BatchTypes.newBatchJobStatus,
+          0,          // progressPct
+          null,       // message
+          BatchTypes.createInterestsJobType,
+          BatchTypes.userInterestsTextModel,
+          userInterestsText.id,
+          null,       // parameters
+          null,       // results
+          userProfileId)
     }
   }
 
