@@ -22,6 +22,12 @@ export class ServerOnlyTypes {
     [this.hnSiteName]: `https://news.ycombinator.com/item?id={externalId}`
   }
 
+  // Social media ranking types
+  static frontPageRankingType = 'front-page'
+
+  // Site-independent site topics
+  static allSiteTopic = 'all'
+
   // Frequency to create listings
   static listingFreqInHours = 6
 }

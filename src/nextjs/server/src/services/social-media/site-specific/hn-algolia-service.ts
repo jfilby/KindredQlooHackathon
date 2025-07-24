@@ -105,7 +105,7 @@ export class HackerNewAlgoliaService {
             siteTopicModel.getByUniqueKey(
               prisma,
               siteId,
-              'front-page')  // name
+              ServerOnlyTypes.allSiteTopic)  // name
 
     // Validate
     if (siteTopic == null) {
@@ -127,7 +127,7 @@ export class HackerNewAlgoliaService {
     const listed = new Date()
 
     // Define the ranking type
-    const rankingType = 'front-page'
+    const rankingType = ServerOnlyTypes.frontPageRankingType
 
     // Check if this has been done recently, if so skip creating a new
     // SiteTopicList.

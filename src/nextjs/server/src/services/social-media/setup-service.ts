@@ -36,6 +36,6 @@ export class SocialMediaSetupService {
             prisma,
             undefined,  // id
             hnSite.id,
-            'front-page')
+            ServerOnlyTypes.allSiteTopic)
   }
 }

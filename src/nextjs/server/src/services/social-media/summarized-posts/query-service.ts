@@ -74,7 +74,7 @@ export class SummarizePostQueryService {
               siteTopicModel.getByUniqueKey(
                 prisma,
                 site.id,
-                'front-page')
+                ServerOnlyTypes.allSiteTopic)
 
       // Validate
       if (siteTopic == null) {
@@ -89,7 +89,7 @@ export class SummarizePostQueryService {
               siteTopicListModel.getLatestBySiteTopicIdAndStatus(
                 prisma,
                 siteTopic.id,
-                'front-page',  // rankingType
+                ServerOnlyTypes.frontPageRankingType,
                 BaseDataTypes.activeStatus)
 
       if (siteTopicList == null) {
