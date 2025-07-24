@@ -21,6 +21,11 @@ export class SocialMediaSetupService {
           prisma: PrismaClient,
           userProfileId: string) {
 
+    // Debug
+    const fnName = `${this.clName}.setup()`
+
+    // console.log(`${fnName}: starting..`)
+
     // Upsert Site records
     for (const siteName of ServerOnlyTypes.socialMediaSites) {
 
@@ -45,7 +50,7 @@ export class SocialMediaSetupService {
               ServerOnlyTypes.allSiteTopic)
 
     // Get/create a BatchJob to add interests for the site topic
-    var batchJob = await
+    var batchJobs = await
           batchJobModel.getByStatusesAndJobTypeAndRefModelAndRefId(
             prisma,
             null,  // instanceId
@@ -57,22 +62,26 @@ export class SocialMediaSetupService {
             BatchTypes.siteTopicModel,
             siteTopic.id)
 
-    if (batchJob == null) {
+    // Debug
+    // console.log(`${fnName}: batchJobs: ` + JSON.stringify(batchJobs))
 
-      batchJob = await
-        batchJobModel.create(
-          prisma,
-          null,   // instanceId
-          false,  // runInATransaction
-          BatchTypes.newBatchJobStatus,
-          0,      // progressPct
-          null,   // message
-          BatchTypes.createSiteTopicInterests,
-          BatchTypes.siteTopicModel,
-          siteTopic.id,
-          null,   // parameters
-          null,   // results
-          userProfileId)
+    // Create (if not found)
+    if (batchJobs.length === 0) {
+
+      const batchJob = await
+              batchJobModel.create(
+                prisma,
+                null,   // instanceId
+                false,  // runInATransaction
+                BatchTypes.newBatchJobStatus,
+                0,      // progressPct
+                null,   // message
+                BatchTypes.createSiteTopicInterests,
+                BatchTypes.siteTopicModel,
+                siteTopic.id,
+                null,   // parameters
+                null,   // results
+                userProfileId)
     }
   }
 }

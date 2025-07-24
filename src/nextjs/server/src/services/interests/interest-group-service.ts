@@ -210,9 +210,7 @@ export class InterestGroupService {
       const userEntityInterests = await
               userEntityInterestModel.filter(
                 prisma,
-                userEntityInterestGroup.userProfileId,
-                undefined,
-                false)  // includeEntityInterests
+                userEntityInterestGroup.userProfileId)
 
       // Get entityInterestIds
       const entityInterestIds = userEntityInterests.map(

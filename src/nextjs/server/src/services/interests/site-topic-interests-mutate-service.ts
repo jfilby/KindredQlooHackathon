@@ -2,7 +2,9 @@ import { BatchJob, PrismaClient } from '@prisma/client'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { SiteTopicEntityInterestGroupModel } from '@/models/interests/site-topic-entity-interest-group-model'
@@ -11,6 +13,7 @@ import { GetTechService } from '../tech/get-tech-service'
 import { InterestGroupService } from './interest-group-service'
 
 // Models
+const batchJobModel = new BatchJobModel()
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
 const siteTopicEntityInterestGroupModel = new SiteTopicEntityInterestGroupModel()
@@ -50,14 +53,14 @@ export class SiteTopicInterestsMutateService {
       await this.createStarterInterestGroups(
               prisma,
               userProfileId,
-              siteTopic)
+              siteTopic.id)
     }
   }
 
   async createStarterInterestGroups(
           prisma: PrismaClient,
           userProfileId: string,
-          siteTopic: any) {
+          siteTopicId: string) {
 
     // Debug
     const fnName = `${this.clName}.createStarterInterestGroups()`
@@ -66,18 +69,48 @@ export class SiteTopicInterestsMutateService {
     const tech = await
             getTechService.getStandardLlmTech(prisma)
 
+    // Get SiteTopic
+    const siteTopic = await
+            siteTopicModel.getById(
+              prisma,
+              siteTopicId)
+
+    // Validate
+    if (siteTopic == null) {
+      throw new CustomError(`${fnName}: siteTopic == null`)
+    }
+
     // Get InterestTypes
+    const interestTypes = await
+            interestTypeModel.filter(prisma)
+
+    if (interestTypes == null) {
+      throw new CustomError(`${fnName}: interestTypes == null`)
+    }
+
+    // Get EntityInterests
     const entityInterests = await
             entityInterestModel.filter(
-              prisma)
+              prisma,
+              undefined,  // interestTypeId
+              siteTopicId,
+              true)       // includeInterestTypes
 
     if (entityInterests == null) {
       throw new CustomError(`${fnName}: entityInterests == null`)
     }
 
-    if (entityInterests.length === 0) {
-      throw new CustomError(`${fnName}: entityInterests.length === 0`)
+    // No need to run if 5+ interests exist for the SiteTopic
+    if (entityInterests.length >= 5) {
+      return {
+        status: true
+      }
     }
+
+    // Debug
+    console.log(`${fnName}: siteTopic: ` + JSON.stringify(siteTopic))
+    console.log(`${fnName}: entityInterests: ` + JSON.stringify(entityInterests))
+    console.log(`${fnName}: interestTypes: ` + JSON.stringify(interestTypes))
 
     // Define the prompt
     var prompt =
@@ -91,11 +124,12 @@ export class SiteTopicInterestsMutateService {
           `- The interestNames should be in natural, but lower case.\n` +
           `\n` +
           `Entity interests: ` + JSON.stringify(entityInterests) + `\n` +
+          `Interest types: ` + JSON.stringify(interestTypes) + `\n` +
           `\n` +
           `An example:\n` +
           `[\n` +
           `  {\n` +
-          `    "interestTypeId": "..".\n` +
+          `    "interestTypeId": "..",\n` +
           `    "interestName": ".."\n` +
           `  }\n` +
           `]\n`
@@ -118,7 +152,11 @@ export class SiteTopicInterestsMutateService {
     if (queryResults == null) {
 
       console.log(`${fnName}: queryResults == null`)
-      return
+
+      return {
+        status: false,
+        message: `${fnName}: queryResults == null`
+      }
     }
 
     // Process
@@ -148,7 +186,7 @@ export class SiteTopicInterestsMutateService {
       throw new CustomError(`${fnName}: batchJob.userProfileId == null`)
     }
 
-    if (batchJob.userProfileId == null) {
+    if (batchJob.refId == null) {
       throw new CustomError(`${fnName}: batchJob.refId == null`)
     }
 
@@ -158,6 +196,16 @@ export class SiteTopicInterestsMutateService {
               prisma,
               batchJob.userProfileId,
               batchJob.refId)
+
+    // Set BatchJob to completed
+    await batchJobModel.update(
+            prisma,
+            batchJob.id,
+            undefined,  // instanceId,
+            undefined,  // runInATransaction
+            BatchTypes.completedBatchJobStatus,
+            100,        // progressPct
+            null)       // message
 
     // Return
     return results
@@ -170,6 +218,8 @@ export class SiteTopicInterestsMutateService {
 
     // Debug
     const fnName = `${this.clName}.createStarterInterestGroups()`
+
+    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Validate
     if (queryResults.json == null) {
@@ -198,26 +248,33 @@ export class SiteTopicInterestsMutateService {
         throw new CustomError(`${fnName}: interest.interestName == null`)
       }
 
-      // Lowercase the interestName
-      const interestName = (interest.interestName as string).toLowerCase()
-
       // Validate interestTypeId exists
       const interestType = await
               interestTypeModel.getById(
                 prisma,
                 interest.interestTypeId)
 
-      if (interestType) {
+      if (interestType == null) {
         throw new CustomError(`${fnName}: InterestType not found for id: ` +
                               `${interest.interestTypeId}`)
       }
 
       // Upsert the entity interest
-      const entityInterest = await
-              entityInterestModel.getByUniqueKey(
-                prisma,
-                interest.interestTypeId,
-                interestName)
+      var entityInterest = await
+            entityInterestModel.getByUniqueKey(
+              prisma,
+              interest.interestTypeId,
+              interest.interestName)
+
+      if (entityInterest == null) {
+
+        entityInterest = await
+          entityInterestModel.create(
+            prisma,
+            interest.interestTypeId,
+            null,  // qlooEntityId
+            interest.interestName)
+      }
 
       // Add to entityInterestIds
       entityInterestIds.push(entityInterest.id)
@@ -225,7 +282,9 @@ export class SiteTopicInterestsMutateService {
 
     // Return early if no entityInterestIds
     if (entityInterestIds.length === 0) {
-      return
+      return {
+        status: true
+      }
     }
 
     // Get/create the EntityInterestGroup
@@ -246,5 +305,10 @@ export class SiteTopicInterestsMutateService {
               undefined,  // id
               siteTopicId,
               entityInterestGroup.id)
+
+    // Return OK
+    return {
+      status: true
+    }
   }
 }

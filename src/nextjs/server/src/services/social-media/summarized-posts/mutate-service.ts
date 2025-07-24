@@ -450,18 +450,38 @@ export class SummarizePostMutateService {
               post.id)
 
     // Get InterestTypes
+    const interestTypes = await
+            interestTypeModel.filter(prisma)
+
+    if (interestTypes == null) {
+      throw new CustomError(`${fnName}: interestTypes == null`)
+    }
+
+    // Get EntityInterests
     const entityInterests = await
             entityInterestModel.filter(
               prisma,
-              undefined)
+              undefined,  // interestTypeId
+              siteTopicList.siteTopicId,
+              true)       // includeInterestTypes
 
     if (entityInterests == null) {
       throw new CustomError(`${fnName}: entityInterests == null`)
     }
 
     if (entityInterests.length === 0) {
-      throw new CustomError(`${fnName}: entityInterests.length === 0`)
+      // Not yet ready to summarize posts
+      console.log(`${fnName}: entityInterests.length === 0 (not ready)`)
+      return null
     }
+
+    /* Debug
+    if (entityInterests.length > 0) {
+      console.log(`${fnName}: entityInterests: ` +
+                  JSON.stringify(entityInterests))
+
+      throw new CustomError(`${fnName}: STOP TO TEST`)
+    } */
 
     // Define the prompt
     var prompt =
@@ -487,10 +507,12 @@ export class SummarizePostMutateService {
           `  commentIds (get from the id field of the comments).\n` +
           `- Don't consider comments that are too terse, unhelpful or ` +
           `  proven wrong by follow-on comments.\n` +
-          `- Add a list of interests from the list provided. You may ` +
-          `  add one interest that's not in the list if it's relevant.\n` +
+          `- Add a list of interests from the entityInterests list provided.` +
+          `  You may add one interest that's not in the list if it's ` +
+          `  relevant.\n` +
           `\n` +
           `Entity interests: ` + JSON.stringify(entityInterests) + `\n` +
+          `Interest types: ` + JSON.stringify(interestTypes) + `\n` +
           `\n`
 
     // Existing summary post?
@@ -517,7 +539,7 @@ export class SummarizePostMutateService {
       `  ],\n` +
       `  "interests": [\n` +
       `    {\n` +
-      `      "interestTypeId": "..".\n` +
+      `      "interestTypeId": "..",\n` +
       `      "interestName": ".."\n` +
       `    }\n` +
       `  ]\n` +
@@ -629,7 +651,7 @@ export class SummarizePostMutateService {
       console.warn(`${fnName}: timed-out trying to summarize post: ` +
                    `${post.id} with an LLM`)
 
-      return
+      return null
     }
 
     // Process results

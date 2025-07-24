@@ -28,12 +28,14 @@ export class PostInterestsMutateService {
     // Debug
     const fnName = `${this.clName}.process()`
 
+    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+
     // Validate
     if (queryResults.json.interests == null) {
       throw new CustomError(`${fnName}: queryResults.json.interests == null`)
     }
 
-    if (!Array.isArray(queryResults.json)) {
+    if (!Array.isArray(queryResults.json.interests)) {
       throw new CustomError(`${fnName}: queryResults.json.interests isn't ` +
                             `an array`)
     }
@@ -56,16 +58,13 @@ export class PostInterestsMutateService {
         throw new CustomError(`${fnName}: interest.interestName == null`)
       }
 
-      // Lowercase the interestName
-      const interestName = (interest.interestName as string).toLowerCase()
-
       // Validate interestTypeId exists
       const interestType = await
               interestTypeModel.getById(
                 prisma,
                 interest.interestTypeId)
 
-      if (interestType) {
+      if (interestType == null) {
         throw new CustomError(`${fnName}: InterestType not found for id: ` +
                               `${interest.interestTypeId}`)
       }
@@ -75,7 +74,14 @@ export class PostInterestsMutateService {
               entityInterestModel.getByUniqueKey(
                 prisma,
                 interest.interestTypeId,
-                interestName)
+                interest.interestName)
+
+      if (entityInterest == null) {
+        throw new CustomError(
+                    `${fnName}: entityInterest == null for interestTypeId: ` +
+                    `${interest.interestTypeId} and interestName: ` +
+                    `${interest.interestName}`)
+      }
 
       // Add to entityInterestIds
       entityInterestIds.push(entityInterest.id)

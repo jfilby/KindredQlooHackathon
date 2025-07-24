@@ -55,6 +55,7 @@ export class EntityInterestModel {
   async filter(
           prisma: PrismaClient,
           interestTypeId: string | undefined = undefined,
+          siteTopicId: string | undefined = undefined,
           includeInterestTypes: boolean = false) {
 
     // Debug
@@ -67,7 +68,18 @@ export class EntityInterestModel {
           interestType: includeInterestTypes
         },
         where: {
-          interestTypeId: interestTypeId
+          interestTypeId: interestTypeId,
+          ofEntityInterestItems: {
+            every: {
+              entityInterestGroup: {
+                ofSiteTopicEntityInterestGroup: {
+                  some: {
+                    siteTopicId: siteTopicId
+                  }
+                }
+              }
+            }
+          }
         }
       })
     } catch(error: any) {

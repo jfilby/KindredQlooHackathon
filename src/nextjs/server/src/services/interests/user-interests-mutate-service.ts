@@ -235,7 +235,8 @@ export class UserInterestsMutateService {
               entityInterestModel.filter(
                 prisma,
                 interestType.id,
-                true)  // includeInterestTypes
+                undefined,  // siteTopicId
+                true)       // includeInterestTypes
 
       const interests = entityInterests.map(
               (entityInterest: EntityInterest) => entityInterest.name)

@@ -62,6 +62,9 @@ export class SiteTopicModel {
 
     try {
       siteTopic = await prisma.siteTopic.findUnique({
+        include: {
+          site: true
+        },
         where: {
           id: id
         }

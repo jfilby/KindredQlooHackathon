@@ -60,6 +60,11 @@ export class SetupService {
   async run(prisma: PrismaClient,
             adminUserProfile: UserProfile) {
 
+    // Debug
+    const fnName = `${this.clName}.run()`
+
+    // console.log(`${fnName}: starting..`)
+
     // Chat settings names
     await this.chatSettingsSetup(
             prisma,
