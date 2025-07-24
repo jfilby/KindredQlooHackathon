@@ -1,8 +1,10 @@
 import { PrismaClient, UserProfile } from '@prisma/client'
+import { InterestsBatchServiceTests } from '../interests/batch-service-tests'
 import { QlooTests } from '../qloo/tests'
 import { UserInterestsMutateServiceTests } from '../interests/user-interests-mutate-service-tests'
 
 // Services
+const interestsBatchServiceTests = new InterestsBatchServiceTests()
 const qlooTests = new QlooTests()
 const userInterestsMutateServiceTests = new UserInterestsMutateServiceTests()
 
@@ -15,11 +17,13 @@ export class Tests {
   interestsTests = 'interests'
   postSummaryTests = 'post-summary'
   qlooTests = 'qloo'
+  upsertInterestsCommand = 'upsert-interests'
 
   tests = [
     this.interestsTests,
     this.postSummaryTests,
-    this.qlooTests
+    this.qlooTests,
+    this.upsertInterestsCommand
   ]
 
   // Code
@@ -46,6 +50,12 @@ export class Tests {
       case this.qlooTests: {
 
         await qlooTests.tests(prisma)
+        break
+      }
+
+      case this.upsertInterestsCommand: {
+
+        await interestsBatchServiceTests.testCreateInterests(prisma)
         break
       }
 

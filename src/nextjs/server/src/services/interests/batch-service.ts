@@ -61,7 +61,8 @@ export class InterestsBatchService {
         undefined,  // instanceId
         undefined,  // runInATransaction
         BatchTypes.completedBatchJobStatus,
-        100)        // progressPct
+        100,        // progressPct
+        null)       // message
 
     // Return
     return {

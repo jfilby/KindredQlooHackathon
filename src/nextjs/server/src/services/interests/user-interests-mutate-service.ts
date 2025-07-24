@@ -146,7 +146,10 @@ export class UserInterestsMutateService {
           batchJobModel.getByStatusesAndJobTypeAndRefModelAndRefId(
             prisma,
             null,  // instanceId
-            [BatchTypes.newBatchJobStatus],
+            [
+              BatchTypes.newBatchJobStatus,
+              BatchTypes.activeBatchJobStatus
+            ],
             BatchTypes.createInterestsJobType,
             BatchTypes.userInterestsTextModel,
             userInterestsText.id)
@@ -180,6 +183,8 @@ export class UserInterestsMutateService {
 
     // Debug
     const fnName = `${this.clName}.upsertUserInterestsByText()`
+
+    console.log(`${fnName}: starting..`)
 
     // Validate
     if (text == null) {
