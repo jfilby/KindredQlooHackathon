@@ -119,42 +119,6 @@ model AiPersona {
 
 // Kindred: Interests
 
-/* model AiPersonaDomainInterest {
-  id                           String               @id @default(cuid())
-  aiPersonaId                  String               @map("ai_persona_id")
-  aiPersona                    AiPersona            @relation(fields: [aiPersonaId], references: [id])
-  domainInterestId             String               @map("domain_interest_id")
-  domainInterest               DomainInterest       @relation(fields: [domainInterestId], references: [id])
-
-  @@unique([aiPersonaId, domainInterestId])
-  @@map("ai_persona_domain_interest")
-  @@schema("public")
-}
-
-model AiPersonaEntityInterest {
-  id                           String               @id @default(cuid())
-  aiPersonaId                  String               @map("ai_persona_id")
-  aiPersona                    AiPersona            @relation(fields: [aiPersonaId], references: [id])
-  entityInterestId             String               @map("entity_interest_id")
-  entityInterest               EntityInterest       @relation(fields: [entityInterestId], references: [id])
-
-  @@unique([aiPersonaId, entityInterestId])
-  @@map("ai_persona_entity_interest")
-  @@schema("public")
-}
-
-model UserDomainInterest {
-  id                           String               @id @default(cuid())
-  userProfileId                String               @map("user_profile_id")
-  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
-  domainInterestId             String               @map("domain_interest_id")
-  domainInterest               DomainInterest       @relation(fields: [domainInterestId], references: [id])
-
-  @@unique([userProfileId, domainInterestId])
-  @@map("user_domain_interest")
-  @@schema("public")
-} */
-
 model EntityInterest {
   id                           String               @id @default(cuid())
   interestTypeId               String               @map("interest_type_id")
@@ -165,7 +129,6 @@ model EntityInterest {
   siteTopic                    SiteTopic?           @relation(fields: [siteTopicId], references: [id])
   name                         String               @unique
 
-  // ofAiPersonaEntityInterest    AiPersonaEntityInterest[]
   ofEntityInterestItems        EntityInterestItem[]
   ofUserEntityInterests        UserEntityInterest[]
 
@@ -184,10 +147,12 @@ model EntityInterestGroup {
   embeddingGenerated           DateTime?            @map("embedding_generated")
   lastSimilarFound             DateTime?            @map("last_similar_found")
 
-  ofEntityInterestItems          EntityInterestItem[]
-  ofSharedEntityInterestGroupsA  SharedEntityInterestGroup[]  @relation("a")
-  ofSharedEntityInterestGroupsB  SharedEntityInterestGroup[]  @relation("b")
-  ofUserEntityInterestGroups     UserEntityInterestGroup[]
+  ofEntityInterestItems           EntityInterestItem[]
+  ofPostEntityInterestGroups      PostEntityInterestGroup[]
+  ofSharedEntityInterestGroupsA   SharedEntityInterestGroup[]  @relation("a")
+  ofSharedEntityInterestGroupsB   SharedEntityInterestGroup[]  @relation("b")
+  ofSiteTopicEntityInterestGroup  SiteTopicEntityInterestGroup[]
+  ofUserEntityInterestGroups      UserEntityInterestGroup[]
 
   @@map("entity_interest_group")
   @@schema("public")
@@ -213,10 +178,19 @@ model InterestType {
   name                         String               @unique
 
   ofEntityInterests            EntityInterest[]
-  // ofAiPersonaDomainInterests   AiPersonaDomainInterest[]
-  // ofUserDomainInterests        UserDomainInterest[]
 
   @@map("interest_type")
+  @@schema("public")
+}
+
+model PostEntityInterestGroup {
+  id                           String                @id @default(cuid())
+  postId                       String                @map("post_id") @unique
+  post                         Post                  @relation(fields: [postId], references: [id])
+  entityInterestGroupId        String?               @map("entity_interest_group_id")
+  entityInterestGroup          EntityInterestGroup?  @relation(fields: [entityInterestGroupId], references: [id])
+
+  @@map("post_entity_interest_group")
   @@schema("public")
 }
 
@@ -229,6 +203,17 @@ model SharedEntityInterestGroup {
 
   @@unique([entityInterestGroupAId, entityInterestGroupBId])
   @@map("shared_entity_interest_group")
+  @@schema("public")
+}
+
+model SiteTopicEntityInterestGroup {
+  id                           String                @id @default(cuid())
+  siteTopicId                  String                @map("site_topic_id") @unique
+  siteTopic                    SiteTopic             @relation(fields: [siteTopicId], references: [id])
+  entityInterestGroupId        String?               @map("entity_interest_group_id")
+  entityInterestGroup          EntityInterestGroup?  @relation(fields: [entityInterestGroupId], references: [id])
+
+  @@map("site_topic_entity_interest_group")
   @@schema("public")
 }
 
@@ -298,6 +283,7 @@ model Post {
   checkedComments              DateTime?            @map("checked_comments")
 
   ofComments                   Comment[]
+  ofPostEntityInterestGroups   PostEntityInterestGroup[]
   ofPostSummaries              PostSummary[]
   ofPostTopics                 PostTopic[]
   ofSiteTopicListPosts         SiteTopicListPost[]
@@ -352,10 +338,11 @@ model SiteTopic {
   site                         Site                 @relation(fields: [siteId], references: [id])
   name                         String
 
-  ofEntityInterests            EntityInterest[]
-  ofInterestTypes              InterestType[]
-  ofPostTopics                 PostTopic[]
-  ofSiteTopicLists             SiteTopicList[]
+  ofEntityInterests               EntityInterest[]
+  ofInterestTypes                 InterestType[]
+  ofPostTopics                    PostTopic[]
+  ofSiteTopicLists                SiteTopicList[]
+  ofSiteTopicEntityInterestGroup  SiteTopicEntityInterestGroup[]
 
   @@unique([siteId, name])
   @@map("site_topic")

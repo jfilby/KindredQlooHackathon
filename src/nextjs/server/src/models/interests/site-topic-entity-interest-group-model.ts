@@ -1,25 +1,25 @@
 import { PrismaClient } from '@prisma/client'
 
-export class SiteTopicModel {
+export class SiteTopicEntityInterestGroupModel {
 
   // Consts
-  clName = 'SiteTopicModel'
+  clName = 'SiteTopicEntityInterestGroupModel'
 
   // Code
   async create(
           prisma: PrismaClient,
-          siteId: string,
-          name: string) {
+          siteTopicId: string,
+          entityInterestGroupId: string | null) {
 
     // Debug
     const fnName = `${this.clName}.create()`
 
     // Create record
     try {
-      return await prisma.siteTopic.create({
+      return await prisma.siteTopicEntityInterestGroup.create({
         data: {
-          siteId: siteId,
-          name: name
+          siteTopicId: siteTopicId,
+          entityInterestGroupId: entityInterestGroupId
         }
       })
     } catch(error) {
@@ -37,7 +37,7 @@ export class SiteTopicModel {
 
     // Delete
     try {
-      return await prisma.siteTopic.delete({
+      return await prisma.siteTopicEntityInterestGroup.delete({
         where: {
           id: id
         }
@@ -50,6 +50,28 @@ export class SiteTopicModel {
     }
   }
 
+  async filter(
+          prisma: PrismaClient,
+          siteTopicId: string | undefined,
+          entityInterestGroupId: string | null | undefined) {
+
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Query
+    try {
+      return await prisma.siteTopicEntityInterestGroup.findMany({
+        where: {
+          siteTopicId: siteTopicId,
+          entityInterestGroupId: entityInterestGroupId
+        }
+      })
+    } catch(error: any) {
+      console.error(`${fnName}: error: ${error}`)
+      throw 'Prisma error'
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {
@@ -58,10 +80,10 @@ export class SiteTopicModel {
     const fnName = `${this.clName}.getById()`
 
     // Query
-    var siteTopic: any = null
+    var siteTopicEntityInterestGroup: any = null
 
     try {
-      siteTopic = await prisma.siteTopic.findUnique({
+      siteTopicEntityInterestGroup = await prisma.siteTopicEntityInterestGroup.findUnique({
         where: {
           id: id
         }
@@ -74,7 +96,7 @@ export class SiteTopicModel {
     }
 
     // Return
-    return siteTopic
+    return siteTopicEntityInterestGroup
   }
 
   async getByIds(
@@ -86,7 +108,7 @@ export class SiteTopicModel {
 
     // Query
     try {
-      return await prisma.siteTopic.findMany({
+      return await prisma.siteTopicEntityInterestGroup.findMany({
         where: {
           id: {
             in: ids
@@ -103,31 +125,24 @@ export class SiteTopicModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          siteId: string,
-          name: string) {
+          siteTopicId: string) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
 
     // Validate
-    if (siteId == null) {
-      console.error(`${fnName}: siteId == null`)
-      throw 'Validation error'
-    }
-
-    if (name == null) {
-      console.error(`${fnName}: name == null`)
+    if (siteTopicId == null) {
+      console.error(`${fnName}: siteTopicId == null`)
       throw 'Validation error'
     }
 
     // Query
-    var siteTopic: any = null
+    var siteTopicEntityInterestGroup: any = null
 
     try {
-      siteTopic = await prisma.siteTopic.findFirst({
+      siteTopicEntityInterestGroup = await prisma.siteTopicEntityInterestGroup.findFirst({
         where: {
-          siteId: siteId,
-          name: name
+          siteTopicId: siteTopicId
         }
       })
     } catch(error: any) {
@@ -138,49 +153,24 @@ export class SiteTopicModel {
     }
 
     // Return
-    return siteTopic
-  }
-
-  async getWithMissingEntityInterestGroups(prisma: PrismaClient) {
-
-    // Debug
-    const fnName = `${this.clName}.getWithMissingEntityInterestGroups()`
-
-    // Query
-    try {
-      return await prisma.siteTopic.findMany({
-        include: {
-          site: true
-        },
-        where: {
-          ofSiteTopicEntityInterestGroup: {
-            none: {}
-          }
-        }
-      })
-    } catch(error: any) {
-      if (!(error instanceof error.NotFound)) {
-        console.error(`${fnName}: error: ${error}`)
-        throw 'Prisma error'
-      }
-    }
+    return siteTopicEntityInterestGroup
   }
 
   async update(
           prisma: PrismaClient,
           id: string | undefined,
-          siteId: string | undefined,
-          name: string | undefined) {
+          siteTopicId: string | undefined,
+          entityInterestGroupId: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
 
     // Update record
     try {
-      return await prisma.siteTopic.update({
+      return await prisma.siteTopicEntityInterestGroup.update({
         data: {
-          siteId: siteId,
-          name: name
+          siteTopicId: siteTopicId,
+          entityInterestGroupId: entityInterestGroupId
         },
         where: {
           id: id
@@ -195,8 +185,8 @@ export class SiteTopicModel {
   async upsert(
           prisma: PrismaClient,
           id: string | undefined,
-          siteId: string | undefined,
-          name: string | undefined) {
+          siteTopicId: string | undefined,
+          entityInterestGroupId: string | null | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -205,17 +195,15 @@ export class SiteTopicModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        siteId != null &&
-        name != null) {
+        siteTopicId != null) {
 
-      const post = await
+      const siteTopicEntityInterestGroup = await
               this.getByUniqueKey(
                 prisma,
-                siteId,
-                name)
+                siteTopicId)
 
-      if (post != null) {
-        id = post.id
+      if (siteTopicEntityInterestGroup != null) {
+        id = siteTopicEntityInterestGroup.id
       }
     }
 
@@ -223,22 +211,23 @@ export class SiteTopicModel {
     if (id == null) {
 
       // Validate for create (mainly for type validation of the create call)
-      if (siteId == null) {
-        console.error(`${fnName}: id is null and siteId is null`)
+      if (siteTopicId == null) {
+        console.error(`${fnName}: id is null and siteTopicId is null`)
         throw 'Prisma error'
       }
 
-      if (name == null) {
-        console.error(`${fnName}: id is null and name is null`)
+      if (entityInterestGroupId === undefined) {
+        console.error(`${fnName}: id is null and entityInterestGroupId is undefined`)
         throw 'Prisma error'
       }
+
 
       // Create
       return await
                this.create(
                  prisma,
-                 siteId,
-                 name)
+                 siteTopicId,
+                 entityInterestGroupId)
     } else {
 
       // Update
@@ -246,8 +235,8 @@ export class SiteTopicModel {
                this.update(
                  prisma,
                  id,
-                 siteId,
-                 name)
+                 siteTopicId,
+                 entityInterestGroupId)
     }
   }
 }
