@@ -10,7 +10,6 @@ export class EntityInterestModel {
           prisma: PrismaClient,
           interestTypeId: string,
           qlooEntityId: string | null,
-          siteTopicId: string | null,
           name: string) {
 
     // Debug
@@ -22,7 +21,6 @@ export class EntityInterestModel {
         data: {
           interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
-          siteTopicId: siteTopicId,
           name: name
         }
       })
@@ -56,7 +54,7 @@ export class EntityInterestModel {
 
   async filter(
           prisma: PrismaClient,
-          interestTypeId: string | undefined,
+          interestTypeId: string | undefined = undefined,
           includeInterestTypes: boolean = false) {
 
     // Debug
@@ -174,7 +172,6 @@ export class EntityInterestModel {
           id: string | undefined,
           interestTypeId: string | undefined,
           qlooEntityId: string | null | undefined,
-          siteTopicId: string | null | undefined,
           name: string | undefined) {
 
     // Debug
@@ -186,7 +183,6 @@ export class EntityInterestModel {
         data: {
           interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
-          siteTopicId: siteTopicId,
           name: name
         },
         where: {
@@ -204,7 +200,6 @@ export class EntityInterestModel {
           id: string | undefined,
           interestTypeId: string | undefined,
           qlooEntityId: string | null | undefined,
-          siteTopicId: string | null | undefined,
           name: string | undefined) {
 
     // Debug
@@ -242,11 +237,6 @@ export class EntityInterestModel {
         throw 'Prisma error'
       }
 
-      if (siteTopicId === undefined) {
-        console.error(`${fnName}: id is null and siteTopicId is undefined`)
-        throw 'Prisma error'
-      }
-
       if (name == null) {
         console.error(`${fnName}: id is null and name is null`)
         throw 'Prisma error'
@@ -258,7 +248,6 @@ export class EntityInterestModel {
                  prisma,
                  interestTypeId,
                  qlooEntityId,
-                 siteTopicId,
                  name)
     } else {
 
@@ -269,7 +258,6 @@ export class EntityInterestModel {
                  id,
                  interestTypeId,
                  qlooEntityId,
-                 siteTopicId,
                  name)
     }
   }

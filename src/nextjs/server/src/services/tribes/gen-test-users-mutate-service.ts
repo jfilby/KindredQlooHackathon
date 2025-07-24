@@ -160,7 +160,6 @@ export class GenTestUsersMutateService {
                     undefined,  // id
                     interestType.id,
                     null,       // qlooEntityId
-                    null,       // siteTopicId
                     interest)   // name
 
           const userEntityInterest = await

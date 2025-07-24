@@ -125,8 +125,6 @@ model EntityInterest {
   interestType                 InterestType         @relation(fields: [interestTypeId], references: [id])
   qlooEntityId                 String?              @map("qloo_entity_id")
   qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
-  siteTopicId                  String?              @map("site_topic_id")
-  siteTopic                    SiteTopic?           @relation(fields: [siteTopicId], references: [id])
   name                         String               @unique
 
   ofEntityInterestItems        EntityInterestItem[]
@@ -173,8 +171,6 @@ model EntityInterestItem {
 model InterestType {
   id                           String               @id @default(cuid())
   qlooEntityType               String?              @map("qloo_entity_type")
-  siteTopicId                  String?              @map("site_topic_id")
-  siteTopic                    SiteTopic?           @relation(fields: [siteTopicId], references: [id])
   name                         String               @unique
 
   ofEntityInterests            EntityInterest[]
@@ -338,8 +334,6 @@ model SiteTopic {
   site                         Site                 @relation(fields: [siteId], references: [id])
   name                         String
 
-  ofEntityInterests               EntityInterest[]
-  ofInterestTypes                 InterestType[]
   ofPostTopics                    PostTopic[]
   ofSiteTopicLists                SiteTopicList[]
   ofSiteTopicEntityInterestGroup  SiteTopicEntityInterestGroup[]

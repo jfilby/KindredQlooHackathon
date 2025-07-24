@@ -67,15 +67,16 @@ export class SiteTopicInterestsMutateService {
             getTechService.getStandardLlmTech(prisma)
 
     // Get InterestTypes
-    const interestTypes = await
-            interestTypeModel.filter(prisma)
+    const entityInterests = await
+            entityInterestModel.filter(
+              prisma)
 
-    if (interestTypes == null) {
-      throw new CustomError(`${fnName}: interestTypes == null`)
+    if (entityInterests == null) {
+      throw new CustomError(`${fnName}: entityInterests == null`)
     }
 
-    if (interestTypes.length === 0) {
-      throw new CustomError(`${fnName}: interestTypes.length === 0`)
+    if (entityInterests.length === 0) {
+      throw new CustomError(`${fnName}: entityInterests.length === 0`)
     }
 
     // Define the prompt
@@ -89,7 +90,7 @@ export class SiteTopicInterestsMutateService {
           `  about.\n` +
           `- The interestNames should be in natural, but lower case.\n` +
           `\n` +
-          `Interest types: ` + JSON.stringify(interestTypes) + `\n` +
+          `Entity interests: ` + JSON.stringify(entityInterests) + `\n` +
           `\n` +
           `An example:\n` +
           `[\n` +

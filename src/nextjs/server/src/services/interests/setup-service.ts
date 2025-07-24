@@ -30,7 +30,6 @@ export class InterestsSetupService {
                 prisma,
                 undefined,  // id
                 value,      // qlooEntityType
-                null,       // siteTopicId
                 name)
     }
   }

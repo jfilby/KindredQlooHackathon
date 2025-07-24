@@ -4,6 +4,9 @@ import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { CommentModel } from '@/models/social-media/comment-model'
+import { EntityInterestModel } from '@/models/interests/entity-interest-model'
+import { InterestTypeModel } from '@/models/interests/interest-type-model'
+import { PostInterestsMutateService } from '@/services/interests/post-interests-mutate-service'
 import { PostSummaryInsightCommentModel } from '@/models/summaries/post-summary-insight-comment-model'
 import { PostSummaryInsightModel } from '@/models/summaries/post-summary-insight-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
@@ -14,6 +17,9 @@ import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-po
 
 // Models
 const commentModel = new CommentModel()
+const entityInterestModel = new EntityInterestModel()
+const interestTypeModel = new InterestTypeModel()
+const postInterestsMutateService = new PostInterestsMutateService()
 const postSummaryInsightCommentModel = new PostSummaryInsightCommentModel()
 const postSummaryInsightModel = new PostSummaryInsightModel()
 const postSummaryModel = new PostSummaryModel()
@@ -235,6 +241,12 @@ export class SummarizePostMutateService {
       }
     }
 
+    // Process post interests
+    await postInterestsMutateService.process(
+            prisma,
+            postId,
+            queryResults)
+
     // Return
     return postSummary
   }
@@ -437,6 +449,20 @@ export class SummarizePostMutateService {
               prisma,
               post.id)
 
+    // Get InterestTypes
+    const entityInterests = await
+            entityInterestModel.filter(
+              prisma,
+              undefined)
+
+    if (entityInterests == null) {
+      throw new CustomError(`${fnName}: entityInterests == null`)
+    }
+
+    if (entityInterests.length === 0) {
+      throw new CustomError(`${fnName}: entityInterests.length === 0`)
+    }
+
     // Define the prompt
     var prompt =
           `# Prompt\n` +
@@ -460,7 +486,12 @@ export class SummarizePostMutateService {
           `  Each insight in part2 should be backed up by up to 5 ` +
           `  commentIds (get from the id field of the comments).\n` +
           `- Don't consider comments that are too terse, unhelpful or ` +
-          `  proven wrong by follow-on comments.\n`
+          `  proven wrong by follow-on comments.\n` +
+          `- Add a list of interests from the list provided. You may ` +
+          `  add one interest that's not in the list if it's relevant.\n` +
+          `\n` +
+          `Entity interests: ` + JSON.stringify(entityInterests) + `\n` +
+          `\n`
 
     // Existing summary post?
     if (postSummary != null) {
@@ -484,6 +515,12 @@ export class SummarizePostMutateService {
       `      commentIds: [ "clid349538458" ]\n` +
       `    {\n` +
       `  ],\n` +
+      `  "interests": [\n` +
+      `    {\n` +
+      `      "interestTypeId": "..".\n` +
+      `      "interestName": ".."\n` +
+      `    }\n` +
+      `  ]\n` +
       `}\n` +
       `\n` +
       `- The value part1 must be a string.\n` +
