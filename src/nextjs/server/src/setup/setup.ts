@@ -81,6 +81,8 @@ export class SetupService {
             adminUserProfile.id)
 
     // Social media setup
-    await socialMediaSetupService.setup(prisma)
+    await socialMediaSetupService.setup(
+            prisma,
+            adminUserProfile.id)
   }
 }

@@ -8,7 +8,9 @@ export class BatchTypes {
 
   // Batch job names
   static createInterestsJobType = 'createInterests'
+  static createSiteTopicInterests = 'createSiteTopicInterests'
 
   // Ref models
+  static siteTopicModel = 'SiteTopic'
   static userInterestsTextModel = 'UserInterestsText'
 }

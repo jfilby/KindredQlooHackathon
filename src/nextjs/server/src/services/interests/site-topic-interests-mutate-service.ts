@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { BatchJob, PrismaClient } from '@prisma/client'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
@@ -127,6 +127,37 @@ export class SiteTopicInterestsMutateService {
               prisma,
               siteTopic.id,
               queryResults)
+
+    // Return
+    return results
+  }
+
+  async createStarterInterestGroupsByBatchJob(
+          prisma: PrismaClient,
+          batchJob: BatchJob) {
+
+    // Debug
+    const fnName = `${this.clName}.createStarterInterestGroupsByBatchJob()`
+
+    // Validate
+    if (batchJob == null) {
+      throw new CustomError(`${fnName}: batchJob == null`)
+    }
+
+    if (batchJob.userProfileId == null) {
+      throw new CustomError(`${fnName}: batchJob.userProfileId == null`)
+    }
+
+    if (batchJob.userProfileId == null) {
+      throw new CustomError(`${fnName}: batchJob.refId == null`)
+    }
+
+    // Call the main function
+    const results = await
+            this.createStarterInterestGroups(
+              prisma,
+              batchJob.userProfileId,
+              batchJob.refId)
 
     // Return
     return results

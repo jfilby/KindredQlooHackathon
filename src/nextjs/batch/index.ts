@@ -8,6 +8,7 @@ import { BatchTypes } from '@/types/batch-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { GetQlooInsightsService } from '@/services/qloo/get-insights-service'
 import { InterestsBatchService } from '@/services/interests/batch-service'
+import { SiteTopicInterestsMutateService } from '@/services/interests/site-topic-interests-mutate-service'
 import { SocialMediaBatchPipelineService } from '@/services/social-media/pipeline/service'
 
 const prisma = new PrismaClient()
@@ -15,6 +16,7 @@ const prisma = new PrismaClient()
 // Services
 const getQlooInsightsService = new GetQlooInsightsService()
 const interestsBatchService = new InterestsBatchService()
+const siteTopicInterestsMutateService = new SiteTopicInterestsMutateService()
 const socialMediaBatchPipelineService = new SocialMediaBatchPipelineService()
 
 // Settings
@@ -49,6 +51,13 @@ async function dispatchBatchJobByType(
       case BatchTypes.createInterestsJobType: {
 
         return await interestsBatchService.createInterests(
+                       prismaForJob,
+                       batchJob)
+      }
+
+      case BatchTypes.createSiteTopicInterests: {
+
+        return await siteTopicInterestsMutateService.createStarterInterestGroupsByBatchJob(
                        prismaForJob,
                        batchJob)
       }
