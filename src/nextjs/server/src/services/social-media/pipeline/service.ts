@@ -89,6 +89,8 @@ export class SocialMediaBatchPipelineService {
     // Debug
     const fnName = `${this.clName}.runForSite()`
 
+    console.log(`${fnName}: starting for site: ${site.name}`)
+
     // All summarization is done for the admin user
     const forUserProfileId = userProfileId
 

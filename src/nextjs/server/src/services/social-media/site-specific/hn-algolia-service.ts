@@ -94,6 +94,8 @@ export class HackerNewAlgoliaService {
 
     // Handle errors
     if (results.status === false) {
+
+      console.log(`${fnName}: results.status === false`)
       return results
     }
 
@@ -140,6 +142,8 @@ export class HackerNewAlgoliaService {
             ServerOnlyTypes.listingFreqInHours)  // hoursAgo
 
     if (siteTopicList != null) {
+
+      console.log(`${fnName}: skipping, recently created..`)
       return
     }
 
