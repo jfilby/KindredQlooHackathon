@@ -125,7 +125,7 @@ model EntityInterest {
   interestType                 InterestType         @relation(fields: [interestTypeId], references: [id])
   qlooEntityId                 String?              @map("qloo_entity_id")
   qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
-  name                         String               @unique
+  name                         String
 
   ofEntityInterestItems        EntityInterestItem[]
   ofUserEntityInterests        UserEntityInterest[]
