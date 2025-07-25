@@ -65,8 +65,14 @@ export class PostInterestsMutateService {
                 interest.interestTypeId)
 
       if (interestType == null) {
+
         throw new CustomError(`${fnName}: InterestType not found for id: ` +
                               `${interest.interestTypeId}`)
+
+        // console.warn(`${fnName}: InterestType not found for id: ` +
+        //              `${interest.interestTypeId}`)
+
+        // continue
       }
 
       // Upsert the entity interest
@@ -113,5 +119,56 @@ export class PostInterestsMutateService {
               undefined,  // id
               postId,
               entityInterestGroup.id)
+  }
+
+  async verifyInterestTypeIds(
+          prisma: PrismaClient,
+          interests: any[]) {
+
+    // Debug
+    const fnName = `${this.clName}.verifyInterestTypeIds()`
+
+    // Validate interests
+    if (interests == null) {
+
+      console.log(`${fnName}: interests == null`)
+
+      return {
+        status: false
+      }
+    }
+
+    if (!Array.isArray(interests)) {
+
+      console.log(`${fnName}: interests isn't an array`)
+
+      return {
+        status: false
+      }
+    }
+
+    // Iterate interests
+    for (const interest of interests) {
+
+      const interestType = await
+              interestTypeModel.getById(
+                prisma,
+                interest.interestTypeId)
+
+      if (interestType == null) {
+
+        console.log(`${fnName}: interestType not found for id: ` +
+                    `${interest.interestTypeId}`)
+
+        return {
+          status: false
+        }
+      }
+    }
+
+    // Return OK
+    return {
+      status: true
+    }
   }
 }

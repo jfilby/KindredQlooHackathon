@@ -463,7 +463,7 @@ export class SummarizePostMutateService {
               prisma,
               undefined,  // interestTypeId
               siteTopicList.siteTopicId,
-              true)       // includeInterestTypes
+              false)      // includeInterestTypes
 
     if (entityInterests == null) {
       throw new CustomError(`${fnName}: entityInterests == null`)
@@ -593,6 +593,9 @@ export class SummarizePostMutateService {
       `\n` +
       `The comments follow: ` + JSON.stringify(commentsJson)
 
+    // Debug
+    // console.log(`${fnName}: prompt: ${prompt}`)
+
     // LLM request (try 5 times)
     var queryResults: any = undefined
 
@@ -635,6 +638,16 @@ export class SummarizePostMutateService {
           !Array.isArray(queryResults.json.part2)) {
 
         console.log(`${fnName}: queryResults.json.part2 isn't an array`)
+        continue
+      }
+
+      // Verify interestTypeIds
+      const interestTypeIdsExist = await
+              postInterestsMutateService.verifyInterestTypeIds(
+                prisma,
+                queryResults.json.interests)
+
+      if (interestTypeIdsExist.status === false) {
         continue
       }
 

@@ -11,6 +11,7 @@ import { SiteTopicEntityInterestGroupModel } from '@/models/interests/site-topic
 import { SiteTopicModel } from '@/models/social-media/site-topic-model'
 import { GetTechService } from '../tech/get-tech-service'
 import { InterestGroupService } from './interest-group-service'
+import { PostInterestsMutateService } from './post-interests-mutate-service'
 
 // Models
 const batchJobModel = new BatchJobModel()
@@ -23,6 +24,7 @@ const siteTopicModel = new SiteTopicModel()
 const agentLlmService = new AgentLlmService()
 const getTechService = new GetTechService()
 const interestGroupService = new InterestGroupService()
+const postInterestsMutateService = new PostInterestsMutateService()
 
 // Class
 export class SiteTopicInterestsMutateService {
@@ -94,7 +96,7 @@ export class SiteTopicInterestsMutateService {
               prisma,
               undefined,  // interestTypeId
               siteTopicId,
-              true)       // includeInterestTypes
+              false)      // includeInterestTypes
 
     if (entityInterests == null) {
       throw new CustomError(`${fnName}: entityInterests == null`)
@@ -134,19 +136,38 @@ export class SiteTopicInterestsMutateService {
           `  }\n` +
           `]\n`
 
-    // LLM request
-    const queryResults = await
-            agentLlmService.agentSingleShotLlmRequest(
-              prisma,
-              tech,
-              userProfileId,
-              null,       // instanceId
-              ServerOnlyTypes.defaultChatSettingsName,
-              BaseDataTypes.batchAgentRefId,
-              BaseDataTypes.batchAgentName,
-              BaseDataTypes.batchAgentRole,
-              prompt,
-              true)       // isJsonMode
+    // LLM request tries
+    var queryResults: any = undefined
+
+    for (var i = 0; i < 5; i++) {
+
+      // LLM request
+      queryResults = await
+        agentLlmService.agentSingleShotLlmRequest(
+          prisma,
+          tech,
+          userProfileId,
+          null,       // instanceId
+          ServerOnlyTypes.defaultChatSettingsName,
+          BaseDataTypes.batchAgentRefId,
+          BaseDataTypes.batchAgentName,
+          BaseDataTypes.batchAgentRole,
+          prompt,
+          true)       // isJsonMode
+
+      // Verify interestTypeIds
+      const interestTypeIdsExist = await
+              postInterestsMutateService.verifyInterestTypeIds(
+                prisma,
+                queryResults.json.interests)
+
+      if (interestTypeIdsExist.status === false) {
+        continue
+      }
+
+      // Passed validation
+      break
+    }
 
     // Validate
     if (queryResults == null) {

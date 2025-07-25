@@ -70,7 +70,7 @@ export class EntityInterestModel {
         where: {
           interestTypeId: interestTypeId,
           ofEntityInterestItems: {
-            every: {
+            some: {
               entityInterestGroup: {
                 ofSiteTopicEntityInterestGroup: {
                   some: {
