@@ -70,17 +70,20 @@ export class PostInterestsMutateService {
       }
 
       // Upsert the entity interest
-      const entityInterest = await
-              entityInterestModel.getByUniqueKey(
-                prisma,
-                interest.interestTypeId,
-                interest.interestName)
+      var entityInterest = await
+            entityInterestModel.getByUniqueKey(
+              prisma,
+              interest.interestTypeId,
+              interest.interestName)
 
       if (entityInterest == null) {
-        throw new CustomError(
-                    `${fnName}: entityInterest == null for interestTypeId: ` +
-                    `${interest.interestTypeId} and interestName: ` +
-                    `${interest.interestName}`)
+
+        entityInterest = await
+          entityInterestModel.create(
+            prisma,
+            interestType.id,
+            null,  // qlooEntityId
+            interest.interestName)
       }
 
       // Add to entityInterestIds
