@@ -101,7 +101,8 @@ export class SummarizePostQueryService {
 
         return {
           status: true,
-          message: `No listings`
+          message: `No listings`,
+          postSummaries: []
         }
       }
 
