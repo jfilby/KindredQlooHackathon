@@ -1,4 +1,4 @@
-import { Post, PostUrl, PrismaClient, Site, SiteTopicList } from '@prisma/client'
+import { EntityInterest, InterestType, Post, PostUrl, PrismaClient, Site, SiteTopicList } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
@@ -275,6 +275,32 @@ export class SummarizePostMutateService {
     // Summarize posts for each list
     for (const siteTopicList of siteTopicLists) {
 
+      // Get InterestTypes
+      const interestTypes = await
+              interestTypeModel.filter(prisma)
+
+      if (interestTypes == null) {
+        throw new CustomError(`${fnName}: interestTypes == null`)
+      }
+
+      // Get EntityInterests
+      const entityInterests = await
+              entityInterestModel.filter(
+                prisma,
+                undefined,  // interestTypeId
+                siteTopicList.siteTopicId,
+                false)      // includeInterestTypes
+
+      if (entityInterests == null) {
+        throw new CustomError(`${fnName}: entityInterests == null`)
+      }
+
+      if (entityInterests.length === 0) {
+        // Not yet ready to summarize posts
+        console.log(`${fnName}: entityInterests.length === 0 (not ready)`)
+        continue
+      }
+
       // Get posts to summarize
       const siteTopicListPosts = await
               siteTopicListPostModel.filter(
@@ -297,6 +323,8 @@ export class SummarizePostMutateService {
 
         await this.summarizePost(
                 prisma,
+                interestTypes,
+                entityInterests,
                 siteTopicList,
                 siteTopicListPost,
                 userProfileId,
@@ -318,6 +346,8 @@ export class SummarizePostMutateService {
 
   async summarizePost(
           prisma: PrismaClient,
+          interestTypes: InterestType[],
+          entityInterests: EntityInterest[],
           siteTopicList: SiteTopicList,
           siteTopicListPost: any,
           userProfileId: string,
@@ -378,6 +408,8 @@ export class SummarizePostMutateService {
             this.summarizePostWithLlm(
               prisma,
               siteTopicList,
+              interestTypes,
+              entityInterests,
               userProfileId,
               forUserProfileId,
               site,
@@ -404,6 +436,8 @@ export class SummarizePostMutateService {
   async summarizePostWithLlm(
           prisma: PrismaClient,
           siteTopicList: SiteTopicList,
+          interestTypes: InterestType[],
+          entityInterests: EntityInterest[],
           userProfileId: string,
           forUserProfileId: string,
           site: Site,
@@ -448,32 +482,6 @@ export class SummarizePostMutateService {
             this.getCommentsJson(
               prisma,
               post.id)
-
-    // Get InterestTypes
-    const interestTypes = await
-            interestTypeModel.filter(prisma)
-
-    if (interestTypes == null) {
-      throw new CustomError(`${fnName}: interestTypes == null`)
-    }
-
-    // Get EntityInterests
-    const entityInterests = await
-            entityInterestModel.filter(
-              prisma,
-              undefined,  // interestTypeId
-              siteTopicList.siteTopicId,
-              false)      // includeInterestTypes
-
-    if (entityInterests == null) {
-      throw new CustomError(`${fnName}: entityInterests == null`)
-    }
-
-    if (entityInterests.length === 0) {
-      // Not yet ready to summarize posts
-      console.log(`${fnName}: entityInterests.length === 0 (not ready)`)
-      return null
-    }
 
     /* Debug
     if (entityInterests.length > 0) {
