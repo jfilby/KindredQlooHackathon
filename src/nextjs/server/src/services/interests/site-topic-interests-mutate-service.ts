@@ -183,7 +183,7 @@ export class SiteTopicInterestsMutateService {
       const interestTypeIdsExist = await
               postInterestsMutateService.verifyInterestTypeIds(
                 prisma,
-                queryResults.json.interests)
+                queryResults.json)
 
       if (interestTypeIdsExist.status === false) {
         continue
