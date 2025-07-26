@@ -99,13 +99,6 @@ export const typeDefs = `#graphql
   # Kindred (types)
   # ---
 
-  type AiPersona {
-    id: String!
-    userProfileId: String!
-    name: String!
-    description: String!
-  }
-
   type EntityInterest {
     id: String!
     interestType: InterestType!
@@ -177,7 +170,7 @@ export const typeDefs = `#graphql
   type ServerStartData {
     status: Boolean!
     message: String
-    aiPersona: AiPersona
+    chatSession: ChatSession
   }
 
   type Site {

@@ -16,7 +16,7 @@ export async function loadServerStartData(
   // console.log(`${fnName}: loading instance..`)
 
   // Load chat session
-  var chatSession: any
+  var chatSession: any = undefined
 
   /* if (args.loadChatSession === true &&
       (args.chatSessionId != null ||

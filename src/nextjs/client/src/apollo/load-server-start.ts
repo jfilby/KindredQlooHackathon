@@ -22,14 +22,6 @@ export const loadServerStartDataMutation = gql`
           userProfileId
         }
       }
-      paymentIntegrations {
-        id
-        status
-        namedFieldsValues {
-          paymentProvider
-          testMode
-        }
-      }
     }
   }
 `
