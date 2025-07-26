@@ -8,7 +8,7 @@ export default function VerifyRequest() {
 
   // Render
   return (
-    <Layout userProfileId={undefined}>
+    <Layout userProfile={undefined}>
 
       <br/><br/>
 

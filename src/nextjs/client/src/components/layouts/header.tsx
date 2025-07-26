@@ -9,10 +9,10 @@ import { HeaderMobile } from './header-mobile'
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 interface Props {
-  userProfileId: string | undefined
+  userProfile: any | undefined
 }
 
-export default function PageHeader({ userProfileId }: Props) {
+export default function PageHeader({ userProfile }: Props) {
   /* const { data: session, status } = useSession()
   const loading = status === "loading" */
 

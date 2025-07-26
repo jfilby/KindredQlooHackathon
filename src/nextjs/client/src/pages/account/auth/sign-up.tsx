@@ -21,7 +21,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
 
   // Render
   return (
-    <Layout userProfileId={undefined}>
+    <Layout userProfile={undefined}>
 
       <br/><br/>
 

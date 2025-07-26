@@ -5,7 +5,7 @@ interface Props {
   children: React.ReactNode
   projectName?: string | null
   ownerName?: string | null
-  userProfileId: string | undefined
+  userProfile: any | undefined
 }
 
 export const pageBodyWidth = '54em'
@@ -15,13 +15,13 @@ export default function Layout({
                           children,
                           projectName = null,
                           ownerName = null,
-                          userProfileId
+                          userProfile
                         }: Props) {
 
   // Render
   return (
     <>
-      <PageHeader userProfileId={userProfileId} />
+      <PageHeader userProfile={userProfile} />
 
       {projectName != null ?
         <div style={{ textAlign: 'center' }}>

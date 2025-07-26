@@ -25,7 +25,7 @@ export default function PostSummariesPage({
         <title>{process.env.NEXT_PUBLIC_APP_NAME} - Post summaries</title>
       </Head>
 
-      <Layout userProfileId={userProfile.id}>
+      <Layout userProfile={userProfile}>
 
         <Box
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
