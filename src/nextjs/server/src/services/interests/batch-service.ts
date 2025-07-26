@@ -64,6 +64,9 @@ export class InterestsBatchService {
         100,        // progressPct
         null)       // message
 
+    // Don't wait for the batch to create an interests group
+    await this.groupInterests(prisma)
+
     // Return
     return {
       status: true
