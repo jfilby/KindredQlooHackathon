@@ -53,7 +53,8 @@ export class UserEntityInterestGroupModel {
   async filter(
           prisma: PrismaClient,
           userProfileId: string | undefined,
-          entityInterestGroupId: string | null | undefined) {
+          entityInterestGroupId: string | null | undefined = undefined,
+          includeEntityInterestGroup: boolean = false) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
@@ -61,6 +62,9 @@ export class UserEntityInterestGroupModel {
     // Query
     try {
       return await prisma.userEntityInterestGroup.findMany({
+        include: {
+          entityInterestGroup: includeEntityInterestGroup
+        },
         where: {
           userProfileId: userProfileId,
           entityInterestGroupId: entityInterestGroupId

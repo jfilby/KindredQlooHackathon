@@ -153,6 +153,9 @@ export class PostSummaryModel {
         throw 'Prisma error'
       }
     }
+
+    // Error
+    return []
   }
 
   async getByUniqueKey(

@@ -72,6 +72,37 @@ export class PostEntityInterestGroupModel {
     }
   }
 
+  async filterAndOrderBySimilarEntityInterestGroups(
+          prisma: PrismaClient,
+          entityInterestGroupIdOfUser: string,
+          sortedPostIds: string[]) {
+
+    // Debug
+    const fnName = `${this.clName}.findSimilar()`
+
+    // Order by similarity
+    const rankedPosts = await
+            prisma.$queryRawUnsafe<string[]>(`
+              SELECT peig.post_id
+                FROM post_entity_interest_group peig,
+                     entity_interest_group eigp,  /* groups for posts */
+                     entity_interest_group eigu   /* groups for users */
+               WHERE eigp.id = peig.entity_interest_group_id
+                 AND eigu.id = $1
+                 AND peig.post_id = ANY($2::uuid[])
+               ORDER BY eigp.embedding <=> eigu.embedding;
+                        post_id
+            `,
+            entityInterestGroupIdOfUser,
+            sortedPostIds)
+
+    // Debug
+    console.log(`${fnName}: rankedPosts: ` + JSON.stringify(rankedPosts))
+
+    // Return
+    return rankedPosts
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {
