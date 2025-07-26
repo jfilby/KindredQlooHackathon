@@ -4,7 +4,9 @@ require('dotenv').config({ path: `../server/.env.${process.env.NODE_ENV}` })
 // Requires/imports
 const { PrismaClient } = require('../server/node_modules/@prisma/client')
 import { CustomError } from '@/serene-core-server/types/errors'
+import { FeatureFlagModel } from '@/serene-core-server/models/feature-flags/feature-flag-model'
 import { BatchTypes } from '@/types/batch-types'
+import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { GetQlooInsightsService } from '@/services/qloo/get-insights-service'
 import { InterestsBatchService } from '@/services/interests/batch-service'
@@ -12,6 +14,9 @@ import { SiteTopicInterestsMutateService } from '@/services/interests/site-topic
 import { SocialMediaBatchPipelineService } from '@/services/social-media/pipeline/service'
 
 const prisma = new PrismaClient()
+
+// Models
+const featureFlagModel = new FeatureFlagModel()
 
 // Services
 const getQlooInsightsService = new GetQlooInsightsService()
@@ -117,7 +122,18 @@ async function interval15m(prisma: any) {
   await getQlooInsightsService.setMissingQlooEntityIds(prisma)
 
   // Social media batch pipeline
-  await socialMediaBatchPipelineService.runForAllSites(prisma)
+  const socialMediaBatchPipelineFeatureFlag = await
+          featureFlagModel.getByUniqueKey(
+            prisma,
+            null,
+            null,
+            ServerOnlyTypes.socialMediaBatchPipelineFeatureFlag)
+
+  if (socialMediaBatchPipelineFeatureFlag != null &&
+      socialMediaBatchPipelineFeatureFlag.enabled == true) {
+
+    await socialMediaBatchPipelineService.runForAllSites(prisma)
+  }
 }
 
 function sleep(ms: number) {

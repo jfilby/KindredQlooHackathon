@@ -1,5 +1,8 @@
 export class ServerOnlyTypes {
 
+  // Feature flags
+  static socialMediaBatchPipelineFeatureFlag = 'socialMediaBatchPipeline'
+
   // Chat settings
   static defaultChatSettingsName = 'default'
 

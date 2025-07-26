@@ -155,6 +155,30 @@ export class FeatureFlagModel {
 
     // Upsert
     if (id == null) {
+      // Validate for create (mainly for type validation of the create call)
+      if (userProfileId === undefined) {
+        console.error(`${fnName}: id is null and userProfileId is null`)
+        throw 'Prisma error'
+      }
+
+      if (instanceId === undefined) {
+        console.error(`${fnName}: id is null and instanceId is null`)
+        throw 'Prisma error'
+      }
+
+      if (name == null) {
+        console.error(`${fnName}: id is null and name is null`)
+        throw 'Prisma error'
+      }
+
+      if (enabled == null) {
+        console.error(`${fnName}: id is null and enabled is null`)
+        throw 'Prisma error'
+      }
+
+      // Create
+      // console.log(`${fnName}: create..`)
+
       return await this.create(
                      prisma,
                      userProfileId,
