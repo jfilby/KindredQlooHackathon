@@ -28,6 +28,28 @@ export class EntityInterestItemModel {
     }
   }
 
+  async deleteByEntityInterestGroupId(
+          prisma: PrismaClient,
+          entityInterestGroupId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.deleteByEntityInterestGroupId()`
+
+    // Delete
+    try {
+      return await prisma.entityInterestItem.deleteMany({
+        where: {
+          entityInterestGroupId: entityInterestGroupId
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async deleteById(
           prisma: PrismaClient,
           id: string) {

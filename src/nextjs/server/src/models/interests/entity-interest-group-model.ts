@@ -10,6 +10,7 @@ export class EntityInterestGroupModel {
           prisma: PrismaClient,
           uniqueHash: string,
           embeddingTechId: string,
+          embeddingGenerated: Date | null,
           lastSimilarFound: Date | null) {
 
     // Debug
@@ -21,6 +22,7 @@ export class EntityInterestGroupModel {
         data: {
           uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
+          embeddingGenerated: embeddingGenerated,
           lastSimilarFound: lastSimilarFound
         }
       })
@@ -266,6 +268,7 @@ export class EntityInterestGroupModel {
           id: string | undefined,
           uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
+          embeddingGenerated: Date | null | undefined,
           lastSimilarFound: Date | null | undefined) {
 
     // Debug
@@ -277,6 +280,7 @@ export class EntityInterestGroupModel {
         data: {
           uniqueHash: uniqueHash,
           embeddingTechId: embeddingTechId,
+          embeddingGenerated: embeddingGenerated,
           lastSimilarFound: lastSimilarFound
         },
         where: {
@@ -295,6 +299,7 @@ export class EntityInterestGroupModel {
           uniqueHash: string | undefined,
           embeddingTechId: string | undefined,
           embedding: number[] | null | undefined,
+          embeddingGenerated: Date | null | undefined,
           lastSimilarFound: Date | null | undefined) {
 
     // Debug
@@ -335,6 +340,11 @@ export class EntityInterestGroupModel {
         throw 'Prisma error'
       }
 
+      if (embeddingGenerated === undefined) {
+        console.error(`${fnName}: id is null and embeddingGenerated is null`)
+        throw 'Prisma error'
+      }
+
       if (lastSimilarFound === undefined) {
         console.error(`${fnName}: id is null and lastSimilarFound is null`)
         throw 'Prisma error'
@@ -346,6 +356,7 @@ export class EntityInterestGroupModel {
                  prisma,
                  uniqueHash,
                  embeddingTechId,
+                 embeddingGenerated,
                  lastSimilarFound)
     } else {
 
@@ -356,6 +367,7 @@ export class EntityInterestGroupModel {
                  id,
                  uniqueHash,
                  embeddingTechId,
+                 embeddingGenerated,
                  lastSimilarFound)
     }
   }

@@ -5,6 +5,7 @@ import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
@@ -14,6 +15,7 @@ import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const batchJobModel = new BatchJobModel()
+const entityInterestItemModel = new EntityInterestItemModel()
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
 const userEntityInterestModel = new UserEntityInterestModel()
@@ -42,6 +44,8 @@ export class UserInterestsMutateService {
     console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Upsert user interests
+    var entityInterestIds: string[] = []
+
     for (const interestsEntry of queryResults.json) {
 
       // Debug
@@ -84,6 +88,9 @@ export class UserInterestsMutateService {
                 interest)
           }
 
+          // Add to entityInterestIds
+          entityInterestIds.push(entityInterest.id)
+
           // Get/create UserInterest
           var userEntityInterest = await
                 userEntityInterestModel.getByUniqueKey(
@@ -116,6 +123,16 @@ export class UserInterestsMutateService {
           prisma,
           userProfileId,
           null)  // entityInterestGroupId
+    }
+
+    // Upsert items
+    for (const entityInterestId of entityInterestIds) {
+
+      await entityInterestItemModel.upsert(
+              prisma,
+              undefined,  // id
+              userEntityInterestGroup.entityInterestGroupId,
+              entityInterestId)
     }
 
     // Return

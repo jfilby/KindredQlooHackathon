@@ -191,6 +191,7 @@ export class InterestGroupService {
         entityInterestGroup.id,
         undefined,   // uniqueHash
         undefined,   // embeddingTechId
+        undefined,   // embeddingGenerated
         new Date())  // lastSimilarFound
 
     console.log(`${fnName}: returning..`)
@@ -271,6 +272,7 @@ export class InterestGroupService {
         prisma,
         uniqueHash,
         embeddingTech.id,
+        null,  // embeddingGenerated
         null)  // lastSimilarFound
 
     for (const entityInterestId of entityInterestIds) {
