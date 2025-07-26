@@ -1,9 +1,11 @@
 import { BatchJob, PrismaClient } from '@prisma/client'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { CustomError } from '@/serene-core-server/types/errors'
+import { UsersService } from '@/serene-core-server/services/users/service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { ServerTestTypes } from '@/types/server-test-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
@@ -25,6 +27,7 @@ const agentLlmService = new AgentLlmService()
 const getTechService = new GetTechService()
 const interestGroupService = new InterestGroupService()
 const postInterestsMutateService = new PostInterestsMutateService()
+const usersService = new UsersService()
 
 // Class
 export class SiteTopicInterestsMutateService {
@@ -35,10 +38,31 @@ export class SiteTopicInterestsMutateService {
   // Code
   async createAllMissingStarterInterests(
           prisma: PrismaClient,
-          userProfileId: string) {
+          userProfileId: string | undefined = undefined) {
 
     // Debug
     const fnName = `${this.clName}.createAllMissingStarterInterests()`
+
+    // Get admin user if no userProfileId specified
+    if (userProfileId == null) {
+
+      const adminUserProfile = await
+        usersService.getOrCreateUserByEmail(
+          prisma,
+          ServerTestTypes.adminUserEmail,
+          undefined)  // defaultUserPreferences
+
+      if (adminUserProfile == null) {
+        throw new CustomError(`${fnName}: adminUserProfile == null`)
+      }
+
+      userProfileId = adminUserProfile.id
+    }
+
+    // Validate
+    if (userProfileId == null) {
+      throw new CustomError(`${fnName}: userProfileId == null`)
+    }
 
     // Get site topics with no entity interest groups
     const siteTopics = await

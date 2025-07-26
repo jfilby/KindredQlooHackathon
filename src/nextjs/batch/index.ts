@@ -107,6 +107,9 @@ async function interval15m(prisma: any) {
 
   console.log(`${fnName}: starting..`)
 
+  // Create missing interests for site topics
+  await siteTopicInterestsMutateService.createAllMissingStarterInterests(prisma)
+
   // Group and find similar interests
   await interestsBatchService.groupAndFindSimilarInterests(prisma)
 
