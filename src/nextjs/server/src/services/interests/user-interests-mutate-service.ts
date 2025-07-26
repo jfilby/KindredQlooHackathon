@@ -11,6 +11,7 @@ import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
+import { EntityInterestService } from './entity-interest-service'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
@@ -24,6 +25,7 @@ const userInterestsTextModel = new UserInterestsTextModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
+const entityInterestService = new EntityInterestService()
 const getTechService = new GetTechService()
 
 // Class
@@ -72,21 +74,11 @@ export class UserInterestsMutateService {
         for (const interest of interests) {
 
           // Get/create EntityInterest
-          var entityInterest = await
-                entityInterestModel.getByUniqueKey(
-                  prisma,
-                  interestType.id,
-                  interest)
-
-          if (entityInterest == null) {
-
-            entityInterest = await
-              entityInterestModel.create(
-                prisma,
-                interestType.id,
-                null,       // qlooEntityId
-                interest)
-          }
+          const entityInterest = await
+                  entityInterestService.getOrCreate(
+                    prisma,
+                    interestType.id,
+                    interest)
 
           // Add to entityInterestIds
           entityInterestIds.push(entityInterest.id)

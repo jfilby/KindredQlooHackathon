@@ -11,6 +11,7 @@ import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { SiteTopicEntityInterestGroupModel } from '@/models/interests/site-topic-entity-interest-group-model'
 import { SiteTopicModel } from '@/models/social-media/site-topic-model'
+import { EntityInterestService } from './entity-interest-service'
 import { GetTechService } from '../tech/get-tech-service'
 import { InterestGroupService } from './interest-group-service'
 import { PostInterestsMutateService } from './post-interests-mutate-service'
@@ -24,6 +25,7 @@ const siteTopicModel = new SiteTopicModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
+const entityInterestService = new EntityInterestService()
 const getTechService = new GetTechService()
 const interestGroupService = new InterestGroupService()
 const postInterestsMutateService = new PostInterestsMutateService()
@@ -304,22 +306,12 @@ export class SiteTopicInterestsMutateService {
                               `${interest.interestTypeId}`)
       }
 
-      // Upsert the entity interest
-      var entityInterest = await
-            entityInterestModel.getByUniqueKey(
-              prisma,
-              interest.interestTypeId,
-              interest.interestName)
-
-      if (entityInterest == null) {
-
-        entityInterest = await
-          entityInterestModel.create(
-            prisma,
-            interest.interestTypeId,
-            null,  // qlooEntityId
-            interest.interestName)
-      }
+      // Get/create EntityInterest
+      const entityInterest = await
+              entityInterestService.getOrCreate(
+                prisma,
+                interest.interestTypeId,
+                interest.interestName)
 
       // Add to entityInterestIds
       entityInterestIds.push(entityInterest.id)

@@ -1,16 +1,16 @@
 import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { PostEntityInterestGroupModel } from '@/models/interests/post-entity-interest-group-model'
+import { EntityInterestService } from './entity-interest-service'
 import { InterestGroupService } from './interest-group-service'
 
 // Models
-const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
 const postEntityInterestGroupModel = new PostEntityInterestGroupModel()
 
 // Services
+const entityInterestService = new EntityInterestService()
 const interestGroupService = new InterestGroupService()
 
 // Class
@@ -75,22 +75,12 @@ export class PostInterestsMutateService {
         // continue
       }
 
-      // Upsert the entity interest
-      var entityInterest = await
-            entityInterestModel.getByUniqueKey(
-              prisma,
-              interest.interestTypeId,
-              interest.interestName)
-
-      if (entityInterest == null) {
-
-        entityInterest = await
-          entityInterestModel.create(
-            prisma,
-            interestType.id,
-            null,  // qlooEntityId
-            interest.interestName)
-      }
+      // Get/create EntityInterest
+      const entityInterest = await
+              entityInterestService.getOrCreate(
+                prisma,
+                interest.interestTypeId,
+                interest.interestName)
 
       // Add to entityInterestIds
       entityInterestIds.push(entityInterest.id)
