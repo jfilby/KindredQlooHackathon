@@ -141,37 +141,37 @@ export class UserInterestsMutateService {
               text)
 
     // Determine if a BatchJob has already been created
-    var batchJob = await
-          batchJobModel.getByStatusesAndJobTypeAndRefModelAndRefId(
-            prisma,
-            null,  // instanceId
-            [
-              BatchTypes.newBatchJobStatus,
-              BatchTypes.activeBatchJobStatus
-            ],
-            BatchTypes.createInterestsJobType,
-            BatchTypes.userInterestsTextModel,
-            userInterestsText.id)
+    const batchJobs = await
+            batchJobModel.getByStatusesAndJobTypeAndRefModelAndRefId(
+              prisma,
+              null,  // instanceId
+              [
+                BatchTypes.newBatchJobStatus,
+                BatchTypes.activeBatchJobStatus
+              ],
+              BatchTypes.createInterestsJobType,
+              BatchTypes.userInterestsTextModel,
+              userInterestsText.id)
 
-    if (batchJob == null) {
+    if (batchJobs.length === 0) {
 
       // Create a BatchJob to process the text
       // runInATransaction is true to prevent missing vital record processing
-      batchJob = await
-        batchJobModel.upsert(
-          prisma,
-          undefined,  // id
-          null,       // instanceId
-          true,       // runInATransaction
-          BatchTypes.newBatchJobStatus,
-          0,          // progressPct
-          null,       // message
-          BatchTypes.createInterestsJobType,
-          BatchTypes.userInterestsTextModel,
-          userInterestsText.id,
-          null,       // parameters
-          null,       // results
-          userProfileId)
+      const batchJob = await
+              batchJobModel.upsert(
+                prisma,
+                undefined,  // id
+                null,       // instanceId
+                true,       // runInATransaction
+                BatchTypes.newBatchJobStatus,
+                0,          // progressPct
+                null,       // message
+                BatchTypes.createInterestsJobType,
+                BatchTypes.userInterestsTextModel,
+                userInterestsText.id,
+                null,       // parameters
+                null,       // results
+                userProfileId)
     }
   }
 
