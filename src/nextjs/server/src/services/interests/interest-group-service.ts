@@ -74,6 +74,12 @@ export class InterestGroupService {
 
       entityInterestNames = entityInterestNames.sort()
 
+      // Validate
+      if (entityInterestGroup.embeddingTechId == null) {
+        throw new CustomError(
+                    `${fnName}: entityInterestGroup.embeddingTechId == null`)
+      }
+
       // Get embedding tech
       const embeddingsTech = await
               techModel.getById(

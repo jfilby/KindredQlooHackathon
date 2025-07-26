@@ -17,6 +17,14 @@ export class GetTechService {
     // Debug
     const fnName = `${this.clName}.getEmbeddingsTech()`
 
+    // Validate
+    if (process.env.STANDARD_EMBEDDINGS_VARIANT_NAME == null ||
+        process.env.STANDARD_EMBEDDINGS_VARIANT_NAME === '') {
+
+      throw new CustomError(`${fnName}: env var ` +
+                            `STANDARD_EMBEDDINGS_VARIANT_NAME not specified`)
+    }
+
     // Defined LLM variant name
     const variantName = process.env.STANDARD_EMBEDDINGS_VARIANT_NAME!
 
@@ -43,6 +51,14 @@ export class GetTechService {
 
     // Debug
     const fnName = `${this.clName}.getStandardLlmTech()`
+
+    // Validate
+    if (process.env.STANDARD_LLM_VARIANT_NAME == null ||
+        process.env.STANDARD_LLM_VARIANT_NAME === '') {
+
+      throw new CustomError(`${fnName}: env var ` +
+                            `STANDARD_EMBEDDINGS_VARIANT_NAME not specified`)
+    }
 
     // Defined LLM variant name
     const variantName = process.env.STANDARD_LLM_VARIANT_NAME!
