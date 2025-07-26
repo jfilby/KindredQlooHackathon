@@ -16,8 +16,8 @@ export class EntityInterestService {
           interestTypeId: string,
           name: string) {
 
-    // Lowercase the name
-    const lowerName = name.toLowerCase()
+    // Trim and lowercase the name
+    const lowerName = name.trim().toLowerCase()
 
     // Check if a record already exists
     var entityInterest = await
