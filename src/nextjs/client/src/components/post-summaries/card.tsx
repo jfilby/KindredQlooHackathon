@@ -120,7 +120,7 @@ export default function ViewPostSummaryCard({
                   }}
                   target='_new'
                   underline='hover'>
-                  Discuss on {postSummary.site.name}
+                  Discuss on {postSummary.post.site.name}
                 </Link>
               </Typography>
             :

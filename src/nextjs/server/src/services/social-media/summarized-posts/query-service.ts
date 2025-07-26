@@ -30,16 +30,26 @@ export class SummarizePostQueryService {
     site: Site,
     postSummaries: any) {
 
+    // Debug
+    const fnName = `${this.clName}.filter()`
+
+    // Per postSummary
     for (var postSummary of postSummaries) {
 
+      // Set site
       postSummary.site = site
 
+      // Set postSummary.socialMediaUrl if possible
       if (postSummary.post.externalId != null) {
 
         postSummary.socialMediaUrl =
           ServerOnlyTypes.socialMediaUrls[site.name].replace(
             '{externalId}',
             postSummary.post.externalId)
+
+        // Debug
+        // console.log(`${fnName}: postSummary.socialMediaUrl: ` +
+        //             `${postSummary.socialMediaUrl}`)
       }
     }
   }
@@ -145,6 +155,11 @@ export class SummarizePostQueryService {
       throw new CustomError(`${fnName}: postSummaries == null`)
     }
 
+    // Add social media links
+    this.addSocialMediaDetails(
+      site,
+      postSummaries)
+
     /* Debug: output the 1st post summary
     if (postSummaries.length > 0) {
       console.log(`${fnName}: postSummaries[0]: ` +
@@ -167,13 +182,15 @@ export class SummarizePostQueryService {
               }))
             }))
 
-    // Add social media links
-    this.addSocialMediaDetails(
-      site,
-      postSummaries)
-
     // Debug
-    console.log(`${fnName}: postSummaries: ${postSummaries.length}`)
+    console.log(`${fnName}: renamedPostSummaries2: ` +
+                `${renamedPostSummaries2.length}`)
+
+    /* Debug: output the 1st post summary
+    if (renamedPostSummaries2.length > 0) {
+      console.log(`${fnName}: renamedPostSummaries2[0]: ` +
+                  JSON.stringify(renamedPostSummaries2[0]))
+    } */
 
     // Build a map from postId to index
     const postOrderMap = new Map(
