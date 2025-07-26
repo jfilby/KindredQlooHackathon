@@ -1,4 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
+
+export interface PostIdRecord {
+  post_id: string
+}
 
 export class PostEntityInterestGroupModel {
 
@@ -75,29 +80,39 @@ export class PostEntityInterestGroupModel {
   async filterAndOrderBySimilarEntityInterestGroups(
           prisma: PrismaClient,
           entityInterestGroupIdOfUser: string,
-          sortedPostIds: string[]) {
+          sortedPostIds: string[]): Promise<PostIdRecord[]> {
 
     // Debug
     const fnName = `${this.clName}.findSimilar()`
 
-    // Order by similarity
-    const rankedPosts = await
-            prisma.$queryRawUnsafe<string[]>(`
+    // console.log(`${fnName}: starting with entityInterestGroupIdOfUser: ` +
+    //             `${entityInterestGroupIdOfUser} sortedPostIds: ` +
+    //             `${sortedPostIds}`)
+
+    // Validate
+    if (sortedPostIds.length === 0) {
+      throw new CustomError(`${fnName}: sortedPostIds.length === 0`)
+    }
+
+    // Define the query
+    const query = Prisma.sql`
               SELECT peig.post_id
                 FROM post_entity_interest_group peig,
-                     entity_interest_group eigp,  /* groups for posts */
-                     entity_interest_group eigu   /* groups for users */
+                     entity_interest_group eigp,
+                     entity_interest_group eigu
                WHERE eigp.id = peig.entity_interest_group_id
-                 AND eigu.id = $1
-                 AND peig.post_id = ANY($2::uuid[])
-               ORDER BY eigp.embedding <=> eigu.embedding;
-                        post_id
-            `,
-            entityInterestGroupIdOfUser,
-            sortedPostIds)
+                 AND eigu.id = ${entityInterestGroupIdOfUser}
+                 AND peig.post_id IN (${Prisma.join(sortedPostIds)})
+               ORDER BY eigp.embedding <=> eigu.embedding;`
+    // Debug
+    // console.log(`${fnName}: query: ` + JSON.stringify(query))
+
+    // Query (order by similarity)
+    const rankedPosts = await
+            prisma.$queryRaw(query) as PostIdRecord[]
 
     // Debug
-    console.log(`${fnName}: rankedPosts: ` + JSON.stringify(rankedPosts))
+    // console.log(`${fnName}: rankedPosts: ` + JSON.stringify(rankedPosts))
 
     // Return
     return rankedPosts

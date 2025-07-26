@@ -18,25 +18,41 @@ export async function getPostSummaries(
   // Debug
   const fnName = `getPostSummaries()`
 
+  // Get the given user, if specified
+  var userProfile: any = undefined
+
+  if (args.userProfileId != null) {
+
+    userProfile = await
+      usersService.getById(
+        prisma,
+        args.userProfileId)
+  }
+
   // Get anon user
   const anonUserProfile = await
           usersService.getUserProfileByEmail(
             prisma,
             ServerTestTypes.anonUserEmail)
 
-  // Validate
-  if (anonUserProfile == null) {
-    throw new CustomError(`${fnName}: anonUserProfile == null`)
+  // Set for anonymous user if the given user isn't signed-in
+  if (userProfile == null ||
+      userProfile.userId == null) {
+
+    userProfile = anonUserProfile
   }
 
-  // Set forUserProfileId
-  const forUserProfileId = anonUserProfile.id
+  // Validate
+  if (userProfile == null) {
+    throw new CustomError(`${fnName}: userProfile == null`)
+  }
 
   // Filter
   const results = await
           summarizePostQueryService.filterLatest(
             prisma,
-            forUserProfileId,
+            anonUserProfile.id,
+            userProfile.id,
             args.siteTopicListId)
 
   // Return

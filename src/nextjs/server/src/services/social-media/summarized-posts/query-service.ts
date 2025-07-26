@@ -2,7 +2,7 @@ import { PrismaClient, Site } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
-import { PostEntityInterestGroupModel } from '@/models/interests/post-entity-interest-group-model'
+import { PostEntityInterestGroupModel, PostIdRecord } from '@/models/interests/post-entity-interest-group-model'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
 import { SiteModel } from '@/models/social-media/site-model'
 import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
@@ -46,7 +46,8 @@ export class SummarizePostQueryService {
 
   async filterLatest(
           prisma: PrismaClient,
-          forUserProfileId: string,
+          listingOfUserProfileId: string,
+          interstsOfUserProfileId: string,
           inSiteTopicListId: string | undefined) {
 
     // Debug
@@ -136,7 +137,7 @@ export class SummarizePostQueryService {
           postSummaryModel.getByPostIdsAndUserProfileId(
             prisma,
             postIds,
-            forUserProfileId)
+            listingOfUserProfileId)
 
     // Validate
     if (postSummaries == null) {
@@ -201,11 +202,11 @@ export class SummarizePostQueryService {
     } */
 
     // Re-rank?
-    if (forUserProfileId != null) {
+    if (interstsOfUserProfileId != null) {
 
       await this.reRankByInterests(
               prisma,
-              forUserProfileId,
+              interstsOfUserProfileId,
               sortedPostIds,
               sortedPostSummaries)
     }
@@ -226,7 +227,8 @@ export class SummarizePostQueryService {
     // Debug
     const fnName = `${this.clName}.reRankByInterests()`
 
-    console.log(`${fnName}: starting with userProfileId: ${userProfileId}`)
+    // console.log(`${fnName}: starting with userProfileId: ${userProfileId} ` +
+    //             `postIds: ` + JSON.stringify(postIds))
 
     // A notNull function
     function notNull<T>(value: T | null): value is T {
@@ -244,24 +246,45 @@ export class SummarizePostQueryService {
     }
 
     // Debug
-    console.log(`${fnName}: has userEntityInterestGroup: ` +
-                `${userEntityInterestGroup}`)
+    // console.log(`${fnName}: has userEntityInterestGroup: ` +
+    //             JSON.stringify(userEntityInterestGroup))
 
     // Get post summary interests ranked by similarity with user interests
-    postIds = await
+    const postIdRecords = await
       postEntityInterestGroupModel.filterAndOrderBySimilarEntityInterestGroups(
         prisma,
         userEntityInterestGroup.entityInterestGroupId,
         postIds)
 
-    // Build a map from postId to index
-    const postOrderMap = new Map(
-      postSummaries.map((post, idx) =>
-        [post.postId, post.index !== undefined ? post.index : idx]))
+    // Debug
+    console.log(`${fnName}: postIdRecords: ` + JSON.stringify(postIdRecords))
+
+    // Get postIds
+    const rankedPostIds = postIdRecords.map((postIdRecord: PostIdRecord) =>
+      postIdRecord.post_id)
+
+    // Debug
+    console.log(`${fnName}: rankedPostIds: ` + JSON.stringify(rankedPostIds))
+
+    // Get map of postIds
+    const postIdRank = new Map(rankedPostIds.map((id, i) => [id, i]))
 
     // Sort by reranked sortedPostIds
-    postSummaries = postSummaries.sort(
-      (a, b) =>
-        (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0))
+    const sortingPostSummaries = postSummaries.sort((a, b) => {
+      // Get the rank of each postId, default to a large number if not found
+      const rankA = postIdRank.has(a.postId) ? postIdRank.get(a.postId)! : Infinity
+      const rankB = postIdRank.has(b.postId) ? postIdRank.get(b.postId)! : Infinity
+      return rankA - rankB
+    })
+
+    /* Debug
+    if (sortingPostSummaries.length > 0) {
+
+      console.log(`${fnName}: sortingPostSummaries[0].id: ` +
+                  JSON.stringify(sortingPostSummaries[0].postId))
+    } */
+
+    // Return
+    return postSummaries = sortingPostSummaries
   }
 }
