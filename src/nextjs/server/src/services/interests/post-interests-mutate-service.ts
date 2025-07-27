@@ -66,13 +66,10 @@ export class PostInterestsMutateService {
 
       if (interestType == null) {
 
-        throw new CustomError(`${fnName}: InterestType not found for id: ` +
-                              `${interest.interestTypeId}`)
+        console.warn(`${fnName}: InterestType not found for id: ` +
+                     `${interest.interestTypeId}`)
 
-        // console.warn(`${fnName}: InterestType not found for id: ` +
-        //              `${interest.interestTypeId}`)
-
-        // continue
+        continue
       }
 
       // Get/create EntityInterest

@@ -606,6 +606,7 @@ export class SummarizePostMutateService {
 
     // LLM request (try 5 times)
     var queryResults: any = undefined
+    var verified = false
 
     for (var i = 0; i < 5; i++) {
 
@@ -626,6 +627,7 @@ export class SummarizePostMutateService {
       } catch(e: any) {
 
         // For now skip the post summary if the LLM call fails
+        queryResults == null
         continue
       }
 
@@ -638,6 +640,8 @@ export class SummarizePostMutateService {
       if (queryResults.json == null) {
         console.log(`${fnName}: queryResults.json == null`)
         console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+
+        queryResults == null
         continue
       }
 
@@ -646,6 +650,8 @@ export class SummarizePostMutateService {
           !Array.isArray(queryResults.json.part2)) {
 
         console.log(`${fnName}: queryResults.json.part2 isn't an array`)
+
+        queryResults == null
         continue
       }
 
@@ -656,6 +662,7 @@ export class SummarizePostMutateService {
                 queryResults.json.interests)
 
       if (interestTypeIdsExist.status === false) {
+        queryResults == null
         continue
       }
 
