@@ -54,11 +54,13 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
 
           <Typography
             variant='body1'>
-            or..
+            .. or you can test this project as a signed-out user. You can still
+            personalize your experience, but changes will be lost when you
+            clear your cookies.
           </Typography>
         </div>
 
-        <form method='post' action='/api/auth/signin/email'>
+        {/* <form method='post' action='/api/auth/signin/email'>
           <input name='csrfToken' type='hidden' defaultValue={csrfToken} />
 
           <FormControl style={{ marginBottom: '2em', width: '20em' }}>
@@ -77,10 +79,10 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
             variant='contained'>
             Sign in with Email
            </Button>
-        </form>
+        </form> */}
       </div>
 
-      <div style={{ width: '100%', marginBottom: '5em' }}>
+      {/* <div style={{ width: '100%', marginBottom: '5em' }}>
         <center>
           <div style={{ width: '50%' }}>
             <Typography variant='body1'>
@@ -89,7 +91,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
             </Typography>
           </div>
         </center>
-      </div>
+      </div> */}
 
       <div style={{ width: '100%' }}>
         <center>

@@ -6,7 +6,7 @@ interface Props {
   projectName?: string | null
   ownerName?: string | null
   withHeader?: boolean
-  userProfileId: string | undefined
+  userProfile: any | undefined
 }
 
 export const pageBodyWidthPlusPlus = '80em'
@@ -19,7 +19,7 @@ export default function FullHeightLayout({
                           projectName = null,
                           ownerName = null,
                           withHeader = true,
-                          userProfileId
+                          userProfile
                         }: Props) {
 
   // Render
@@ -28,7 +28,7 @@ export default function FullHeightLayout({
       <div style={{ width: '100%' }}>
 
         {withHeader === true ?
-          <PageHeader userProfileId={userProfileId} />
+          <PageHeader userProfile={userProfile} />
         :
           <></>
         }

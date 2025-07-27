@@ -18,7 +18,7 @@ export default NextAuth({
   },
   adapter: PrismaAdapter(prisma),
   providers: [
-    CredentialsProvider({
+    /* CredentialsProvider({
       id: 'credentials',
       name: 'Credentials',
       async authorize(credentials) {
@@ -53,7 +53,7 @@ export default NextAuth({
         username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
-    }),
+    }), */
     /* CredentialsProvider({
       async authorize(credentials) {
 
