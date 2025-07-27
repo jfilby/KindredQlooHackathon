@@ -39,12 +39,10 @@ export function HeaderBrowser({ highLevelLink }: Props) {
         </Grid>
         <Grid size={3} style={{ textAlign: 'right' }}>
           <Typography variant='body1'>
-            { session &&
-              <HeaderBrowserLink
-                name='My interests'
-                linkName='interests'
-                highLevelLink={highLevelLink} />
-            }
+            <HeaderBrowserLink
+              name='My interests'
+              linkName='interests'
+              highLevelLink={highLevelLink} />
             &nbsp;
             &nbsp;
             <HeaderBrowserLink

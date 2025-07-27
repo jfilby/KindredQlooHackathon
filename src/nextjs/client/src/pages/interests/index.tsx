@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
@@ -14,6 +15,9 @@ interface Props {
 export default function InterestsPage({
                           userProfile
                         }: Props) {
+
+  // Session
+  const { data: session } = useSession()
 
   // State
   const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
@@ -41,6 +45,17 @@ export default function InterestsPage({
             <Typography>
               Loading..
             </Typography>
+          }
+
+          {!session ?
+            <Typography
+              style={{ marginTop: '2em' }}
+              variant='body1'>
+              You&apos;re not signed in, but changes to your interests will
+              persist for this session.
+            </Typography>
+          :
+            <></>
           }
         </Box>
       </Layout>

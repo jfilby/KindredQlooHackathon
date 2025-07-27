@@ -51,8 +51,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
           <Typography
             variant='body1'>
             .. or you can test this project as a signed-out user. You can still
-            personalize your experience, but changes will be lost when you
-            clear your cookies.
+            personalize your experience for this session.
           </Typography>
         </div>
 

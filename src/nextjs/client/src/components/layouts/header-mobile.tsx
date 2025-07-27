@@ -76,12 +76,10 @@ export function HeaderMobile({ highLevelLink }: Props) {
                 linkName=''
                 highLevelLink={highLevelLink} />
             <Divider />
-            {session &&
-              <HeaderMobileLink
-                name='My interests'
-                linkName='interests'
-                highLevelLink={highLevelLink} />
-            }
+            <HeaderMobileLink
+              name='My interests'
+              linkName='interests'
+              highLevelLink={highLevelLink} />
             <HeaderMobileLink
               name='Docs'
               linkName='docs'
