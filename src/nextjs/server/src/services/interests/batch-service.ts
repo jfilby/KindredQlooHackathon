@@ -108,9 +108,6 @@ export class InterestsBatchService {
 
   async groupInterests(prisma: PrismaClient) {
 
-    // Get/create interest groups
-    await interestGroupService.getOrCreateMissingGroups(prisma)
-
     // Create embeddings missing for any interest groups
     await interestGroupService.creatingMissingEmbeddings(prisma)
   }

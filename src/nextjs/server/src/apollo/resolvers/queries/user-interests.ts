@@ -1,10 +1,8 @@
 import { prisma } from '@/db'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 
 // Models
-const userEntityInterestModel = new UserEntityInterestModel()
 const userInterestsTextModel = new UserInterestsTextModel()
 
 // Code
@@ -28,18 +26,9 @@ export async function getUserInterests(
             prisma,
             args.userProfileId)
 
-  // Filter
-  const userEntityInterests = await
-          userEntityInterestModel.filter(
-            prisma,
-            args.userProfileId,
-            undefined,  // entityInterestId
-            true)       // includeEntityInterest
-
   // Return
   return {
     status: true,
-    userEntityInterests: userEntityInterests,
     userInterestsText: userInterestsText
   }
 }

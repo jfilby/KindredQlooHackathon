@@ -3,13 +3,11 @@ import { EntityInterest, EntityInterestGroup, EntityInterestItem, PrismaClient, 
 import { CustomError } from '@/serene-core-server/types/errors'
 import { TechModel } from '@/serene-core-server/models/tech/tech-model'
 import { OpenAiEmbeddingsService } from '@/serene-ai-server/services/llm-apis/openai/embeddings-api'
-import { ServerOnlyTypes } from '@/types/server-only-types'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { SharedEntityInterestGroupModel } from '@/models/interests/shared-entity-interest-group-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
-import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
@@ -19,7 +17,6 @@ const entityInterestModel = new EntityInterestModel()
 const sharedEntityInterestGroupModel = new SharedEntityInterestGroupModel()
 const techModel = new TechModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
-const userEntityInterestModel = new UserEntityInterestModel()
 
 // Services
 const getTechService = new GetTechService()
@@ -201,50 +198,6 @@ export class InterestGroupService {
         new Date())  // lastSimilarFound
 
     console.log(`${fnName}: returning..`)
-  }
-
-  async getOrCreateMissingGroups(prisma: PrismaClient) {
-
-    // Debug
-    const fnName = `${this.clName}.getOrCreateMissingGroups()`
-
-    console.log(`${fnName}: starting..`)
-
-    // Get a list of UserEntityInterestGroups missing an entityInterestGroupId
-    const userEntityInterestGroups = await
-            userEntityInterestGroupModel.filter(
-              prisma,
-              undefined,  // userProfileId
-              null,       // entityInterestGroupId
-              ServerOnlyTypes.actualUserInterestType)
-
-    // Process each UserEntityInterestGroup
-    for (const userEntityInterestGroup of userEntityInterestGroups) {
-
-      const userEntityInterests = await
-              userEntityInterestModel.filter(
-                prisma,
-                userEntityInterestGroup.userProfileId)
-
-      // Get entityInterestIds
-      const entityInterestIds = userEntityInterests.map(
-        (userEntityInterest: UserEntityInterest) =>
-          userEntityInterest.entityInterestId)
-
-      // Get/create the missing group
-      const entityInterestGroup = await
-              this.getOrCreate(
-                prisma,
-                entityInterestIds)
-
-      // Assign to UserEntityInterestGroup
-      await userEntityInterestGroupModel.update(
-              prisma,
-              userEntityInterestGroup.id,
-              undefined,  // userProfileId
-              entityInterestGroup.id,
-              undefined)  // type
-    }
   }
 
   async getOrCreate(

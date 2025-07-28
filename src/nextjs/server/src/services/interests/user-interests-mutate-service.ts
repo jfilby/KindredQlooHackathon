@@ -9,7 +9,6 @@ import { EntityInterestItemModel } from '@/models/interests/entity-interest-item
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
-import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 import { EntityInterestService } from './entity-interest-service'
 import { GetTechService } from '../tech/get-tech-service'
@@ -20,7 +19,6 @@ const batchJobModel = new BatchJobModel()
 const entityInterestItemModel = new EntityInterestItemModel()
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
-const userEntityInterestModel = new UserEntityInterestModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 const userInterestsTextModel = new UserInterestsTextModel()
 
@@ -84,22 +82,6 @@ export class UserInterestsMutateService {
 
           // Add to entityInterestIds
           entityInterestIds.push(entityInterest.id)
-
-          // Get/create UserInterest
-          var userEntityInterest = await
-                userEntityInterestModel.getByUniqueKey(
-                  prisma,
-                  userProfileId,
-                  entityInterest.id)
-
-          if (userEntityInterest == null) {
-
-            userEntityInterest = await
-              userEntityInterestModel.create(
-                prisma,
-                userProfileId,
-                entityInterest.id)
-          }
         }
       }
     }

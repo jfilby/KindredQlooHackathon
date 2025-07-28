@@ -198,7 +198,6 @@ export const typeDefs = `#graphql
   type UserInterestsResults {
     status: Boolean!
     message: String
-    userEntityInterests: [UserEntityInterest]
     userInterestsText: UserInterestsText
   }
 

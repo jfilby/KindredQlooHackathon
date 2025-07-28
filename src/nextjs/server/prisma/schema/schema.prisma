@@ -130,7 +130,6 @@ model EntityInterest {
   name                         String
 
   ofEntityInterestItems        EntityInterestItem[]
-  ofUserEntityInterests        UserEntityInterest[]
 
   @@unique([interestTypeId, name])
   @@map("entity_interest")
@@ -225,18 +224,6 @@ model UserEntityInterestGroup {
 
   @@unique([userProfileId, type])
   @@map("user_entity_interest_group")
-  @@schema("public")
-}
-
-model UserEntityInterest {
-  id                           String               @id @default(cuid())
-  userProfileId                String               @map("user_profile_id")
-  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
-  entityInterestId             String               @map("entity_interest_id")
-  entityInterest               EntityInterest       @relation(fields: [entityInterestId], references: [id])
-
-  @@unique([userProfileId, entityInterestId])
-  @@map("user_entity_interest")
   @@schema("public")
 }
 
