@@ -71,7 +71,7 @@ model QlooEntity {
   qlooEntityId                 String               @map("qloo_entity_id") @unique
   isTrending                   Boolean              @map("is_trending")
   name                         String
-  disambiguation               String
+  disambiguation               String?
   types                        String[]
   popularity                   Float
   json                         Json                 @db.JsonB
@@ -120,11 +120,13 @@ model AiPersona {
 // Kindred: Interests
 
 model EntityInterest {
+  // If in new status then try to find the qlooEntityId before setting to active
   id                           String               @id @default(cuid())
   interestTypeId               String               @map("interest_type_id")
   interestType                 InterestType         @relation(fields: [interestTypeId], references: [id])
   qlooEntityId                 String?              @map("qloo_entity_id")
   qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
+  status                       String?              @db.Char(1)  // N (new), A (active), P (delete pending)
   name                         String
 
   ofEntityInterestItems        EntityInterestItem[]

@@ -4,10 +4,9 @@ import { BatchTypes } from '@/types/batch-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
-import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
-import { GetQlooInsightsService } from '../qloo/get-insights-service'
+import { EntityInterestService } from './entity-interest-service'
 import { InterestGroupService } from './interest-group-service'
 import { UserInterestsMutateService } from './user-interests-mutate-service'
 
@@ -15,12 +14,11 @@ import { UserInterestsMutateService } from './user-interests-mutate-service'
 const batchJobModel = new BatchJobModel()
 const entityInterestGroupModel = new EntityInterestGroupModel()
 const entityInterestItemModel = new EntityInterestItemModel()
-const qlooEntityModel = new QlooEntityModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 const userInterestsTextModel = new UserInterestsTextModel()
 
 // Services
-const getQlooInsightsService = new GetQlooInsightsService()
+const entityInterestService = new EntityInterestService()
 const interestGroupService = new InterestGroupService()
 const userInterestsMutateService = new UserInterestsMutateService()
 
@@ -85,13 +83,16 @@ export class InterestsBatchService {
     }
   }
 
-  async groupAndFindSimilarInterests(prisma: PrismaClient) {
+  async batchProcessing(prisma: PrismaClient) {
 
     // Group interests
     await this.groupInterests(prisma)
 
     // Find similar interests
     await this.findSimilarInterests(prisma)
+
+    // Process new entity interests
+    await entityInterestService.processNewEntityInterests(prisma)
   }
 
   async groupInterests(prisma: PrismaClient) {

@@ -8,7 +8,6 @@ import { FeatureFlagModel } from '@/serene-core-server/models/feature-flags/feat
 import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
-import { GetQlooInsightsService } from '@/services/qloo/get-insights-service'
 import { InterestsBatchService } from '@/services/interests/batch-service'
 import { SiteTopicInterestsMutateService } from '@/services/interests/site-topic-interests-mutate-service'
 import { SocialMediaBatchPipelineService } from '@/services/social-media/pipeline/service'
@@ -19,7 +18,6 @@ const prisma = new PrismaClient()
 const featureFlagModel = new FeatureFlagModel()
 
 // Services
-const getQlooInsightsService = new GetQlooInsightsService()
 const interestsBatchService = new InterestsBatchService()
 const siteTopicInterestsMutateService = new SiteTopicInterestsMutateService()
 const socialMediaBatchPipelineService = new SocialMediaBatchPipelineService()
@@ -116,10 +114,7 @@ async function interval15m(prisma: any) {
   await siteTopicInterestsMutateService.createAllMissingStarterInterests(prisma)
 
   // Group and find similar interests
-  await interestsBatchService.groupAndFindSimilarInterests(prisma)
-
-  // Get any missing Qloo entities
-  await getQlooInsightsService.setMissingQlooEntityIds(prisma)
+  await interestsBatchService.batchProcessing(prisma)
 
   // Social media batch pipeline
   const socialMediaBatchPipelineFeatureFlag = await

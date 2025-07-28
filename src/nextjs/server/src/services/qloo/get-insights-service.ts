@@ -1,9 +1,11 @@
-import { PrismaClient } from '@prisma/client'
+import { EntityInterest, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
+import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
 import { QlooUtilsFetchService } from './qloo-fetch-service'
 
 // Models
+const entityInterestModel = new EntityInterestModel()
 const qlooEntityModel = new QlooEntityModel()
 
 // Services
@@ -108,28 +110,16 @@ export class GetQlooInsightsService {
     }
   }
 
-  async setMissingQlooEntityIds(prisma: PrismaClient) {
-
-    // Get entities
-    const entities = await
-            qlooEntityModel.filter(
-              prisma,
-              undefined,  // isTrending
-              undefined)  // types
+  async setMissingQlooEntityIds(
+          prisma: PrismaClient,
+          entityInterests: EntityInterest[]) {
 
     // Return if no entities to process
-    if (entities.length === 0) {
+    if (entityInterests.length === 0) {
       return
     }
 
     // Get entityIds
-    const qlooEntityIds = entities.map((entity: any) => entity.qlooEntityId)
-
-    // Query
-    await this.getAndSave(
-            prisma,
-            entities[0].types[0],
-            3,  // take
-            qlooEntityIds)
+    ;
   }
 }

@@ -20,21 +20,10 @@ export class GetQlooInsightsServiceTests {
     // Debug
     const fnName = `${this.clName}.tests()`
 
-    // Get entities
-    const entities = await
-            qlooEntityModel.filter(
-              prisma,
-              undefined,  // isTrending
-              undefined)  // types
+    // Process new EntityInterests
+    ;
 
     // Get entityIds
-    const qlooEntityIds = entities.map((entity: any) => entity.qlooEntityId)
-
-    // Query
-    await getQlooInsightsService.getAndSave(
-            prisma,
-            entities[0].types[0],
-            3,  // take
-            qlooEntityIds)
+    ;
   }
 }

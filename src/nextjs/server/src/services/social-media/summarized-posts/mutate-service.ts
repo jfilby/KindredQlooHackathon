@@ -288,6 +288,8 @@ export class SummarizePostMutateService {
               entityInterestModel.filter(
                 prisma,
                 undefined,  // interestTypeId
+                undefined,  // qlooEntityId
+                undefined,  // status
                 siteTopicList.siteTopicId,
                 false)      // includeInterestTypes
 

@@ -34,7 +34,7 @@ export class GetQlooEntitiesService {
     }
 
     if (take <= 1) {
-      throw new CustomError(`${fnName}: take <= 1`)
+      throw new CustomError(`${fnName}: take: <= 1`)
     }
 
     // Initial URL
@@ -87,12 +87,23 @@ export class GetQlooEntitiesService {
 
     // Validate
     if (getResults.results == null) {
-      return
+      return []
     }
 
     // Save the results
+    const qlooEntityIds: string[] = []
+
     for (const result of getResults.results) {
 
+      // Debug
+      console.log(`${fnName}: result: ` + JSON.stringify(result))
+
+      // Set undefined values to null
+      if (result.disambiguation === undefined) {
+        result.disambiguation = null
+      }
+
+      // Upsert QlooEntity
       const qlooEntity = await
               qlooEntityModel.upsert(
                 prisma,
@@ -104,6 +115,15 @@ export class GetQlooEntitiesService {
                 result.types,
                 result.popularity,
                 result)
+
+      // Debug
+      console.log(`${fnName}: QlooEntity upserted`)
+
+      // Add id
+      qlooEntityIds.push(qlooEntity.id)
     }
+
+    // Return
+    return qlooEntityIds
   }
 }

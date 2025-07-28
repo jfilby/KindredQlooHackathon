@@ -9,6 +9,7 @@ import { ServerOnlyTypes } from '@/types/server-only-types'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
+import { EntityInterestService } from '../interests/entity-interest-service'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
@@ -19,6 +20,7 @@ const userModel = new UserModel()
 
 // Services
 const agentLlmService = new AgentLlmService()
+const entityInterestService = new EntityInterestService()
 const getTechService = new GetTechService()
 const usersService = new UsersService()
 
@@ -155,11 +157,9 @@ export class GenTestUsersMutateService {
         for (const interest of interests as string[]) {
 
           const entityInterest = await
-                  entityInterestModel.upsert(
+                  entityInterestService.getOrCreate(
                     prisma,
-                    undefined,  // id
                     interestType.id,
-                    null,       // qlooEntityId
                     interest)   // name
 
           const userEntityInterest = await

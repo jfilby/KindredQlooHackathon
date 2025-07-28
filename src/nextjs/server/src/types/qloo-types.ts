@@ -21,7 +21,7 @@ export enum QlooEntityCategory {
   tv_show = 'urn:entity:tv_show',
   videogame = 'urn:entity:videogame',
   demographics = 'urn:demographics',
-  tag = 'urn:entity:tag'
+  tag = 'urn:tag'
 }
 
 export enum QlooTag {

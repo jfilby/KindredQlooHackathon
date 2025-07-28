@@ -11,7 +11,7 @@ export class QlooEntityModel {
           qlooEntityId: string,
           isTrending: boolean,
           name: string,
-          disambiguation: string,
+          disambiguation: string | null,
           types: string[],
           popularity: number,
           json: any) {
@@ -174,7 +174,7 @@ export class QlooEntityModel {
           qlooEntityId: string | undefined,
           isTrending: boolean | undefined,
           name: string | undefined,
-          disambiguation: string | undefined,
+          disambiguation: string | null | undefined,
           types: string[] | undefined,
           popularity: number | undefined,
           json: any | undefined) {
@@ -210,7 +210,7 @@ export class QlooEntityModel {
           qlooEntityId: string | undefined,
           isTrending: boolean | undefined,
           name: string | undefined,
-          disambiguation: string | undefined,
+          disambiguation: string | null | undefined,
           types: string[] | undefined,
           popularity: number | undefined,
           json: any | undefined) {
@@ -253,8 +253,8 @@ export class QlooEntityModel {
         throw 'Prisma error'
       }
 
-      if (disambiguation == null) {
-        console.error(`${fnName}: id is null and disambiguation is null`)
+      if (disambiguation === undefined) {
+        console.error(`${fnName}: id is null and disambiguation is undefined`)
         throw 'Prisma error'
       }
 

@@ -244,6 +244,8 @@ export class UserInterestsMutateService {
               entityInterestModel.filter(
                 prisma,
                 interestType.id,
+                undefined,  // qlooEntityId
+                undefined,  // status
                 undefined,  // siteTopicId
                 true)       // includeInterestTypes
 

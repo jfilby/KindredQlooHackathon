@@ -10,6 +10,7 @@ export class EntityInterestModel {
           prisma: PrismaClient,
           interestTypeId: string,
           qlooEntityId: string | null,
+          status: string,
           name: string) {
 
     // Debug
@@ -21,6 +22,7 @@ export class EntityInterestModel {
         data: {
           interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
+          status: status,
           name: name
         }
       })
@@ -55,6 +57,8 @@ export class EntityInterestModel {
   async filter(
           prisma: PrismaClient,
           interestTypeId: string | undefined = undefined,
+          qlooEntityId: string | null | undefined = undefined,
+          status: string | undefined = undefined,
           siteTopicId: string | undefined = undefined,
           includeInterestTypes: boolean = false) {
 
@@ -69,6 +73,8 @@ export class EntityInterestModel {
         },
         where: {
           interestTypeId: interestTypeId,
+          qlooEntityId: qlooEntityId,
+          status: status,
           ofEntityInterestItems: {
             some: {
               entityInterestGroup: {
@@ -184,6 +190,7 @@ export class EntityInterestModel {
           id: string | undefined,
           interestTypeId: string | undefined,
           qlooEntityId: string | null | undefined,
+          status: string | undefined,
           name: string | undefined) {
 
     // Debug
@@ -195,6 +202,7 @@ export class EntityInterestModel {
         data: {
           interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
+          status: status,
           name: name
         },
         where: {
@@ -212,6 +220,7 @@ export class EntityInterestModel {
           id: string | undefined,
           interestTypeId: string | undefined,
           qlooEntityId: string | null | undefined,
+          status: string | undefined,
           name: string | undefined) {
 
     // Debug
@@ -249,6 +258,11 @@ export class EntityInterestModel {
         throw 'Prisma error'
       }
 
+      if (status == null) {
+        console.error(`${fnName}: id is null and status is null`)
+        throw 'Prisma error'
+      }
+
       if (name == null) {
         console.error(`${fnName}: id is null and name is null`)
         throw 'Prisma error'
@@ -260,6 +274,7 @@ export class EntityInterestModel {
                  prisma,
                  interestTypeId,
                  qlooEntityId,
+                 status,
                  name)
     } else {
 
@@ -270,6 +285,7 @@ export class EntityInterestModel {
                  id,
                  interestTypeId,
                  qlooEntityId,
+                 status,
                  name)
     }
   }
