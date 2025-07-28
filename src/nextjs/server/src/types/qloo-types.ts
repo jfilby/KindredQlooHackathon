@@ -4,6 +4,19 @@ export class QlooApiDetails {
   static apiKey = process.env.QLOO_API_KEY
 }
 
+export enum QlooEntityInsightsApiType {
+  artist = 'urn:entity:artist',
+  book = 'urn:entity:book',
+  brand = 'urn:entity:brand',
+  destination = 'urn:entity:destination',
+  movie = 'urn:entity:movie',
+  person = 'urn:entity:person',
+  place = 'urn:entity:place',
+  podcast = 'urn:entity:podcast',
+  tv_show = 'urn:entity:tv_show',
+  videogame = 'urn:entity:videogame'
+}
+
 export enum QlooEntityCategory {
   actor = 'urn:entity:actor',
   album = 'urn:entity:album',

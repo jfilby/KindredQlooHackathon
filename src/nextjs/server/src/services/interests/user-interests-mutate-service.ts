@@ -3,6 +3,7 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { BatchTypes } from '@/types/batch-types'
+import { QlooEntityInsightsApiType } from '@/types/qloo-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
@@ -266,11 +267,17 @@ export class UserInterestsMutateService {
           `\n`
 
     // Get a list of interest types
-    const interestTypes = await
+    const allInterestTypes = await
             interestTypeModel.filter(prisma)
 
-    const interestTypeNames = interestTypes.map(
-            (interestTypeRecord: InterestType) => interestTypeRecord.name)
+    // Filter out types not included in the Qloo Insights API
+    const interestTypes =
+            allInterestTypes.filter(
+              (i: any) => Object.values(QlooEntityInsightsApiType).includes(i.qlooEntityType))
+
+    // Debug
+    // console.log(`${fnName}: interestTypes: ` +
+    //             JSON.stringify(interestTypes))
 
     // Add interest types to the prompt
     prompt +=
