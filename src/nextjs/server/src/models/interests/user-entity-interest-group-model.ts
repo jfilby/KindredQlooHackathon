@@ -10,7 +10,8 @@ export class UserEntityInterestGroupModel {
           prisma: PrismaClient,
           userProfileId: string,
           entityInterestGroupId: string | null,
-          type: string) {
+          type: string,
+          reset: boolean) {
 
     // Debug
     const fnName = `${this.clName}.create()`
@@ -21,7 +22,8 @@ export class UserEntityInterestGroupModel {
         data: {
           userProfileId: userProfileId,
           entityInterestGroupId: entityInterestGroupId,
-          type: type
+          type: type,
+          reset: reset
         }
       })
     } catch(error) {
@@ -57,6 +59,7 @@ export class UserEntityInterestGroupModel {
           userProfileId: string | undefined,
           entityInterestGroupId: string | null | undefined = undefined,
           type: string | undefined = undefined,
+          reset: boolean | undefined = undefined,
           includeEntityInterestGroup: boolean = false) {
 
     // Debug
@@ -71,7 +74,8 @@ export class UserEntityInterestGroupModel {
         where: {
           userProfileId: userProfileId,
           entityInterestGroupId: entityInterestGroupId,
-          type: type
+          type: type,
+          reset: reset
         }
       })
     } catch(error: any) {
@@ -188,7 +192,8 @@ export class UserEntityInterestGroupModel {
           id: string | undefined,
           userProfileId: string | undefined,
           entityInterestGroupId: string | null | undefined,
-          type: string | undefined) {
+          type: string | undefined,
+          reset: boolean | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
@@ -199,7 +204,8 @@ export class UserEntityInterestGroupModel {
         data: {
           userProfileId: userProfileId,
           entityInterestGroupId: entityInterestGroupId,
-          type: type
+          type: type,
+          reset: reset
         },
         where: {
           id: id
@@ -216,7 +222,8 @@ export class UserEntityInterestGroupModel {
           id: string | undefined,
           userProfileId: string | undefined,
           entityInterestGroupId: string | null | undefined,
-          type: string | undefined) {
+          type: string | undefined,
+          reset: boolean | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -258,13 +265,19 @@ export class UserEntityInterestGroupModel {
         throw 'Prisma error'
       }
 
+      if (reset == null) {
+        console.error(`${fnName}: id is null and reset is null`)
+        throw 'Prisma error'
+      }
+
       // Create
       return await
                this.create(
                  prisma,
                  userProfileId,
                  entityInterestGroupId,
-                 type)
+                 type,
+                 reset)
     } else {
 
       // Update
@@ -274,7 +287,8 @@ export class UserEntityInterestGroupModel {
                  id,
                  userProfileId,
                  entityInterestGroupId,
-                 type)
+                 type,
+                 reset)
     }
   }
 }

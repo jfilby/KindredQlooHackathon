@@ -96,7 +96,7 @@ export class GetQlooEntitiesService {
     for (const result of getResults.results) {
 
       // Debug
-      console.log(`${fnName}: result: ` + JSON.stringify(result))
+      // console.log(`${fnName}: result: ` + JSON.stringify(result))
 
       // Set undefined values to null
       if (result.disambiguation === undefined) {

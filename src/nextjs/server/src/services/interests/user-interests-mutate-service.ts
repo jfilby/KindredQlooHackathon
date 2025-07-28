@@ -35,34 +35,6 @@ export class UserInterestsMutateService {
   clName = 'UserInterestsMutateService'
 
   // Code
-  async deleteRecommendedUserEntityInterests(
-          prisma: PrismaClient,
-          userProfileId: string) {
-
-    // Debug
-    const fnName = `${this.clName}.deleteRecommendedUserEntityInterests()`
-
-    // Get the UserEntityInterestGroup if any exists
-    var userEntityInterestGroup = await
-          userEntityInterestGroupModel.getByUniqueKey(
-            prisma,
-            userProfileId,
-            ServerOnlyTypes.recommendedUserInterestType)
-
-    if (userEntityInterestGroup == null) {
-      return
-    }
-
-    // Unset the entityInterestGroup
-    userEntityInterestGroup = await
-      userEntityInterestGroupModel.update(
-        prisma,
-        userEntityInterestGroup.id,
-        undefined,  // userProfileId
-        null,       // entityInterestGroupId
-        ServerOnlyTypes.recommendedUserInterestType)
-  }
-
   async processQueryResults(
           prisma: PrismaClient,
           userProfileId: string,
@@ -128,7 +100,8 @@ export class UserInterestsMutateService {
           prisma,
           userProfileId,
           null,  // entityInterestGroupId
-          ServerOnlyTypes.actualUserInterestType)
+          ServerOnlyTypes.actualUserInterestType,
+          true)  // reset
     }
 
     // Get/create interests group
@@ -147,7 +120,8 @@ export class UserInterestsMutateService {
           userEntityInterestGroup.id,
           undefined,  // userProfileId
           entityInterestGroup.id,
-          undefined)  // actualUserInterestType
+          undefined,  // type
+          false)      // reset
     }
 
     // Return
@@ -187,8 +161,8 @@ export class UserInterestsMutateService {
         userProfileId,
         text)
 
-    // Delete any recommended interests
-    await this.deleteRecommendedUserEntityInterests(
+    // Reset any recommended interests
+    await this.resetUserEntityInterestsGroups(
             prisma,
             userProfileId)
 
@@ -224,6 +198,35 @@ export class UserInterestsMutateService {
                 null,       // parameters
                 null,       // results
                 userProfileId)
+    }
+  }
+
+  async resetUserEntityInterestsGroups(
+          prisma: PrismaClient,
+          userProfileId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.resetUserEntityInterestsGroups()`
+
+    // Process each UserEntityInterestGroup
+    var userEntityInterestGroups = await
+          userEntityInterestGroupModel.filter(
+            prisma,
+            userProfileId,
+            undefined,
+            undefined,
+            true)  // reset
+
+    for (const userEntityInterestGroup of userEntityInterestGroups) {
+
+      // Unset the entityInterestGroup
+      await userEntityInterestGroupModel.update(
+              prisma,
+              userEntityInterestGroup.id,
+              undefined,  // userProfileId
+              null,       // entityInterestGroupId
+              undefined,  // type
+              undefined)  // reset
     }
   }
 

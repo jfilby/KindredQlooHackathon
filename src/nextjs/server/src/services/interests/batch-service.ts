@@ -1,7 +1,6 @@
 import { BatchJob, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BatchTypes } from '@/types/batch-types'
-import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
@@ -38,6 +37,8 @@ export class InterestsBatchService {
 
     // Debug
     const fnName = `${this.clName}.createInterests()`
+
+    console.log(`${fnName}: starting..`)
 
     // Validate
     if (batchJob.refId == null) {
@@ -108,6 +109,11 @@ export class InterestsBatchService {
 
   async groupInterests(prisma: PrismaClient) {
 
+    // Debug
+    const fnName = `${this.clName}.groupInterests()`
+
+    console.log(`${fnName}: starting..`)
+
     // Create embeddings missing for any interest groups
     await interestGroupService.creatingMissingEmbeddings(prisma)
   }
@@ -128,28 +134,21 @@ export class InterestsBatchService {
           userProfileId: string) {
 
     // Try to get an existing UserEntityInterestGroup
-    const userEntityInterestGroup = await
-            userEntityInterestGroupModel.getByUniqueKey(
+    const userEntityInterestGroups = await
+            userEntityInterestGroupModel.filter(
               prisma,
-              userProfileId,
-              ServerOnlyTypes.actualUserInterestType)
+              userProfileId)
 
-    if (userEntityInterestGroup == null) {
-      return
+    for (const userEntityInterestGroup of userEntityInterestGroups) {
+
+      // Update the EntityInterestGroup to set embeddingGenerated to null
+      await userEntityInterestGroupModel.update(
+              prisma,
+              userEntityInterestGroup.id,
+              undefined,  // userProfileId
+              undefined,  // entityInterestGroupId
+              undefined,  // type
+              true)       // reset
     }
-
-    // Delete the items in the group
-    await entityInterestItemModel.deleteByEntityInterestGroupId(
-            prisma,
-            userEntityInterestGroup.entityInterestGroupId)
-
-    // Update the EntityInterestGroup to set embeddingGenerated to null
-    await entityInterestGroupModel.update(
-            prisma,
-            userEntityInterestGroup.entityInterestGroupId,
-            undefined,  // uniqueHash
-            undefined,  // embeddingTechId
-            null,       // embeddingGenerated
-            undefined)  // lastSimilarFound
   }
 }

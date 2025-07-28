@@ -82,13 +82,14 @@ export class GetQlooInsightsService {
 
   async getAllRecommendedInterests(prisma: PrismaClient) {
 
-    // Get users with actual interests
+    // Get users with actual interests ready to reset
     const userEntityInterestGroups = await
             userEntityInterestGroupModel.filter(
               prisma,
               undefined,  // userProfileId
               undefined,  // entityInterestGroupId
-              ServerOnlyTypes.actualUserInterestType)
+              ServerOnlyTypes.actualUserInterestType,
+              false)       // reset
 
     // Get recommended interests from Qloo
     for (const userEntityInterestGroup of userEntityInterestGroups) {
@@ -216,6 +217,19 @@ export class GetQlooInsightsService {
 
     console.log(`${fnName}: userProfileId: ${userProfileId}`)
 
+    // Check the recommended UserEntityInterestGroup
+    var userEntityInterestGroup = await
+          userEntityInterestGroupModel.getByUniqueKey(
+            prisma,
+            userProfileId,
+            ServerOnlyTypes.recommendedUserInterestType)
+
+    if (userEntityInterestGroup != null) {
+      if (userEntityInterestGroup.reset === false) {
+        return
+      }
+    }
+
     // Get recommended interests from Qloo
     var allEntityInterestIds: string[] = []
 
@@ -228,13 +242,13 @@ export class GetQlooInsightsService {
                 userProfileId,
                 type)
 
-      if (qlooEntityIds.length === 0) {
-        continue
-      }
-
       // Debug
       console.log(`${fnName}: qlooEntityIds: ` +
                   JSON.stringify(qlooEntityIds))
+
+      if (qlooEntityIds.length === 0) {
+        continue
+      }
 
       // Get and save entity interests
       const entityInterestIds = await
@@ -249,6 +263,8 @@ export class GetQlooInsightsService {
 
     // Don't create an EntityInterestGroup if there are no entityInterestIds
     if (allEntityInterestIds.length === 0) {
+
+      console.log(`${fnName}: allEntityInterestIds.length === 0`)
       return
     }
 
@@ -263,13 +279,14 @@ export class GetQlooInsightsService {
               allEntityInterestIds)
 
     // Upsert the UserEntityInterestGroup
-    const userEntityInterestGroup = await
-            userEntityInterestGroupModel.upsert(
-              prisma,
-              undefined,  // id
-              userProfileId,
-              entityInterestGroup.id,
-              ServerOnlyTypes.recommendedUserInterestType)
+    userEntityInterestGroup = await
+      userEntityInterestGroupModel.upsert(
+        prisma,
+        undefined,  // id
+        userProfileId,
+        entityInterestGroup.id,
+        ServerOnlyTypes.recommendedUserInterestType,
+        false)      // reset
 
     // Debug
     console.log(`${fnName}: returning..`)
