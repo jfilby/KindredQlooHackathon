@@ -35,6 +35,34 @@ export class UserInterestsMutateService {
   clName = 'UserInterestsMutateService'
 
   // Code
+  async deleteRecommendedUserEntityInterests(
+          prisma: PrismaClient,
+          userProfileId: string) {
+
+    // Debug
+    const fnName = `${this.clName}.deleteRecommendedUserEntityInterests()`
+
+    // Get the UserEntityInterestGroup if any exists
+    var userEntityInterestGroup = await
+          userEntityInterestGroupModel.getByUniqueKey(
+            prisma,
+            userProfileId,
+            ServerOnlyTypes.recommendedUserInterestType)
+
+    if (userEntityInterestGroup == null) {
+      return
+    }
+
+    // Unset the entityInterestGroup
+    userEntityInterestGroup = await
+      userEntityInterestGroupModel.update(
+        prisma,
+        userEntityInterestGroup.id,
+        undefined,  // userProfileId
+        null,       // entityInterestGroupId
+        ServerOnlyTypes.recommendedUserInterestType)
+  }
+
   async processQueryResults(
           prisma: PrismaClient,
           userProfileId: string,
@@ -136,13 +164,33 @@ export class UserInterestsMutateService {
     // Debug
     const fnName = `${this.clName}.processUpdatedUserInterestsText()`
 
+    // Get the existing UserInterestsText to verify that the text changed
+    var userInterestsText = await
+          userInterestsTextModel.getByUniqueKey(
+            prisma,
+            userProfileId)
+
+    if (userInterestsText?.text != null) {
+
+      if (userInterestsText.text.trim().toLowerCase() ===
+          text.trim().toLowerCase()) {
+
+        return
+      }
+    }
+
     // Upsert UserInterestsText
-    const userInterestsText = await
-            userInterestsTextModel.upsert(
-              prisma,
-              undefined,  // id
-              userProfileId,
-              text)
+    userInterestsText = await
+      userInterestsTextModel.upsert(
+        prisma,
+        undefined,  // id
+        userProfileId,
+        text)
+
+    // Delete any recommended interests
+    await this.deleteRecommendedUserEntityInterests(
+            prisma,
+            userProfileId)
 
     // Determine if a BatchJob has already been created
     const batchJobs = await

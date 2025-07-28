@@ -100,7 +100,8 @@ export class GetQlooInsightsService {
                 userEntityInterestGroup.userProfileId,
                 ServerOnlyTypes.recommendedUserInterestType)
 
-      if (recommendedUserEntityInterestGroup != null) {
+      if (recommendedUserEntityInterestGroup != null &&
+          recommendedUserEntityInterestGroup.entityInterestGroupId != null) {
         continue
       }
 
