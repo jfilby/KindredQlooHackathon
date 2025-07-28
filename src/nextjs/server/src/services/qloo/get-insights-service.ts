@@ -93,6 +93,18 @@ export class GetQlooInsightsService {
     // Get recommended interests from Qloo
     for (const userEntityInterestGroup of userEntityInterestGroups) {
 
+      // Check for an existing recommended UserEntityInterestGroup
+      const recommendedUserEntityInterestGroup = await
+              userEntityInterestGroupModel.getByUniqueKey(
+                prisma,
+                userEntityInterestGroup.userProfileId,
+                ServerOnlyTypes.recommendedUserInterestType)
+
+      if (recommendedUserEntityInterestGroup != null) {
+        continue
+      }
+
+      // Generate recommended interests
       await this.getRecommendedInterests(
               prisma,
               userEntityInterestGroup.userProfileId)
