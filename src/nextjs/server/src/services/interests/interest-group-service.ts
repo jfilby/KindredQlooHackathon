@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import { EntityInterest, EntityInterestGroup, EntityInterestItem, PrismaClient, UserEntityInterest } from '@prisma/client'
+import { EntityInterest, EntityInterestGroup, EntityInterestItem, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { TechModel } from '@/serene-core-server/models/tech/tech-model'
 import { OpenAiEmbeddingsService } from '@/serene-ai-server/services/llm-apis/openai/embeddings-api'
@@ -7,7 +7,6 @@ import { EntityInterestGroupModel } from '@/models/interests/entity-interest-gro
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { SharedEntityInterestGroupModel } from '@/models/interests/shared-entity-interest-group-model'
-import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
@@ -16,7 +15,6 @@ const entityInterestItemModel = new EntityInterestItemModel()
 const entityInterestModel = new EntityInterestModel()
 const sharedEntityInterestGroupModel = new SharedEntityInterestGroupModel()
 const techModel = new TechModel()
-const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 
 // Services
 const getTechService = new GetTechService()
