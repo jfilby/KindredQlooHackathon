@@ -26,7 +26,7 @@ export default function TextEditUserInterests({
     // On save completed successfully
     if (saveCompleted === true) {
       setAlertSeverity('success')
-      setMessage('Saved! Changes could take a few minutes to an hour to take effect.')
+      setMessage('Saved! Changes could take up to a minute to take effect.')
     }
 
   }, [saveCompleted])
