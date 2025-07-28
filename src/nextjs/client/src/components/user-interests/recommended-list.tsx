@@ -19,7 +19,7 @@ export default function RecommendedInterests({
       <div style={{ marginBottom: '2em' }}>
 
         <Typography variant='h5'>
-          Recommended
+          Recommendations from Qloo
         </Typography>
       </div>
 
