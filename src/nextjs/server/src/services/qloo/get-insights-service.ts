@@ -1,12 +1,14 @@
-import { EntityInterest, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { EntityInterestModel } from '@/models/interests/entity-interest-model'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { QlooEntityCategory } from '@/types/qloo-types'
 import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
 import { QlooUtilsFetchService } from './qloo-fetch-service'
+import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 
 // Models
-const entityInterestModel = new EntityInterestModel()
 const qlooEntityModel = new QlooEntityModel()
+const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 
 // Services
 const qlooUtilsFetchService = new QlooUtilsFetchService()
@@ -18,7 +20,7 @@ export class GetQlooInsightsService {
   clName = 'GetQlooInsightsService'
 
   // Code
-  async get(type: string,
+  async get(type: string | undefined,
             take: number = 3,
             qlooEntityIds: string[] | undefined = undefined) {
 
@@ -53,7 +55,7 @@ export class GetQlooInsightsService {
 
     if (qlooEntityIds != null) {
 
-      uriAdditions.push(`filter.results.entities=` + qlooEntityIds.join(','))
+      uriAdditions.push(`signal.interests.entities=` + qlooEntityIds.join(','))
     }
 
     // Complete the URL
@@ -110,16 +112,65 @@ export class GetQlooInsightsService {
     }
   }
 
-  async setMissingQlooEntityIds(
+  async getRecommendedInterests(
           prisma: PrismaClient,
-          entityInterests: EntityInterest[]) {
+          userProfileId: string) {
 
-    // Return if no entities to process
-    if (entityInterests.length === 0) {
+    // Debug
+    const fnName = `${this.clName}.getRecommendedInterests()`
+
+    console.log(`${fnName}: userProfileId: ${userProfileId}`)
+
+    // Get the user's interests
+    const userEntityInterestGroup = await
+            userEntityInterestGroupModel.getByUniqueKey(
+              prisma,
+              userProfileId,
+              true)  // includeEntityInterests
+
+    /* Debug
+    console.log(
+      `${fnName}: userEntityInterestGroup.entityInterestGroup.ofEntityInterestItems: ` +
+      JSON.stringify(userEntityInterestGroup.entityInterestGroup.ofEntityInterestItems)) */
+
+    // Validate
+    if (userEntityInterestGroup?.entityInterestGroup?.ofEntityInterestItems == null) {
       return
     }
 
-    // Get entityIds
-    ;
+    // Get entityInterestItems
+    const entityInterestItems =
+            userEntityInterestGroup.entityInterestGroup.ofEntityInterestItems
+
+    // Get entityInterests
+    const entityInterests =
+            entityInterestItems.map(
+              (entityInterestItem: any) => entityInterestItem.entityInterest)
+
+    // Get qlooEntityIds
+    const qlooEntityIds: string[] = []
+
+    for (const entityInterest of entityInterests) {
+
+      if (entityInterest.status === BaseDataTypes.activeStatus &&
+          entityInterest.qlooEntityId != null) {
+
+        qlooEntityIds.push(entityInterest.qlooEntity.qlooEntityId)
+      }
+    }
+
+    // Debug
+    console.log(`${fnName}: qlooEntityIds: ` +
+                JSON.stringify(qlooEntityIds))
+
+    // Get recommended interests from Qloo
+    const results = await
+            this.get(
+              QlooEntityCategory.book,  // type
+              3,                        // take
+              qlooEntityIds)
+
+    // Debug
+    console.log(`${fnName}: results: ` + JSON.stringify(results))
   }
 }

@@ -15,7 +15,9 @@ export class QlooTests {
   clName = 'QlooTests'
 
   // Code
-  async tests(prisma: PrismaClient) {
+  async tests(
+          prisma: PrismaClient,
+          userProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.tests()`
@@ -25,6 +27,8 @@ export class QlooTests {
 
     // await getQlooEntitiesServiceTests.tests(prisma)
 
-    await getQlooInsightsServiceTests.tests(prisma)
+    await getQlooInsightsServiceTests.tests(
+            prisma,
+            userProfileId)
   }
 }

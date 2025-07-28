@@ -15,15 +15,18 @@ export class GetQlooInsightsServiceTests {
   clName = 'GetQlooInsightsServiceTests'
 
   // Code
-  async tests(prisma: PrismaClient) {
+  async tests(
+          prisma: PrismaClient,
+          userProfileId: string) {
 
     // Debug
     const fnName = `${this.clName}.tests()`
 
-    // Process new EntityInterests
-    ;
+    console.log(`${fnName}: starting..`)
 
-    // Get entityIds
-    ;
+    // Get recommended entities
+    await getQlooInsightsService.getRecommendedInterests(
+            prisma,
+            userProfileId)
   }
 }

@@ -49,7 +49,10 @@ export class Tests {
 
       case this.qlooTests: {
 
-        await qlooTests.tests(prisma)
+        await qlooTests.tests(
+                prisma,
+                adminUserProfile.id)
+
         break
       }
 

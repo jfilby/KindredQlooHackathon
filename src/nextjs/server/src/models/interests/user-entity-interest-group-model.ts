@@ -129,7 +129,8 @@ export class UserEntityInterestGroupModel {
 
   async getByUniqueKey(
           prisma: PrismaClient,
-          userProfileId: string) {
+          userProfileId: string,
+          includeEntityInterests: boolean = false) {
 
     // Debug
     const fnName = `${this.clName}.getByUniqueKey()`
@@ -145,6 +146,22 @@ export class UserEntityInterestGroupModel {
 
     try {
       userEntityInterestGroup = await prisma.userEntityInterestGroup.findFirst({
+        include: includeEntityInterests ? {
+          entityInterestGroup: {
+            include: {
+              ofEntityInterestItems: {
+                include: {
+                  entityInterest: {
+                    include: {
+                      interestType: true,
+                      qlooEntity: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        } : undefined,
         where: {
           userProfileId: userProfileId
         }
