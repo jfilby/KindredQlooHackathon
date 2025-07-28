@@ -13,6 +13,7 @@ import { UserEntityInterestModel } from '@/models/interests/user-entity-interest
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 import { EntityInterestService } from './entity-interest-service'
 import { GetTechService } from '../tech/get-tech-service'
+import { InterestGroupService } from './interest-group-service'
 
 // Models
 const batchJobModel = new BatchJobModel()
@@ -27,6 +28,7 @@ const userInterestsTextModel = new UserInterestsTextModel()
 const agentLlmService = new AgentLlmService()
 const entityInterestService = new EntityInterestService()
 const getTechService = new GetTechService()
+const interestGroupService = new InterestGroupService()
 
 // Class
 export class UserInterestsMutateService {
@@ -117,14 +119,22 @@ export class UserInterestsMutateService {
           null)  // entityInterestGroupId
     }
 
-    // Upsert items
-    for (const entityInterestId of entityInterestIds) {
+    // Get/create interests group
+    if (userEntityInterestGroup.entityInterestGroupId == null) {
 
-      await entityInterestItemModel.upsert(
-              prisma,
-              undefined,  // id
-              userEntityInterestGroup.entityInterestGroupId,
-              entityInterestId)
+      // Get/create
+      const entityInterestGroup = await
+              interestGroupService.getOrCreate(
+                prisma,
+                entityInterestIds)
+
+      // Set for the user
+      userEntityInterestGroup = await
+        userEntityInterestGroupModel.update(
+          prisma,
+          userEntityInterestGroup.id,
+          undefined,  // userProfileId
+          entityInterestGroup.id)
     }
 
     // Return
