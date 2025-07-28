@@ -129,6 +129,9 @@ export class GetQlooInsightsService {
               take,
               qlooEntityIds)
 
+    // Debug
+    console.log(`${fnName}: getResults: ` + JSON.stringify(getResults))
+
     // Validate
     if (getResults.results == null ||
         getResults.results.entities == null) {
@@ -265,6 +268,20 @@ export class GetQlooInsightsService {
     if (allEntityInterestIds.length === 0) {
 
       console.log(`${fnName}: allEntityInterestIds.length === 0`)
+
+      // Update userEntityInterestGroup and set reset to false
+      if (userEntityInterestGroup != null) {
+
+        userEntityInterestGroup = await
+          userEntityInterestGroupModel.update(
+            prisma,
+            userEntityInterestGroup.id,
+            undefined,  // userProfileId
+            undefined,  // entityInterestGroupId
+            undefined,  // type
+            false)      // reset
+      }
+
       return
     }
 
