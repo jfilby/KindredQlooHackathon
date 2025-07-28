@@ -73,7 +73,7 @@ model QlooEntity {
   name                         String
   disambiguation               String?
   types                        String[]
-  popularity                   Float
+  popularity                   Float?
   json                         Json                 @db.JsonB
   created                      DateTime             @default(now())
   updated                      DateTime             @updatedAt
@@ -126,7 +126,7 @@ model EntityInterest {
   interestType                 InterestType         @relation(fields: [interestTypeId], references: [id])
   qlooEntityId                 String?              @map("qloo_entity_id")
   qlooEntity                   QlooEntity?          @relation(fields: [qlooEntityId], references: [id])
-  status                       String?              @db.Char(1)  // N (new), A (active), P (delete pending)
+  status                       String               @db.Char(1)  // N (new), A (active), P (delete pending)
   name                         String
 
   ofEntityInterestItems        EntityInterestItem[]

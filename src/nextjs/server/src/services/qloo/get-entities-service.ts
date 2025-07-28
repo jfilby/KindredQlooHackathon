@@ -103,6 +103,10 @@ export class GetQlooEntitiesService {
         result.disambiguation = null
       }
 
+      if (result.popularity === undefined) {
+        result.popularity = null
+      }
+
       // Upsert QlooEntity
       const qlooEntity = await
               qlooEntityModel.upsert(
