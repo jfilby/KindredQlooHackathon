@@ -184,12 +184,6 @@ export const typeDefs = `#graphql
     message: String
   }
 
-  type UserEntityInterest {
-    id: String!
-    userProfileId: String!
-    entityInterest: EntityInterest
-  }
-
   type UserInterestsText {
     id: String!
     text: String!
@@ -199,6 +193,7 @@ export const typeDefs = `#graphql
     status: Boolean!
     message: String
     userInterestsText: UserInterestsText
+    recommendedInterests: [EntityInterest]
   }
 
   # Queries

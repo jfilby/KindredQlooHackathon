@@ -12,6 +12,14 @@ export const getUserInterestsQuery = gql`
         id
         text
       }
+      recommendedInterests {
+        id
+        name
+        interestType {
+          id
+          name
+        }
+      }
     }
   }
 `

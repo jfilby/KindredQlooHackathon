@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
 import { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
 import LoadUserEntityInterestsByFilter from '@/components/user-interests/load-by-filter'
+import RecommendedInterests from '@/components/user-interests/recommended-list'
 import TextEditUserInterests from '@/components/user-interests/text-edit'
 
 interface Props {
@@ -21,6 +22,16 @@ export default function InterestsPage({
 
   // State
   const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
+  const [recommendedInterests, setRecommendedInterests] = useState<any[] | undefined>(undefined)
+
+  const [text, setText] = useState<string | undefined>(undefined)
+  const [loadedUserInterests, setLoadedUserInterests] = useState(false)
+
+  // Effects
+  useEffect(() => {
+
+    setText(userInterestsText?.text ?? '')
+  }, [loadedUserInterests])
 
   // Render
   return (
@@ -35,12 +46,12 @@ export default function InterestsPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
-          {userInterestsText !== undefined ?
-            <>
-              <TextEditUserInterests
-                userProfileId={userProfile.id}
-                initialText={userInterestsText?.text ?? ''} />
-            </>
+          {text !== undefined ?
+
+            <TextEditUserInterests
+              userProfileId={userProfile.id}
+              text={text}
+              setText={setText} />
           :
             <Typography>
               Loading..
@@ -57,13 +68,25 @@ export default function InterestsPage({
           :
             <></>
           }
+
+          {userInterestsText != null &&
+           recommendedInterests != null ?
+
+            <RecommendedInterests
+              text={text}
+              setText={setText}
+              recommendedInterests={recommendedInterests} />
+          :
+            <></>
+          }
         </Box>
       </Layout>
 
       <LoadUserEntityInterestsByFilter
         userProfileId={userProfile.id}
-        setUserEntityInterests={undefined}
-        setUserInterestsText={setUserInterestsText} />
+        setUserInterestsText={setUserInterestsText}
+        setRecommendedInterests={setRecommendedInterests}
+        setLoadedUserInterests={setLoadedUserInterests} />
     </>
   )
 }

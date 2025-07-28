@@ -4,19 +4,20 @@ import SaveUserInterestsText from './save-text'
 
 interface Props {
   userProfileId: string
-  initialText: string
+  text: string
+  setText: any
 }
 
 export default function TextEditUserInterests({
                           userProfileId,
-                          initialText
+                          text,
+                          setText
                         }: Props) {
 
   // State
   const [alertSeverity, setAlertSeverity] = useState<any>('')
   const [message, setMessage] = useState<string | undefined>(undefined)
 
-  const [text, setText] = useState<string>(initialText)
   const [saveAction, setSaveAction] = useState<boolean>(false)
   const [saveCompleted, setSaveCompleted] = useState<boolean>(false)
 
@@ -46,7 +47,7 @@ export default function TextEditUserInterests({
 
       <Box
         component='form'
-        style={{ marginBottom: '2m' }}
+        style={{ marginBottom: '2em' }}
         sx={{ '& .MuiTextField-root': { m: 1 } }}
         noValidate
         autoComplete='off'>
