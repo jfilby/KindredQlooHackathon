@@ -1,6 +1,7 @@
 import { BatchJob, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BatchTypes } from '@/types/batch-types'
+import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
@@ -128,7 +129,8 @@ export class InterestsBatchService {
     const userEntityInterestGroup = await
             userEntityInterestGroupModel.getByUniqueKey(
               prisma,
-              userProfileId)
+              userProfileId,
+              ServerOnlyTypes.actualUserInterestType)
 
     if (userEntityInterestGroup == null) {
       return

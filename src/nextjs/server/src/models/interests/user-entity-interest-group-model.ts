@@ -9,7 +9,8 @@ export class UserEntityInterestGroupModel {
   async create(
           prisma: PrismaClient,
           userProfileId: string,
-          entityInterestGroupId: string | null) {
+          entityInterestGroupId: string | null,
+          type: string) {
 
     // Debug
     const fnName = `${this.clName}.create()`
@@ -19,7 +20,8 @@ export class UserEntityInterestGroupModel {
       return await prisma.userEntityInterestGroup.create({
         data: {
           userProfileId: userProfileId,
-          entityInterestGroupId: entityInterestGroupId
+          entityInterestGroupId: entityInterestGroupId,
+          type: type
         }
       })
     } catch(error) {
@@ -54,6 +56,7 @@ export class UserEntityInterestGroupModel {
           prisma: PrismaClient,
           userProfileId: string | undefined,
           entityInterestGroupId: string | null | undefined = undefined,
+          type: string | undefined = undefined,
           includeEntityInterestGroup: boolean = false) {
 
     // Debug
@@ -67,7 +70,8 @@ export class UserEntityInterestGroupModel {
         },
         where: {
           userProfileId: userProfileId,
-          entityInterestGroupId: entityInterestGroupId
+          entityInterestGroupId: entityInterestGroupId,
+          type: type
         }
       })
     } catch(error: any) {
@@ -130,6 +134,7 @@ export class UserEntityInterestGroupModel {
   async getByUniqueKey(
           prisma: PrismaClient,
           userProfileId: string,
+          type: string,
           includeEntityInterests: boolean = false) {
 
     // Debug
@@ -163,7 +168,8 @@ export class UserEntityInterestGroupModel {
           }
         } : undefined,
         where: {
-          userProfileId: userProfileId
+          userProfileId: userProfileId,
+          type: type
         }
       })
     } catch(error: any) {
@@ -181,7 +187,8 @@ export class UserEntityInterestGroupModel {
           prisma: PrismaClient,
           id: string | undefined,
           userProfileId: string | undefined,
-          entityInterestGroupId: string | null | undefined) {
+          entityInterestGroupId: string | null | undefined,
+          type: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.update()`
@@ -191,7 +198,8 @@ export class UserEntityInterestGroupModel {
       return await prisma.userEntityInterestGroup.update({
         data: {
           userProfileId: userProfileId,
-          entityInterestGroupId: entityInterestGroupId
+          entityInterestGroupId: entityInterestGroupId,
+          type: type
         },
         where: {
           id: id
@@ -207,7 +215,8 @@ export class UserEntityInterestGroupModel {
           prisma: PrismaClient,
           id: string | undefined,
           userProfileId: string | undefined,
-          entityInterestGroupId: string | null | undefined) {
+          entityInterestGroupId: string | null | undefined,
+          type: string | undefined) {
 
     // Debug
     const fnName = `${this.clName}.upsert()`
@@ -216,12 +225,14 @@ export class UserEntityInterestGroupModel {
 
     // If id isn't specified, but the unique keys are, try to get the record
     if (id == null &&
-        userProfileId != null) {
+        userProfileId != null &&
+        type != null) {
 
       const userEntityInterestGroup = await
               this.getByUniqueKey(
                 prisma,
-                userProfileId)
+                userProfileId,
+                type)
 
       if (userEntityInterestGroup != null) {
         id = userEntityInterestGroup.id
@@ -242,13 +253,18 @@ export class UserEntityInterestGroupModel {
         throw 'Prisma error'
       }
 
+      if (type == null) {
+        console.error(`${fnName}: id is null and type is null`)
+        throw 'Prisma error'
+      }
 
       // Create
       return await
                this.create(
                  prisma,
                  userProfileId,
-                 entityInterestGroupId)
+                 entityInterestGroupId,
+                 type)
     } else {
 
       // Update
@@ -257,7 +273,8 @@ export class UserEntityInterestGroupModel {
                  prisma,
                  id,
                  userProfileId,
-                 entityInterestGroupId)
+                 entityInterestGroupId,
+                 type)
     }
   }
 }

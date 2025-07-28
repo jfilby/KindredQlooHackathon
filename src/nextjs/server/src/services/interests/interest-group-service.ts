@@ -3,6 +3,7 @@ import { EntityInterest, EntityInterestGroup, EntityInterestItem, PrismaClient, 
 import { CustomError } from '@/serene-core-server/types/errors'
 import { TechModel } from '@/serene-core-server/models/tech/tech-model'
 import { OpenAiEmbeddingsService } from '@/serene-ai-server/services/llm-apis/openai/embeddings-api'
+import { ServerOnlyTypes } from '@/types/server-only-types'
 import { EntityInterestGroupModel } from '@/models/interests/entity-interest-group-model'
 import { EntityInterestItemModel } from '@/models/interests/entity-interest-item-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
@@ -214,7 +215,8 @@ export class InterestGroupService {
             userEntityInterestGroupModel.filter(
               prisma,
               undefined,  // userProfileId
-              null)       // entityInterestGroupId
+              null,       // entityInterestGroupId
+              ServerOnlyTypes.actualUserInterestType)
 
     // Process each UserEntityInterestGroup
     for (const userEntityInterestGroup of userEntityInterestGroups) {
@@ -240,7 +242,8 @@ export class InterestGroupService {
               prisma,
               userEntityInterestGroup.id,
               undefined,  // userProfileId
-              entityInterestGroup.id)
+              entityInterestGroup.id,
+              undefined)  // type
     }
   }
 

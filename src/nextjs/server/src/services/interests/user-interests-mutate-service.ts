@@ -108,7 +108,8 @@ export class UserInterestsMutateService {
     var userEntityInterestGroup = await
           userEntityInterestGroupModel.getByUniqueKey(
             prisma,
-            userProfileId)
+            userProfileId,
+            ServerOnlyTypes.actualUserInterestType)
 
     if (userEntityInterestGroup == null) {
 
@@ -116,7 +117,8 @@ export class UserInterestsMutateService {
         userEntityInterestGroupModel.create(
           prisma,
           userProfileId,
-          null)  // entityInterestGroupId
+          null,  // entityInterestGroupId
+          ServerOnlyTypes.actualUserInterestType)
     }
 
     // Get/create interests group
@@ -134,7 +136,8 @@ export class UserInterestsMutateService {
           prisma,
           userEntityInterestGroup.id,
           undefined,  // userProfileId
-          entityInterestGroup.id)
+          entityInterestGroup.id,
+          undefined)  // actualUserInterestType
     }
 
     // Return

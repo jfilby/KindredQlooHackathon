@@ -33,4 +33,8 @@ export class ServerOnlyTypes {
 
   // Frequency to create listings
   static listingFreqInHours = 6
+
+  // User interests
+  static actualUserInterestType = 'A'
+  static recommendedUserInterestType = 'R'
 }

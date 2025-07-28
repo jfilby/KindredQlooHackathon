@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { QlooEntityCategory } from '@/types/qloo-types'
+import { ServerOnlyTypes } from '@/types/server-only-types'
 import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
 import { QlooUtilsFetchService } from './qloo-fetch-service'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
@@ -121,11 +122,12 @@ export class GetQlooInsightsService {
 
     console.log(`${fnName}: userProfileId: ${userProfileId}`)
 
-    // Get the user's interests
+    // Get the user's actual interests
     const userEntityInterestGroup = await
             userEntityInterestGroupModel.getByUniqueKey(
               prisma,
               userProfileId,
+              ServerOnlyTypes.actualUserInterestType,
               true)  // includeEntityInterests
 
     /* Debug

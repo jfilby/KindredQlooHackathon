@@ -257,7 +257,9 @@ export class SummarizePostQueryService {
     const userEntityInterestGroup = await
             userEntityInterestGroupModel.getByUniqueKey(
               prisma,
-              userProfileId)
+              userProfileId,
+              ServerOnlyTypes.actualUserInterestType,
+              true)  // includeEntityInterests
 
     if (userEntityInterestGroup == null) {
       return
