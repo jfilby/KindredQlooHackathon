@@ -100,13 +100,17 @@ export class UserInterestsMutateService {
         userEntityInterestGroupModel.create(
           prisma,
           userProfileId,
-          null,  // entityInterestGroupId
+          null,   // entityInterestGroupId
           ServerOnlyTypes.actualUserInterestType,
           true)  // reset
     }
 
     // Get/create interests group
-    if (userEntityInterestGroup.entityInterestGroupId == null) {
+    if (userEntityInterestGroup.reset === true) {
+
+      // Debug
+      console.log(`${fnName}: entityInterestIds: ` +
+                  JSON.stringify(entityInterestIds))
 
       // Get/create
       const entityInterestGroup = await
@@ -260,9 +264,10 @@ export class UserInterestsMutateService {
           `# General instructions\n` +
           `- You must generate a list of interests grouped by interestType ` +
           `  from the input text.\n` +
-          `- These will be the interests grouped by interest type. Don't ` +
-          `  generate an empty list if there are valid interests in the ` +
-          `  text.\n` +
+          `- These will be the interests grouped by the listed interest ` +
+          `  types.\n` +
+          `- You must generate an entry for every individual interest in ` +
+          `  the input text.\n` +
           `- Some items in the text could be abbreviated.\n` +
           `\n`
 
@@ -271,7 +276,7 @@ export class UserInterestsMutateService {
             interestTypeModel.filter(prisma)
 
     // Filter out types not included in the Qloo Insights API
-    const interestTypes =
+    const preferredInterestTypes =
             allInterestTypes.filter(
               (i: any) => Object.values(QlooEntityInsightsApiType).includes(i.qlooEntityType))
 
@@ -282,15 +287,17 @@ export class UserInterestsMutateService {
     // Add interest types to the prompt
     prompt +=
       `# Interest types\n` +
-      `The list of interest types: ` + JSON.stringify(interestTypes) +
-      `\n\n`
+      `The list of interest types: ` + JSON.stringify(allInterestTypes) + `\n` +
+      `The list of preferred interest types: ` + JSON.stringify(preferredInterestTypes) + `\n` +
+      `\n`
 
     // Add to the prompt
     prompt +=
       `# Interests\n` +
-      `Here are a list of known interests by interestType:\n`
+      `- The interest names are generated, the list of known interests here ` +
+      `  are only to prevent slight variances that aren't helpful.\n\n`
 
-    for (const interestType of interestTypes) {
+    for (const interestType of allInterestTypes) {
 
       // Get a list of existing EntityInterests
       const entityInterests = await
@@ -305,7 +312,9 @@ export class UserInterestsMutateService {
       const interests = entityInterests.map(
               (entityInterest: EntityInterest) => entityInterest.name)
 
-      prompt += `${interestType.name}: ${interests}\n`
+      if (interests.length > 0) {
+        prompt += `${interestType.name}: ${interests}\n`
+      }
     }
 
     prompt += `\n`
@@ -332,6 +341,9 @@ export class UserInterestsMutateService {
     prompt +=
       `# Input\n` +
       `The input text to process is: ` + text
+
+    // Debug
+    console.log(`${fnName}: prompt: ${prompt}`)
 
     // LLM request
     const queryResults = await
