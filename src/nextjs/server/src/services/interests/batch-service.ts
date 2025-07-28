@@ -85,6 +85,11 @@ export class InterestsBatchService {
 
   async batchProcessing(prisma: PrismaClient) {
 
+    // Debug
+    const fnName = `${this.clName}.batchProcessing()`
+
+    console.log(`${fnName}: starting..`)
+
     // Group interests
     await this.groupInterests(prisma)
 
@@ -105,6 +110,11 @@ export class InterestsBatchService {
   }
 
   async findSimilarInterests(prisma: PrismaClient) {
+
+    // Debug
+    const fnName = `${this.clName}.findSimilarInterests()`
+
+    console.log(`${fnName}: starting..`)
 
     // Find and save similar interests for groups needing that
     await interestGroupService.findAndSetSimilarEntityInterests(prisma)

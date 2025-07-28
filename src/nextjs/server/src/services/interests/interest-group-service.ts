@@ -117,7 +117,9 @@ export class InterestGroupService {
   async findAndSetSimilarEntityInterests(prisma: PrismaClient) {
 
     // Debug
-    const fnName = `${this.clName}.setSimilarEntityInterests()`
+    const fnName = `${this.clName}.findAndSetSimilarEntityInterests()`
+
+    console.log(`${fnName}: starting..`)
 
     // Look for entity interest groups have don't have similar interests groups
     var entityInterestGroups = await
@@ -158,6 +160,9 @@ export class InterestGroupService {
               prisma,
               entityInterestGroup)
     }
+
+    // Debug
+    console.log(`${fnName}: returning..`)
   }
 
   async findSimilarEntityInterests(

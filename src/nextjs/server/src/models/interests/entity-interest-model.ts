@@ -75,7 +75,7 @@ export class EntityInterestModel {
           interestTypeId: interestTypeId,
           qlooEntityId: qlooEntityId,
           status: status,
-          ofEntityInterestItems: {
+          ofEntityInterestItems: siteTopicId ? {
             some: {
               entityInterestGroup: {
                 ofSiteTopicEntityInterestGroup: {
@@ -85,7 +85,7 @@ export class EntityInterestModel {
                 }
               }
             }
-          }
+          } : undefined
         }
       })
     } catch(error: any) {

@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
 import { GetQlooEntitiesService } from '../qloo/get-entities-service'
@@ -19,6 +20,11 @@ export class EntityInterestService {
   async processNewEntityInterest(
           prisma: PrismaClient,
           entityInterest: any) {
+
+    // Debug
+    const fnName = `${this.clName}.processNewEntityInterest()`
+
+    console.log(`${fnName}: starting..`)
 
     // Try to get the category for the EntityInterest's interestType
     var qlooEntityId: string | null = null
@@ -52,6 +58,11 @@ export class EntityInterestService {
 
   async processNewEntityInterests(prisma: PrismaClient) {
 
+    // Debug
+    const fnName = `${this.clName}.processNewEntityInterests()`
+
+    console.log(`${fnName}: starting..`)
+
     // Get EntityInterests in new status
     const entityInterests = await
             entityInterestModel.filter(
@@ -61,6 +72,14 @@ export class EntityInterestService {
               BaseDataTypes.newStatus,
               undefined,  // siteTopicId
               true)       // includeInterestTypes
+
+    // Validate
+    if (entityInterests == null) {
+      throw new CustomError(`${fnName}: entityInterests == null`)
+    }
+
+    // Debug
+    console.log(`${fnName}: entityInterests.length: ${entityInterests.length}`)
 
     // Process each one
     for (const entityInterest of entityInterests) {
