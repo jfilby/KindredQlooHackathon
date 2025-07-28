@@ -1,4 +1,4 @@
-import { EntityInterest, InterestType, PrismaClient } from '@prisma/client'
+import { EntityInterest, PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { AgentLlmService } from '@/serene-ai-server/services/llm-apis/agent-llm-service'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
@@ -225,9 +225,9 @@ export class UserInterestsMutateService {
               prisma,
               userEntityInterestGroup.id,
               undefined,  // userProfileId
-              null,       // entityInterestGroupId
+              undefined,  // entityInterestGroupId
               undefined,  // type
-              undefined)  // reset
+              true)       // reset
     }
   }
 
