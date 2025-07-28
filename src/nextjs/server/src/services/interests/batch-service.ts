@@ -8,6 +8,7 @@ import { EntityInterestItemModel } from '@/models/interests/entity-interest-item
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
 import { EntityInterestService } from './entity-interest-service'
+import { GetQlooInsightsService } from '../qloo/get-insights-service'
 import { InterestGroupService } from './interest-group-service'
 import { UserInterestsMutateService } from './user-interests-mutate-service'
 
@@ -20,6 +21,7 @@ const userInterestsTextModel = new UserInterestsTextModel()
 
 // Services
 const entityInterestService = new EntityInterestService()
+const getQlooInsightsService = new GetQlooInsightsService()
 const interestGroupService = new InterestGroupService()
 const userInterestsMutateService = new UserInterestsMutateService()
 
@@ -99,6 +101,9 @@ export class InterestsBatchService {
 
     // Process new entity interests
     await entityInterestService.processNewEntityInterests(prisma)
+
+    // Get recommended entity interests
+    await getQlooInsightsService.getAllRecommendedInterests(prisma)
   }
 
   async groupInterests(prisma: PrismaClient) {

@@ -254,7 +254,8 @@ export class InterestGroupService {
     // Debug
     const fnName = `${this.clName}.getOrCreate()`
 
-    console.log(`${fnName}: starting..`)
+    console.log(`${fnName}: starting with entityInterestIds: ` +
+                JSON.stringify(entityInterestIds))
 
     // Get a unique hash
     const uniqueHash = this.getUniqueHash(entityInterestIds)
@@ -291,6 +292,9 @@ export class InterestGroupService {
                 entityInterestGroup.id,
                 entityInterestId)
     }
+
+    // Debug
+    console.log(`${fnName}: returning..`)
 
     // Return
     return entityInterestGroup

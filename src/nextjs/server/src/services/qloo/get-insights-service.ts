@@ -3,15 +3,21 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { QlooEntityCategory } from '@/types/qloo-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
+import { EntityInterestModel } from '@/models/interests/entity-interest-model'
+import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { QlooEntityModel } from '@/models/qloo/qloo-entity-model'
+import { InterestGroupService } from '../interests/interest-group-service'
 import { QlooUtilsFetchService } from './qloo-fetch-service'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 
 // Models
+const entityInterestModel = new EntityInterestModel()
+const interestTypeModel = new InterestTypeModel()
 const qlooEntityModel = new QlooEntityModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 
 // Services
+const interestGroupService = new InterestGroupService()
 const qlooUtilsFetchService = new QlooUtilsFetchService()
 
 // Class
@@ -57,6 +63,7 @@ export class GetQlooInsightsService {
     if (qlooEntityIds != null) {
 
       uriAdditions.push(`signal.interests.entities=` + qlooEntityIds.join(','))
+      uriAdditions.push(`filter.exclude.entities=` + qlooEntityIds.join(','))
     }
 
     // Complete the URL
@@ -71,6 +78,25 @@ export class GetQlooInsightsService {
 
     // Return
     return results
+  }
+
+  async getAllRecommendedInterests(prisma: PrismaClient) {
+
+    // Get users with actual interests
+    const userEntityInterestGroups = await
+            userEntityInterestGroupModel.filter(
+              prisma,
+              undefined,  // userProfileId
+              undefined,  // entityInterestGroupId
+              ServerOnlyTypes.actualUserInterestType)
+
+    // Get recommended interests from Qloo
+    for (const userEntityInterestGroup of userEntityInterestGroups) {
+
+      await this.getRecommendedInterests(
+              prisma,
+              userEntityInterestGroup.userProfileId)
+    }
   }
 
   async getAndSave(
@@ -92,13 +118,52 @@ export class GetQlooInsightsService {
     // Validate
     if (getResults.results == null ||
         getResults.results.entities == null) {
-      return
+      return []
+    }
+
+    // Debug
+    // console.log(`${fnName}: getResults: ` + JSON.stringify(getResults))
+
+    // Get the InterestType
+    const interestType = await
+            interestTypeModel.getByQlooEntityType(
+              prisma,
+              type)
+
+    // Validate
+    if (interestType == null) {
+      throw new CustomError(
+                  `${fnName}: interestType == null for type: ${type}`)
     }
 
     // Save the results
+    var entityInterestIds: string[] = []
+
     for (const result of getResults.results.entities) {
 
-      // Save the entity
+      // Debug
+      // console.log(`${fnName}: result: ` + JSON.stringify(result))
+
+      // Set undefined values to null
+      if (result.disambiguation === undefined) {
+        result.disambiguation = null
+      }
+
+      if (result.popularity === undefined) {
+        result.popularity = null
+      }
+
+      // Get types
+      var types: string[] = []
+
+      if (result.types != null) {
+        types = result.types
+
+      } else if (result.type != null) {
+        types = [result.type]
+      }
+
+      // Save the QlooEntity
       const qlooEntity = await
               qlooEntityModel.upsert(
                 prisma,
@@ -107,10 +172,26 @@ export class GetQlooInsightsService {
                 false,      // isTrending
                 result.name,
                 result.disambiguation,
-                result.types,
+                types,
                 result.popularity,
                 result)
+
+      // Upsert the EntityInterest
+      const entityInterest = await
+              entityInterestModel.upsert(
+                prisma,
+                undefined,  // id
+                interestType.id,
+                qlooEntity.id,
+                BaseDataTypes.activeStatus,
+                result.name)
+
+      // Add to entityInterestIds
+      entityInterestIds.push(entityInterest.id)
     }
+
+    // Return
+    return entityInterestIds
   }
 
   async getRecommendedInterests(
@@ -121,6 +202,70 @@ export class GetQlooInsightsService {
     const fnName = `${this.clName}.getRecommendedInterests()`
 
     console.log(`${fnName}: userProfileId: ${userProfileId}`)
+
+    // Get recommended interests from Qloo
+    var allEntityInterestIds: string[] = []
+
+    for (const type of Object.values(QlooEntityCategory)) {
+
+      // Get qlooEntityIds
+      const qlooEntityIds = await
+              this.getUserEntityInterestsByQlooEntityType(
+                prisma,
+                userProfileId,
+                type)
+
+      if (qlooEntityIds.length === 0) {
+        continue
+      }
+
+      // Debug
+      console.log(`${fnName}: qlooEntityIds: ` +
+                  JSON.stringify(qlooEntityIds))
+
+      // Get and save entity interests
+      const entityInterestIds = await
+              this.getAndSave(
+                prisma,
+                type,
+                3,  // take
+                qlooEntityIds)
+
+      allEntityInterestIds = allEntityInterestIds.concat(entityInterestIds)
+    }
+
+    // Don't create an EntityInterestGroup if there are no entityInterestIds
+    if (allEntityInterestIds.length === 0) {
+      return
+    }
+
+    // Debug
+    console.log(`${fnName}: allEntityInterestIds: ` +
+                JSON.stringify(allEntityInterestIds))
+
+    // Get/create the EntityInterestGroup
+    const entityInterestGroup = await
+            interestGroupService.getOrCreate(
+              prisma,
+              allEntityInterestIds)
+
+    // Upsert the UserEntityInterestGroup
+    const userEntityInterestGroup = await
+            userEntityInterestGroupModel.upsert(
+              prisma,
+              undefined,  // id
+              userProfileId,
+              entityInterestGroup.id,
+              ServerOnlyTypes.recommendedUserInterestType)
+
+    // Debug
+    console.log(`${fnName}: returning..`)
+  }
+
+  async getUserEntityInterestsByQlooEntityType(
+          prisma: PrismaClient,
+          userProfileId: string,
+          qlooEntityType: string) {
 
     // Get the user's actual interests
     const userEntityInterestGroup = await
@@ -137,7 +282,7 @@ export class GetQlooInsightsService {
 
     // Validate
     if (userEntityInterestGroup?.entityInterestGroup?.ofEntityInterestItems == null) {
-      return
+      return []
     }
 
     // Get entityInterestItems
@@ -154,25 +299,15 @@ export class GetQlooInsightsService {
 
     for (const entityInterest of entityInterests) {
 
+      // Add qlooEntityIds of the required category
       if (entityInterest.status === BaseDataTypes.activeStatus &&
-          entityInterest.qlooEntityId != null) {
+          entityInterest.qlooEntityId != null &&
+          entityInterest.interestType.qlooEntityType === qlooEntityType) {
 
         qlooEntityIds.push(entityInterest.qlooEntity.qlooEntityId)
       }
     }
 
-    // Debug
-    console.log(`${fnName}: qlooEntityIds: ` +
-                JSON.stringify(qlooEntityIds))
-
-    // Get recommended interests from Qloo
-    const results = await
-            this.get(
-              QlooEntityCategory.book,  // type
-              3,                        // take
-              qlooEntityIds)
-
-    // Debug
-    console.log(`${fnName}: results: ` + JSON.stringify(results))
+    return qlooEntityIds
   }
 }

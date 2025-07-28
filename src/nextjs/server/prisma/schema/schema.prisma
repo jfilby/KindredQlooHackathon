@@ -221,7 +221,7 @@ model UserEntityInterestGroup {
   userProfile                  UserProfile           @relation(fields: [userProfileId], references: [id])
   entityInterestGroupId        String?               @map("entity_interest_group_id")
   entityInterestGroup          EntityInterestGroup?  @relation(fields: [entityInterestGroupId], references: [id])
-  type                         String                @db.Char(1)  // A (actual), R (recommended)
+  type                         String                @db.Char(1)             // A (actual), R (recommended)
 
   @@unique([userProfileId, type])
   @@map("user_entity_interest_group")
