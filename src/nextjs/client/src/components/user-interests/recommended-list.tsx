@@ -23,23 +23,25 @@ export default function RecommendedInterests({
         </Typography>
       </div>
 
-      {recommendedInterests.length > 0 ?
-        <>
-          {recommendedInterests.map(recommendedInterest => (
-            <ViewRecommendedInterestCard
-              key={recommendedInterest.id}
-              text={text}
-              setText={setText}
-              recommendedInterest={recommendedInterest} />
-          ))}
-        </>
-      :
-        <Typography
-          style={{ marginTop: '2em' }}
-          variant='body1'>
-          None yet.
-        </Typography>
-      }
+      <div style={{ marginBottom: '2em' }}>
+        {recommendedInterests.length > 0 ?
+          <>
+            {recommendedInterests.map(recommendedInterest => (
+              <ViewRecommendedInterestCard
+                key={recommendedInterest.id}
+                text={text}
+                setText={setText}
+                recommendedInterest={recommendedInterest} />
+            ))}
+          </>
+        :
+          <Typography
+            style={{ marginTop: '2em' }}
+            variant='body1'>
+            None yet.
+          </Typography>
+        }
+      </div>
     </div>
   )
 }

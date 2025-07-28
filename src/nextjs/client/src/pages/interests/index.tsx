@@ -46,6 +46,22 @@ export default function InterestsPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
+          <Typography variant='h4'>
+            My interests
+          </Typography>
+
+          <Typography variant='body1'>
+            Aside from general tags/topics, you can get better recommendations
+            by using these categories:
+          </Typography>
+
+          <Typography
+            style={{ marginBottom: '1em' }}
+            variant='body2'>
+            artist, book, brand, destination, movie,
+            person, place, podcast, tv_show, videogame
+          </Typography>
+
           {text !== undefined ?
 
             <TextEditUserInterests
