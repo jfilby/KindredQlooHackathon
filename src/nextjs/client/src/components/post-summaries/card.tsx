@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Alert, Divider, Link, Typography } from '@mui/material'
+import ChatIcon from '@mui/icons-material/Chat'
+import LinkIcon from '@mui/icons-material/Link'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { StringUtilsService } from '@/serene-core-client/services/utils/string'
 import DeleteDialog from '../dialogs/delete-dialog'
 import UndeleteDialog from '../dialogs/undelete-dialog'
 import Markdown from 'react-markdown'
 import ListPostSummaryInsights from '../post-summary-insights/list'
+import LabeledIconButton from '@/serene-core-client/components/buttons/labeled-icon-button'
 
 interface Props {
   userProfileId: string
@@ -16,6 +19,9 @@ export default function ViewPostSummaryCard({
                           userProfileId,
                           postSummary
                         }: Props) {
+
+  // Consts
+  const chatUrl = `/post-summary/${postSummary.id}`
 
   // Services
   const stringUtilsService = new StringUtilsService()
@@ -105,24 +111,23 @@ export default function ViewPostSummaryCard({
                    120)}
               </Link>
             </Typography>
+            <br/>
 
             {postSummary.socialMediaUrl != null ?
-              <Typography>
-                <Link
-                  href={postSummary.socialMediaUrl}
-                  style={{ color: 'grey' }}
-                  sx={{
-                     textDecorationColor: 'grey',
-                     textDecorationThickness: '1px',
-                     '&:hover': {
-                       textDecorationThickness: '2px',
-                     },
-                  }}
-                  target='_new'
-                  underline='hover'>
-                  Discuss on {postSummary.post.site.name}
-                </Link>
-              </Typography>
+              <>
+                <LabeledIconButton
+                  icon={LinkIcon}
+                  label={postSummary.post.site.name}
+                  onClick={(e: any) => {
+                    window.open(postSummary.socialMediaUrl, '_blank')?.focus()
+                  }} />
+
+                <LabeledIconButton
+                  icon={ChatIcon}
+                  label={`Chat`}
+                  onClick={(e: any) => window.location.href = chatUrl}
+                  style={{ marginLeft: '1em' }} />
+              </>
             :
               <></>
             }

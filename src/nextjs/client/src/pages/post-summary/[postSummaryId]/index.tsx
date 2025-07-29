@@ -38,7 +38,7 @@ export default function PostSummaryChatPage({
           sx={{ bgcolor: 'background.default' }}>
 
           <Typography variant='h4'>
-            My interests
+            Post summary chat
           </Typography>
 
           <ViewChatSession

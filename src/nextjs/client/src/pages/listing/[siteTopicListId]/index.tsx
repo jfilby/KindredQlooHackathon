@@ -38,7 +38,7 @@ export default function ListingChatPage({
           sx={{ bgcolor: 'background.default' }}>
 
           <Typography variant='h4'>
-            My interests
+            Listing chat
           </Typography>
 
           <ViewChatSession
