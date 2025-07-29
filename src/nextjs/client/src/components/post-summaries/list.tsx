@@ -29,7 +29,7 @@ export default function ListPostSummaries({
               style={{ color: 'grey' }}
               underline='hover'>
               <Typography variant='body1'>
-                Rank summaries by your interests
+                Personalize to rank summaries just for you
               </Typography>
             </Link>
           </div>
