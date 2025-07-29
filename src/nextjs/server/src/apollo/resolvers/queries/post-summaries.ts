@@ -133,33 +133,16 @@ export async function getTimeToNextListing(
   // Debug
   const fnName = `getTimeToNextListing()`
 
-  // Validate/get default
-  var siteTopicId = args.siteTopicId
-
+  // Validate/get
   if (args.siteTopicListId == null) {
-
-    // Get the default
-    const siteTopics = await
-            siteTopicModel.filter(prisma)
-
-    // Validate
-    if (siteTopics == null) {
-      throw new CustomError(`${fnName}: siteTopics == null`)
-    }
-
-    if (siteTopics.length !== 1) {
-      throw new CustomError(`${fnName}: siteTopics !== 1`)
-    }
-
-    // Get siteTopicId
-    siteTopicId = siteTopics[0].id
+    throw new CustomError(`${fnName}: args.siteTopicListId == null`)
   }
 
   // Get time to next listing
   const results = await
           summarizePostUtilsService.getTimeToNextSummary(
             prisma,
-            siteTopicId)
+            args.siteTopicListId)
 
   // Return
   return results

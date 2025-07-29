@@ -232,6 +232,7 @@ export class SummarizePostQueryService {
     // Return
     return {
       status: true,
+      siteTopicListId: siteTopicListId,
       postSummaries: sortedPostSummaries
     }
   }

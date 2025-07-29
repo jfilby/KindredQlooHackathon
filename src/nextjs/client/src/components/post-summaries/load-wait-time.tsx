@@ -3,13 +3,13 @@ import { useLazyQuery } from '@apollo/client'
 import { getTimeToNextListingQuery } from '@/apollo/post-summaries'
 
 interface Props {
-  siteTopicId: string | undefined
+  siteTopicListId: string
   setLoaded: any
   setWaitTime: any
 }
 
 export default function LoadWaitTime({
-                          siteTopicId,
+                          siteTopicListId,
                           setLoaded,
                           setWaitTime
                         }: Props) {
@@ -35,7 +35,7 @@ export default function LoadWaitTime({
       await fetchGetTimeToNextListingQuery(
         {
           variables: {
-            siteTopicId: siteTopicId
+            siteTopicListId: siteTopicListId
           }
         })
 

@@ -10,6 +10,7 @@ export const getPostSummariesQuery = gql`
 
       status
       message
+      siteTopicListId
       postSummaries {
         id
         postId
@@ -82,7 +83,7 @@ export const getPostSummaryQuery = gql`
 
 export const getTimeToNextListingQuery = gql`
   query getTimeToNextListing(
-          $siteTopicListId: String) {
+          $siteTopicListId: String!) {
     getTimeToNextListing(
       siteTopicListId: $siteTopicListId) {
 

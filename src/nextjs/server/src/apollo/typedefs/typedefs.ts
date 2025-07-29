@@ -152,6 +152,7 @@ export const typeDefs = `#graphql
   type PostSummariesResults {
     status: Boolean!
     message: String
+    siteTopicListId: String
     postSummaries: [PostSummary]
   }
 
@@ -273,7 +274,7 @@ export const typeDefs = `#graphql
     getPostSummaryInsightComments(
       postSummaryInsightId: String!): PostSummaryInsightCommentResults!
     getTimeToNextListing(
-      siteTopicListId: String): TimeToNextListingResults!
+      siteTopicListId: String!): TimeToNextListingResults!
 
     # Interests
     getUserInterests(userProfileId: String!): UserInterestsResults!

@@ -5,11 +5,13 @@ import ViewPostSummaryCard from './card'
 
 interface Props {
   userProfileId: string
+  siteTopicListId: string
   postSummaries: any[]
 }
 
 export default function ListPostSummaries({
                           userProfileId,
+                          siteTopicListId,
                           postSummaries
                         }: Props) {
 
@@ -101,7 +103,7 @@ export default function ListPostSummaries({
       }
 
       <LoadWaitTime
-        siteTopicId={undefined}
+        siteTopicListId={siteTopicListId}
         setLoaded={setLoaded}
         setWaitTime={setWaitTime} />
     </div>

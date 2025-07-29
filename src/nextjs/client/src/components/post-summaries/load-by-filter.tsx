@@ -4,11 +4,13 @@ import { getPostSummariesQuery } from '@/apollo/post-summaries'
 
 interface Props {
   userProfileId: string
+  setSiteTopicListId: any
   setPostSummaries: any
 }
 
 export default function LoadPostSummariesByFilter({
                           userProfileId,
+                          setSiteTopicListId,
                           setPostSummaries
                         }: Props) {
 
@@ -39,6 +41,7 @@ export default function LoadPostSummariesByFilter({
 
     const results = fetchGetPostSummariesQueryData.data.getPostSummaries
 
+    setSiteTopicListId(results.siteTopicListId)
     setPostSummaries(results.postSummaries)
   }
 

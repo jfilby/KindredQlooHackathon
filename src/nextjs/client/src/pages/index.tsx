@@ -16,6 +16,7 @@ export default function PostSummariesPage({
                         }: Props) {
 
   // State
+  const [siteTopicListId, setSiteTopicListId] = useState<string | undefined>(undefined)
   const [postSummaries, setPostSummaries] = useState<any[] | undefined>(undefined)
 
   // Render
@@ -31,9 +32,12 @@ export default function PostSummariesPage({
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
 
-          {postSummaries != null ?
+          {siteTopicListId != null &&
+           postSummaries != null ?
+
             <ListPostSummaries
               userProfileId={userProfile.id}
+              siteTopicListId={siteTopicListId}
               postSummaries={postSummaries} />
           :
             <Typography>
@@ -45,6 +49,7 @@ export default function PostSummariesPage({
 
       <LoadPostSummariesByFilter
         userProfileId={userProfile.id}
+        setSiteTopicListId={setSiteTopicListId}
         setPostSummaries={setPostSummaries} />
     </>
   )

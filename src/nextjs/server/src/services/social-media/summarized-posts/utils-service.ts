@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
@@ -15,20 +16,20 @@ export class SummarizePostUtilsService {
   // Code
   async getTimeToNextSummary(
           prisma: PrismaClient,
-          siteTopicId: string) {
+          siteTopicListId: string) {
 
-    // Get the latest listing for the site topic
+    // Debug
+    const fnName = `${this.clName}.getTimeToNextSummary()`
+
+    // Get the SiteTopicList
     const siteTopicList = await
-            siteTopicListModel.getLatestBySiteTopicIdAndStatus(
+            siteTopicListModel.getById(
               prisma,
-              siteTopicId,
-              ServerOnlyTypes.frontPageRankingType,
-              BaseDataTypes.activeStatus)
+              siteTopicListId)
 
+    // Validate
     if (siteTopicList == null) {
-      return {
-        status: true
-      }
+      throw new CustomError(`${fnName}: siteTopicList == null`)
     }
 
     // Get the listing time + freq to generate next listing (hours)
@@ -54,7 +55,26 @@ export class SummarizePostUtilsService {
         : `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`;
 
     // Overdue or ready?
-    var overdueOrReady = 'overdue'
+    var overdueOrReady: string | undefined = undefined
+
+    if (overdue === true) {
+
+      overdueOrReady = 'overdue'
+
+      // Get the latest listing for the site topic
+      const latestSiteTopicList = await
+              siteTopicListModel.getLatestBySiteTopicIdAndStatus(
+                prisma,
+                siteTopicList.siteTopicId,
+                ServerOnlyTypes.frontPageRankingType,
+                BaseDataTypes.activeStatus)
+
+      if (latestSiteTopicList != null &&
+          siteTopicList.id !== latestSiteTopicList.id) {
+
+        overdueOrReady = 'ready'
+      }
+    }
 
     // Return
     return {
