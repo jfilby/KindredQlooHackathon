@@ -64,8 +64,8 @@ export class ChatSessionTurnService {
               fromContents)
 
     // Debug
-    console.log(`${fnName}: chatMessageResults: ` +
-                JSON.stringify(chatMessageResults))
+    // console.log(`${fnName}: chatMessageResults: ` +
+    //             JSON.stringify(chatMessageResults))
 
     // Convert to ChatMessage[]
     var aiChatMessages: ChatMessage[] = []

@@ -39,8 +39,8 @@ export class CreateChatSessionService {
     // Debug
     const fnName = `${this.clName}.getOrCreateChatSession()`
 
-    console.log(`${fnName}: starting with chatSettingsName: ` +
-                `${chatSettingsName}`)
+    // console.log(`${fnName}: starting with chatSettingsName: ` +
+    //             `${chatSettingsName}`)
 
     // Get ChatSettings
     const chatSettings = await
@@ -63,7 +63,7 @@ export class CreateChatSessionService {
                 userProfileId)
 
       // Debug
-      console.log(`${fnName}: returning with existing chatSession..`)
+      // console.log(`${fnName}: returning with existing chatSession..`)
 
       // Formulate return var
       var chatSession = chatSessionResults.chatSession
@@ -82,7 +82,7 @@ export class CreateChatSessionService {
     }
 
     // Debug
-    console.log(`${fnName}: creating chatSession..`)
+    // console.log(`${fnName}: creating chatSession..`)
 
     // Determine the name of the chat session
     var name = `Talk about postSummaryId: ${postSummaryId} with user: ` +
@@ -97,7 +97,7 @@ export class CreateChatSessionService {
               siteTopicListId)
 
     // Debug
-    console.log(`${fnName}: creating ChatSession..`)
+    // console.log(`${fnName}: creating ChatSession..`)
 
     // Create ChatSession
     const chatSessionResults = await
@@ -115,8 +115,8 @@ export class CreateChatSessionService {
               externalId)
 
     // Debug
-    console.log(`${fnName}: created chatSession: ` +
-                JSON.stringify(chatSessionResults.chatSession))
+    // console.log(`${fnName}: created chatSession: ` +
+    //             JSON.stringify(chatSessionResults.chatSession))
 
     // Formulate return var
     var chatSession = chatSessionResults.chatSession

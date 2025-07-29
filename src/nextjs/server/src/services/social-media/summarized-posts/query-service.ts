@@ -121,7 +121,7 @@ export class SummarizePostQueryService {
     }
 
     // Debug
-    console.log(`${fnName}: siteTopicListId: ${siteTopicListId}`)
+    // console.log(`${fnName}: siteTopicListId: ${siteTopicListId}`)
 
     // Get posts for the site topic list
     const siteTopicListPosts = await
@@ -135,13 +135,13 @@ export class SummarizePostQueryService {
     }
 
     // Debug
-    console.log(`${fnName}: siteTopicListPosts: ${siteTopicListPosts.length}`)
+    // console.log(`${fnName}: siteTopicListPosts: ${siteTopicListPosts.length}`)
 
     // Get postIds
     const postIds = siteTopicListPosts.map(post => post.postId)
 
     // Debug
-    console.log(`${fnName}: postIds: ` + JSON.stringify(postIds))
+    // console.log(`${fnName}: postIds: ` + JSON.stringify(postIds))
 
     // Get post summaries
     var postSummaries = await
@@ -183,8 +183,8 @@ export class SummarizePostQueryService {
             }))
 
     // Debug
-    console.log(`${fnName}: renamedPostSummaries2: ` +
-                `${renamedPostSummaries2.length}`)
+    // console.log(`${fnName}: renamedPostSummaries2: ` +
+    //             `${renamedPostSummaries2.length}`)
 
     /* Debug: output the 1st post summary
     if (renamedPostSummaries2.length > 0) {
@@ -203,7 +203,7 @@ export class SummarizePostQueryService {
         (postOrderMap.get(a.postId) ?? 0) - (postOrderMap.get(b.postId) ?? 0))
 
     // Debug
-    console.log(`${fnName}: sortedPostSummaries: ${sortedPostSummaries.length}`)
+    // console.log(`${fnName}: sortedPostSummaries: ${sortedPostSummaries.length}`)
 
     // Get postIds
     const sortedPostIds =
@@ -211,7 +211,7 @@ export class SummarizePostQueryService {
               sortedPostSummary => sortedPostSummary.postId)
 
     // Debug
-    console.log(`${fnName}: sortedPostIds: ` + JSON.stringify(sortedPostIds))
+    // console.log(`${fnName}: sortedPostIds: ` + JSON.stringify(sortedPostIds))
 
     /* Debug: output the 1st post summary
     if (sortedPostSummaries.length > 0) {
@@ -277,14 +277,14 @@ export class SummarizePostQueryService {
         postIds)
 
     // Debug
-    console.log(`${fnName}: postIdRecords: ` + JSON.stringify(postIdRecords))
+    // console.log(`${fnName}: postIdRecords: ` + JSON.stringify(postIdRecords))
 
     // Get postIds
     const rankedPostIds = postIdRecords.map((postIdRecord: PostIdRecord) =>
       postIdRecord.post_id)
 
     // Debug
-    console.log(`${fnName}: rankedPostIds: ` + JSON.stringify(rankedPostIds))
+    // console.log(`${fnName}: rankedPostIds: ` + JSON.stringify(rankedPostIds))
 
     // Get map of postIds
     const postIdRank = new Map(rankedPostIds.map((id, i) => [id, i]))
