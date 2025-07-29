@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 export class PostSummaryModel {
 
@@ -7,7 +7,7 @@ export class PostSummaryModel {
 
   // Code
   async create(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           postId: string,
           userProfileId: string,
           techId: string,
@@ -35,7 +35,7 @@ export class PostSummaryModel {
   }
 
   async deleteById(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string) {
 
     // Debug
@@ -57,8 +57,9 @@ export class PostSummaryModel {
   }
 
   async getById(
-          prisma: PrismaClient,
-          id: string) {
+          prisma: Prisma.TransactionClient,
+          id: string,
+          includeDetails: boolean = false) {
 
     // Debug
     const fnName = `${this.clName}.getById()`
@@ -68,6 +69,28 @@ export class PostSummaryModel {
 
     try {
       postSummary = await prisma.postSummary.findUnique({
+        include: includeDetails ? {
+          post: {
+            include: {
+              postUrl: true,
+              site: true
+            }
+          },
+          ofPostSummaryInsights: {
+            include: {
+              _count: {
+                select: {
+                  ofPostSummaryInsightComments: true
+                }
+              }
+            },
+            orderBy: [
+              {
+                index: 'asc'
+              }
+            ]
+          },
+        } : undefined,
         where: {
           id: id
         }
@@ -84,7 +107,7 @@ export class PostSummaryModel {
   }
 
   async getByIds(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           ids: string[]) {
 
     // Debug
@@ -108,7 +131,7 @@ export class PostSummaryModel {
   }
 
   async getByPostIdsAndUserProfileId(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           postIds: string[],
           userProfileId: string) {
 
@@ -159,7 +182,7 @@ export class PostSummaryModel {
   }
 
   async getByUniqueKey(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           postId: string,
           userProfileId: string) {
 
@@ -194,7 +217,7 @@ export class PostSummaryModel {
   }
 
   async update(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string,
           postId: string | undefined,
           userProfileId: string | undefined,
@@ -226,7 +249,7 @@ export class PostSummaryModel {
   }
 
   async upsert(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string | undefined,
           postId: string | undefined,
           userProfileId: string | undefined,

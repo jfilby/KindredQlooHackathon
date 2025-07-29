@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
@@ -10,13 +9,15 @@ import ViewChatSession from '@/components/chats/view-session'
 interface Props {
   userProfile: any
   chatSession: any
-  postSummaryId: string
+  postSummaryId: string | undefined
+  siteTopicListId: string | undefined
 }
 
 export default function ChatPage({
                           userProfile,
                           chatSession,
-                          postSummaryId
+                          postSummaryId,
+                          siteTopicListId
                         }: Props) {
 
   // Session
@@ -44,6 +45,7 @@ export default function ChatPage({
 
           <ViewChatSession
             postSummaryId={postSummaryId}
+            siteTopicListId={siteTopicListId}
             chatSession={chatSession}
             userProfileId={userProfile.id}
             instanceId={undefined}

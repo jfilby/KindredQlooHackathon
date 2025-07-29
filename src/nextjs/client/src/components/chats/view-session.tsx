@@ -15,10 +15,11 @@ const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_IO_URL}`)
 
 // Page function interface
 interface Props {
-  postSummaryId: string
+  postSummaryId: string | undefined
+  siteTopicListId: string | undefined
   chatSession: any
   userProfileId: string
-  instanceId: string | undefined,
+  instanceId: string | undefined
   showInputTip: boolean | undefined
   setShowInputTip: any
   showNextTip: boolean | undefined
@@ -27,6 +28,7 @@ interface Props {
 
 export default function ViewChatSession({
                           postSummaryId,
+                          siteTopicListId,
                           chatSession,
                           userProfileId,  // should be fromChatParticipantId (or both)
                           instanceId,
@@ -150,6 +152,7 @@ export default function ViewChatSession({
     socket.emit('message', {
         sentByAi: false,
         postSummaryId: postSummaryId,
+        siteTopicListId: siteTopicListId,
         chatSessionId: chatSessionId,
         chatSessionToken: chatSessionToken,
         chatParticipantId: chatParticipant ? chatParticipant.id : null,

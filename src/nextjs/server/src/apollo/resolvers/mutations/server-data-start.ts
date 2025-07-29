@@ -46,6 +46,7 @@ export async function loadServerStartData(
             args.chatSettingsName,
             args.agentId,
             args.postSummaryId,
+            args.siteTopicListId,
             null)  // chatSessionOptions
       } catch (error) {
         if (error instanceof CustomError) {

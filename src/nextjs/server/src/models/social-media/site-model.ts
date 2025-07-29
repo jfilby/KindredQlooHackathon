@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 export class SiteModel {
 
@@ -7,7 +7,7 @@ export class SiteModel {
 
   // Code
   async create(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           name: string) {
 
     // Debug
@@ -27,7 +27,7 @@ export class SiteModel {
   }
 
   async deleteById(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string) {
 
     // Debug
@@ -48,7 +48,7 @@ export class SiteModel {
     }
   }
 
-  async filter(prisma: PrismaClient) {
+  async filter(prisma: Prisma.TransactionClient) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
@@ -67,7 +67,7 @@ export class SiteModel {
   }
 
   async getById(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string) {
 
     // Debug
@@ -94,7 +94,7 @@ export class SiteModel {
   }
 
   async getByIds(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           ids: string[]) {
 
     // Debug
@@ -118,7 +118,7 @@ export class SiteModel {
   }
 
   async getByUniqueKey(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           name: string) {
 
     // Debug
@@ -151,7 +151,7 @@ export class SiteModel {
   }
 
   async update(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string | undefined,
           name: string | undefined) {
 
@@ -175,7 +175,7 @@ export class SiteModel {
   }
 
   async upsert(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string | undefined,
           name: string | undefined) {
 

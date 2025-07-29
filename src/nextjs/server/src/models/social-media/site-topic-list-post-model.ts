@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 export class SiteTopicListPostModel {
 
@@ -7,7 +7,7 @@ export class SiteTopicListPostModel {
 
   // Code
   async create(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           siteTopicListId: string,
           postId: string,
           postSummaryId: string | null,
@@ -33,7 +33,7 @@ export class SiteTopicListPostModel {
   }
 
   async deleteById(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string) {
 
     // Debug
@@ -55,7 +55,7 @@ export class SiteTopicListPostModel {
   }
 
   async filter(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           siteTopicListId: string,
           includePosts: boolean = false,
           includePostSummaries: boolean = false) {
@@ -88,7 +88,7 @@ export class SiteTopicListPostModel {
   }
 
   async getById(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string) {
 
     // Debug
@@ -115,7 +115,7 @@ export class SiteTopicListPostModel {
   }
 
   async getByIds(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           ids: string[]) {
 
     // Debug
@@ -139,7 +139,7 @@ export class SiteTopicListPostModel {
   }
 
   async getByUniqueKey(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           siteTopicListId: string,
           index: number) {
 
@@ -179,7 +179,7 @@ export class SiteTopicListPostModel {
   }
 
   async update(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string | undefined,
           siteTopicListId: string | undefined,
           postId: string | undefined,
@@ -209,7 +209,7 @@ export class SiteTopicListPostModel {
   }
 
   async upsert(
-          prisma: PrismaClient,
+          prisma: Prisma.TransactionClient,
           id: string | undefined,
           siteTopicListId: string | undefined,
           postId: string | undefined,
