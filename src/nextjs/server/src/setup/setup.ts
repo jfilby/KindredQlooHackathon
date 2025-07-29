@@ -1,4 +1,5 @@
 import { PrismaClient, UserProfile } from '@prisma/client'
+import { AgentUserModel } from '@/serene-ai-server/models/agents/agent-user-model'
 import { ChatSettingsModel } from '@/serene-core-server/models/chat/chat-settings-model'
 import { FeatureFlagModel } from '@/serene-core-server/models/feature-flags/feature-flag-model'
 import { SereneAiSetup } from '@/serene-ai-server/services/setup/setup-service'
@@ -10,6 +11,7 @@ import { QlooSetupService } from '@/services/qloo/qloo-setup-service'
 import { SocialMediaSetupService } from '@/services/social-media/setup-service'
 
 // Models
+const agentUserModel = new AgentUserModel()
 const featureFlagModel = new FeatureFlagModel()
 
 // Services
@@ -34,17 +36,23 @@ export class SetupService {
     // Debug
     const fnName = `${this.clName}.chatSettingsSetup()`
 
-    // Get the tech and agent for the chat settings
-    const agentUserResults = await
-            agentUserService.getDefaultAgentUserForChatSettings(prisma)
-
     // Debug
     console.log(`${fnName}: upserting ChatSettings record with ` +
                 `userProfileId: ${userProfileId}`)
 
-    // Upsert ChatSetting record
-    for (const chatSettingsName of ServerOnlyTypes.chatSettingsNames) {
+    // Upsert AgentUser records
+    await agentUserService.setup(prisma)
 
+    // Upsert ChatSetting records
+    for (const chatSetting of ServerOnlyTypes.chatSettings) {
+
+      // Get the tech and agent for the chat settings
+      const agentUser = await
+              agentUserModel.getByUniqueRefId(
+                prisma,
+                chatSetting.agentUniqueRef)
+
+      // Upsert ChatSettings
       await chatSettingsModel.upsert(
               prisma,
               undefined,  // id
@@ -53,8 +61,8 @@ export class SetupService {
               true,       // isEncryptedAtRest
               true,       // isJsonMode
               true,       // isPinned
-              chatSettingsName,
-              agentUserResults.agentUser.id,
+              chatSetting.name,
+              agentUser.id,
               null,       // prompt
               null,       // appCustom
               userProfileId)

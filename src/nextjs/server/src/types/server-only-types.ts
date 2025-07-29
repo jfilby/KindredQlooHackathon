@@ -1,3 +1,5 @@
+import { BaseDataTypes } from '@/shared/types/base-data-types'
+
 export class ServerOnlyTypes {
 
   // Feature flags
@@ -5,9 +7,22 @@ export class ServerOnlyTypes {
 
   // Chat settings
   static defaultChatSettingsName = 'default'
+  static kindredChatSettingsName = 'kindred'
 
   static chatSettingsNames = [
-    this.defaultChatSettingsName
+    this.defaultChatSettingsName,
+    this.kindredChatSettingsName
+  ]
+
+  static chatSettings = [
+    {
+      name: this.defaultChatSettingsName,
+      agentUniqueRef: BaseDataTypes.batchAgentRefId
+    },
+    {
+      name: this.kindredChatSettingsName,
+      agentUniqueRef: BaseDataTypes.kindredAgentRefId
+    }
   ]
 
   // Social media sites

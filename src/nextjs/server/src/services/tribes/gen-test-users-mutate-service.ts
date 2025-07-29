@@ -8,14 +8,12 @@ import { QlooEntityCategory } from '@/types/qloo-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { InterestTypeModel } from '@/models/interests/interest-type-model'
 import { EntityInterestModel } from '@/models/interests/entity-interest-model'
-import { UserEntityInterestModel } from '@/models/interests/user-entity-interest-model'
 import { EntityInterestService } from '../interests/entity-interest-service'
 import { GetTechService } from '../tech/get-tech-service'
 
 // Models
 const entityInterestModel = new EntityInterestModel()
 const interestTypeModel = new InterestTypeModel()
-const userEntityInterestModel = new UserEntityInterestModel()
 const userModel = new UserModel()
 
 // Services
@@ -162,12 +160,12 @@ export class GenTestUsersMutateService {
                     interestType.id,
                     interest)   // name
 
-          const userEntityInterest = await
+          /* const userEntityInterest = await
                   userEntityInterestModel.upsert(
                     prisma,
                     undefined,  // id
                     testerUserProfile.id,
-                    entityInterest.id)
+                    entityInterest.id) */
         }
       }
     }

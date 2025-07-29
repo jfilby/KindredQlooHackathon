@@ -3,6 +3,7 @@ import express from 'express'
 import http from 'http'
 import { prisma } from '@/db'
 import { Server as SocketIoServer } from 'socket.io'
+import { ChatSessionTurnService } from '@/services/chats/chat-session-turn'
 
 // const prisma = new PrismaClient()
 const app = express()
@@ -17,7 +18,7 @@ const io = new SocketIoServer(
                  })
 
 // Services
-;
+const chatSessionTurnService = new ChatSessionTurnService()
 
 // On socket.io events
 io.on('connection', (socket) => {
@@ -31,7 +32,7 @@ io.on('connection', (socket) => {
     const chatSession = await prisma.chatSession.findUnique({
       where: {
         id: chatSessionId,
-        token: chatSessionToken,
+        token: chatSessionToken
       },
     })
 
@@ -65,7 +66,7 @@ io.on('connection', (socket) => {
     // console.log(`message: data: ${JSON.stringify(data)}`)
 
     // Broadcast the message to all clients in the specified chat session
-    const { chatSessionId, chatParticipantId, instanceId, name, userProfileId, contents } = data
+    const { chatSessionId, chatParticipantId, postSummaryId, name, userProfileId, contents } = data
 
     io.to(chatSessionId).emit('message', data)
 
@@ -73,10 +74,22 @@ io.on('connection', (socket) => {
     console.log(`${fnName}: contents: ` + JSON.stringify(contents))
 
     // Transaction
-    var replyData: any = {}
+    var replyData: any
 
+    // Process chat session turn
+    replyData = await
+      chatSessionTurnService.turn(
+        prisma,
+        userProfileId,
+        chatSessionId,  // should be null on the 1st turn
+        chatParticipantId,
+        postSummaryId,
+        contents)
+
+    // Debug
     console.log(`${fnName}: replyData: ` + JSON.stringify(replyData))
 
+    // Reply
     io.to(chatSessionId).emit('message', replyData)
   })
 

@@ -54,7 +54,7 @@ export async function loadServerStartData(
             })
 
   // Debug
-  // console.log(`${fnName}: results: ` + JSON.stringify(results))
+  console.log(`${fnName}: results: ` + JSON.stringify(results))
 
   if (results == null) {
     throw `Failed to load server data`

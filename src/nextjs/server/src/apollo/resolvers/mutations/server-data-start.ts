@@ -1,6 +1,10 @@
 import { prisma } from '@/db'
 import { CustomError } from '@/serene-core-server/types/errors'
 import { BaseDataTypes } from '@/shared/types/base-data-types'
+import { CreateChatSessionService } from '@/services/chats/create-chat-service'
+
+// Services
+const createChatSessionService = new CreateChatSessionService()
 
 // Code
 export async function loadServerStartData(
@@ -18,7 +22,7 @@ export async function loadServerStartData(
   // Load chat session
   var chatSession: any = undefined
 
-  /* if (args.loadChatSession === true &&
+  if (args.loadChatSession === true &&
       (args.chatSessionId != null ||
        args.chatSettingsName != null)) {
 
@@ -32,7 +36,7 @@ export async function loadServerStartData(
 
       try {
         chatSessionResults = await
-          instanceChatsService.getOrCreateChatSession(
+          createChatSessionService.getOrCreateChatSession(
             transactionPrisma,
             args.instanceId,
             args.userProfileId,
@@ -41,8 +45,8 @@ export async function loadServerStartData(
             null,  // externalId
             args.chatSettingsName,
             args.agentId,
-            args.domainId,
-            chatSessionOptions)
+            args.postSummaryId,
+            null)  // chatSessionOptions
       } catch (error) {
         if (error instanceof CustomError) {
           return {
@@ -59,8 +63,8 @@ export async function loadServerStartData(
     })
 
     // Debug
-    // console.log(`${fnName}: chatSessionResults: ` +
-    //             JSON.stringify(chatSessionResults))
+    console.log(`${fnName}: chatSessionResults: ` +
+                JSON.stringify(chatSessionResults))
 
     // Handle chatSessionResults
     if (chatSessionResults.status === false) {
@@ -68,7 +72,7 @@ export async function loadServerStartData(
     }
 
     chatSession = chatSessionResults.chatSession
-  } */
+  }
 
   // Debug
   console.log(`${fnName}: returning OK..`)
