@@ -385,8 +385,8 @@ export class SummarizePostMutateService {
         return
       }
 
-      // Don't summarize yet if not yet 4 hours since last summarized
-      if (duration.hours < 4) {
+      // Don't summarize yet if not yet 3 hours since last summarized
+      if (duration.hours < 3) {
         return
       }
     }
