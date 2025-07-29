@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 import ViewPostSummaryCard from './card'
 
 interface Props {
@@ -16,11 +16,22 @@ export default function ListPostSummaries({
     <div style={{ marginBottom: '2em' }}>
       {postSummaries != null ?
         <>
-          <div style={{ marginBottom: '2em' }}>
+          <div style={{ marginBottom: '1em' }}>
 
             <Typography variant='h5'>
               Latest summaries
             </Typography>
+          </div>
+
+          <div>
+            <Link
+              href='/interests'
+              style={{ color: 'grey' }}
+              underline='hover'>
+              <Typography variant='body1'>
+                Rank summaries by your interests
+              </Typography>
+            </Link>
           </div>
 
           {postSummaries.length > 0 ?
