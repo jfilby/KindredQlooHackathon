@@ -48,19 +48,12 @@ export default function LoadWaitTime({
   // Effects
   useEffect(() => {
 
-    // const fetchData = async () => {
-    //  await getTimeToNextListing()
-    // }
     getTimeToNextListing()
-
-    // Async call
-    // const result = fetchData()
-    //   .catch(console.error)
 
     // Reload
     const intervalId = setInterval(() => {
       getTimeToNextListing()
-    }, 15 * 60 * 1000) // 15 minutes
+    }, 5 * 60 * 1000)  // 5 minutes
 
     return () => clearInterval(intervalId) // Cleanup on unmount
 

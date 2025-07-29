@@ -49,7 +49,7 @@ export class ServerOnlyTypes {
   static allSiteTopic = 'all'
 
   // Listing-related durations
-  static timeToGenListingInMins = 10
+  static timeToGenListingInMins = 15
   static listingFreqInHours = 3
 
   // User interests
