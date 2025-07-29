@@ -88,10 +88,10 @@ export function HeaderMobile({ highLevelLink }: Props) {
               name='About'
               linkName='about'
               highLevelLink={highLevelLink} />
-            <HeaderMobileLink
+            {/* <HeaderMobileLink
               name='Account'
               linkName='account'
-              highLevelLink={highLevelLink} />
+              highLevelLink={highLevelLink} /> */}
             {/* Add more menu items as needed */}
           </Menu>
 
