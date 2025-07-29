@@ -49,7 +49,7 @@ export class ServerOnlyTypes {
   static allSiteTopic = 'all'
 
   // Frequency to create listings
-  static listingFreqInHours = 6
+  static listingFreqInHours = 3
 
   // User interests
   static actualUserInterestType = 'A'
