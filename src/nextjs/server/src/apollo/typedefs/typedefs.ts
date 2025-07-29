@@ -142,10 +142,16 @@ export const typeDefs = `#graphql
     post: Post!
   }
 
-  type PostSummaryResults {
+  type PostSummariesResults {
     status: Boolean!
     message: String
     postSummaries: [PostSummary]
+  }
+
+  type PostSummaryResults {
+    status: Boolean!
+    message: String
+    postSummary: PostSummary
   }
 
   type PostSummaryInsightCommentResults {
@@ -253,7 +259,10 @@ export const typeDefs = `#graphql
     # Summaries
     getPostSummaries(
       userProfileId: String!,
-      siteTopicListId: String): PostSummaryResults!
+      siteTopicListId: String): PostSummariesResults!
+    getPostSummary(
+      userProfileId: String!,
+      id: String): PostSummaryResults!
     getPostSummaryInsightComments(
       postSummaryInsightId: String!): PostSummaryInsightCommentResults!
 

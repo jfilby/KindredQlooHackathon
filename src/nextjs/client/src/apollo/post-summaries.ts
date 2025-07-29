@@ -39,3 +39,43 @@ export const getPostSummariesQuery = gql`
     }
   }
 `
+
+export const getPostSummaryQuery = gql`
+  query getPostSummary(
+          $userProfileId: String!,
+          $id: String) {
+    getPostSummary(
+      userProfileId: $userProfileId,
+      id: $id) {
+
+      status
+      message
+      postSummary {
+        id
+        postId
+        userProfileId
+        status
+        socialMediaUrl
+        postSummary
+        insights {
+          id
+          name
+          description
+          commentsCount
+        }
+        otherComments
+        updated
+        post {
+          site {
+            name
+          }
+          title
+          posted
+          postUrl {
+            url
+          }
+        }
+      }
+    }
+  }
+`
