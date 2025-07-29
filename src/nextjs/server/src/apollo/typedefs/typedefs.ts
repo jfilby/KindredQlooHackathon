@@ -302,7 +302,9 @@ export const typeDefs = `#graphql
       userProfileId: String!,
       loadChatSession: Boolean,
       chatSessionId: String,
-      chatSettingsName: String): ServerStartData!
+      chatSettingsName: String,
+      postSummaryId: String,
+      siteTopicListId: String): ServerStartData!
 
     # Admin
     runAdminFix(userProfileId: String!): StatusAndMessage!

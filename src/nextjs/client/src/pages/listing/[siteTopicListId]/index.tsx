@@ -9,14 +9,12 @@ import ViewChatSession from '@/components/chats/view-session'
 interface Props {
   userProfile: any
   chatSession: any
-  postSummaryId: string | undefined
-  siteTopicListId: string | undefined
+  siteTopicListId: string
 }
 
-export default function ChatPage({
+export default function ListingChatPage({
                           userProfile,
                           chatSession,
-                          postSummaryId,
                           siteTopicListId
                         }: Props) {
 
@@ -30,7 +28,7 @@ export default function ChatPage({
   return (
     <>
       <Head>
-        <title>{process.env.NEXT_PUBLIC_APP_NAME} - Chat</title>
+        <title>{process.env.NEXT_PUBLIC_APP_NAME} - Listing chat</title>
       </Head>
 
       <Layout userProfile={userProfile}>
@@ -44,7 +42,7 @@ export default function ChatPage({
           </Typography>
 
           <ViewChatSession
-            postSummaryId={postSummaryId}
+            postSummaryId={undefined}
             siteTopicListId={siteTopicListId}
             chatSession={chatSession}
             userProfileId={userProfile.id}

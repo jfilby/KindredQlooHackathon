@@ -5,12 +5,16 @@ export const loadServerStartDataMutation = gql`
              $userProfileId: String!,
              $loadChatSession: Boolean,
              $chatSessionId: String,
-             $chatSettingsName: String) {
+             $chatSettingsName: String,
+             $postSummaryId: String,
+             $siteTopicListId: String) {
     loadServerStartData(
       userProfileId: $userProfileId,
       loadChatSession: $loadChatSession,
       chatSessionId: $chatSessionId,
-      chatSettingsName: $chatSettingsName) {
+      chatSettingsName: $chatSettingsName,
+      postSummaryId: $postSummaryId,
+      siteTopicListId: $siteTopicListId) {
 
       status
       message

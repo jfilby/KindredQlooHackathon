@@ -45,7 +45,9 @@ export async function loadServerStartData(
               loadChatSession: loadChatSession,
               chatFocusOnEntity: pageContext.chatFocusOnEntity,
               chatSessionId: queryParams.chatSessionId,
-              chatSettingsName: pageContext.loadChatByChatSettingsName
+              chatSettingsName: pageContext.loadChatByChatSettingsName,
+              postSummaryId: queryParams.postSummaryId,
+              siteTopicListId: queryParams.siteTopicListId
             }
           }).then((result: any) => results = result)
             .catch((error: { networkError: any }) => {

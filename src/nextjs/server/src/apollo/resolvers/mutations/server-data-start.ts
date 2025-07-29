@@ -16,8 +16,7 @@ export async function loadServerStartData(
   // Debug
   const fnName = `loadServerStartData()`
 
-  // console.log(`${fnName}: args: ` + JSON.stringify(args))
-  // console.log(`${fnName}: loading instance..`)
+  console.log(`${fnName}: args: ` + JSON.stringify(args))
 
   // Load chat session
   var chatSession: any = undefined
