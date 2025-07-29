@@ -19,7 +19,12 @@ export default function ListPostSummaries({
           <div style={{ marginBottom: '1em' }}>
 
             <Typography variant='h5'>
-              Latest summaries
+              {postSummaries != null &&
+               postSummaries.length > 0 ?
+                <>{postSummaries[0].post.site.name}</>
+              :
+                <>Latest summaries</>
+              }
             </Typography>
           </div>
 
