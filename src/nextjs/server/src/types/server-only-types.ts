@@ -17,11 +17,13 @@ export class ServerOnlyTypes {
   static chatSettings = [
     {
       name: this.defaultChatSettingsName,
-      agentUniqueRef: BaseDataTypes.batchAgentRefId
+      agentUniqueRef: BaseDataTypes.batchAgentRefId,
+      isJsonMode: true
     },
     {
       name: this.kindredChatSettingsName,
-      agentUniqueRef: BaseDataTypes.kindredAgentRefId
+      agentUniqueRef: BaseDataTypes.kindredAgentRefId,
+      isJsonMode: false
     }
   ]
 

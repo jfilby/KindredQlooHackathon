@@ -59,7 +59,7 @@ export class SetupService {
               null,       // baseChatSettingsId
               BaseDataTypes.activeStatus,
               true,       // isEncryptedAtRest
-              true,       // isJsonMode
+              chatSetting.isJsonMode,
               true,       // isPinned
               chatSetting.name,
               agentUser.id,
