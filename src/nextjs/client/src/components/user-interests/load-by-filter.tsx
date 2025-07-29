@@ -7,13 +7,15 @@ interface Props {
   setUserInterestsText: any
   setRecommendedInterests: any
   setLoadedUserInterests: any
+  starterText: string
 }
 
 export default function LoadUserInterestsByFilter({
                           userProfileId,
                           setUserInterestsText,
                           setRecommendedInterests,
-                          setLoadedUserInterests
+                          setLoadedUserInterests,
+                          starterText
                         }: Props) {
 
   // GraphQL
@@ -44,6 +46,13 @@ export default function LoadUserInterestsByFilter({
     const results = fetchGetUserInterestsQueryData.data.getUserInterests
 
     if (setUserInterestsText != null) {
+
+      if (results.userInterestsText.text == null ||
+          results.userInterestsText.text.trim() === '') {
+
+        results.userInterestsText.text = starterText
+      }
+
       setUserInterestsText(results.userInterestsText)
     }
 

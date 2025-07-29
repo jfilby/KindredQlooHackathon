@@ -15,7 +15,7 @@ export default function TextEditUserInterests({
                         }: Props) {
 
   // State
-  const [alertSeverity, setAlertSeverity] = useState<any>('')
+  const [alertSeverity, setAlertSeverity] = useState<any>(undefined)
   const [message, setMessage] = useState<string | undefined>(undefined)
 
   const [saveAction, setSaveAction] = useState<boolean>(false)

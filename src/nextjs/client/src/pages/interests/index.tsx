@@ -17,6 +17,16 @@ export default function InterestsPage({
                           userProfile
                         }: Props) {
 
+  // Consts
+  const starterText =
+          `## Topics\n` +
+          `\n` +
+          `\n` +
+          `\n` +
+          `## Tastes\n` +
+          `\n` +
+          `\n`
+
   // Session
   const { data: session } = useSession()
 
@@ -24,7 +34,7 @@ export default function InterestsPage({
   const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
   const [recommendedInterests, setRecommendedInterests] = useState<any[] | undefined>(undefined)
 
-  const [text, setText] = useState<string | undefined>(undefined)
+  const [text, setText] = useState<string | undefined>(starterText)
   const [loadedUserInterests, setLoadedUserInterests] = useState(false)
 
   // Effects
@@ -51,8 +61,8 @@ export default function InterestsPage({
           </Typography>
 
           <Typography variant='body1'>
-            Aside from general tags/topics, you can get better recommendations
-            by using these categories:
+            Aside from topics, you can get better recommendations by using
+            these tastes categories:
           </Typography>
 
           <Typography
@@ -102,7 +112,8 @@ export default function InterestsPage({
         userProfileId={userProfile.id}
         setUserInterestsText={setUserInterestsText}
         setRecommendedInterests={setRecommendedInterests}
-        setLoadedUserInterests={setLoadedUserInterests} />
+        setLoadedUserInterests={setLoadedUserInterests}
+        starterText={starterText} />
     </>
   )
 }
