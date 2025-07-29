@@ -83,6 +83,8 @@ export class InterestTypeModel {
         }
       })
     } catch(error: any) {
+      console.log(`${fnName}: error: ` + JSON.stringify(error))
+
       if (!(error instanceof error.NotFound)) {
         console.error(`${fnName}: error: ${error}`)
         throw 'Prisma error'
