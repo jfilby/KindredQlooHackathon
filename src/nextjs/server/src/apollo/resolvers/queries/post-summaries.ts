@@ -3,13 +3,17 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { UsersService } from '@/serene-core-server/services/users/service'
 import { ServerTestTypes } from '@/types/server-test-types'
 import { PostSummaryModel } from '@/models/summaries/post-summary-model'
+import { SiteTopicModel } from '@/models/social-media/site-topic-model'
 import { SummarizePostQueryService } from '@/services/social-media/summarized-posts/query-service'
+import { SummarizePostUtilsService } from '@/services/social-media/summarized-posts/utils-service'
 
 // Models
 const postSummaryModel = new PostSummaryModel()
+const siteTopicModel = new SiteTopicModel()
 
 // Services
 const summarizePostQueryService = new SummarizePostQueryService()
+const summarizePostUtilsService = new SummarizePostUtilsService()
 const usersService = new UsersService()
 
 // Code
@@ -118,4 +122,45 @@ export async function getPostSummary(
     status: true,
     postSummary: postSummary
   }
+}
+
+export async function getTimeToNextListing(
+                        parent: any,
+                        args: any,
+                        context: any,
+                        info: any) {
+
+  // Debug
+  const fnName = `getTimeToNextListing()`
+
+  // Validate/get default
+  var siteTopicId = args.siteTopicId
+
+  if (args.siteTopicListId == null) {
+
+    // Get the default
+    const siteTopics = await
+            siteTopicModel.filter(prisma)
+
+    // Validate
+    if (siteTopics == null) {
+      throw new CustomError(`${fnName}: siteTopics == null`)
+    }
+
+    if (siteTopics.length !== 1) {
+      throw new CustomError(`${fnName}: siteTopics !== 1`)
+    }
+
+    // Get siteTopicId
+    siteTopicId = siteTopics[0].id
+  }
+
+  // Get time to next listing
+  const results = await
+          summarizePostUtilsService.getTimeToNextSummary(
+            prisma,
+            siteTopicId)
+
+  // Return
+  return results
 }

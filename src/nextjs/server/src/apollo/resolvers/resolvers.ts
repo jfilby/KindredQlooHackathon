@@ -13,7 +13,7 @@ import { getUserPreferences } from '@/serene-core-server/apollo/resolvers/querie
 import { upsertUserPreference } from '@/serene-core-server/apollo/resolvers/mutations/user-preferences'
 
 // Kindred queries imports
-import { getPostSummaries, getPostSummary } from './queries/post-summaries'
+import { getPostSummaries, getPostSummary, getTimeToNextListing } from './queries/post-summaries'
 import { getPostSummaryInsightComments } from './queries/post-summary-insight-comments'
 import { getUserInterests } from './queries/user-interests'
 
@@ -59,7 +59,8 @@ const Query = {
   getUserInterests,
   getPostSummaries,
   getPostSummary,
-  getPostSummaryInsightComments
+  getPostSummaryInsightComments,
+  getTimeToNextListing
 }
 
 const Mutation = {

@@ -79,3 +79,17 @@ export const getPostSummaryQuery = gql`
     }
   }
 `
+
+export const getTimeToNextListingQuery = gql`
+  query getTimeToNextListing(
+          $siteTopicListId: String) {
+    getTimeToNextListing(
+      siteTopicListId: $siteTopicListId) {
+
+      status
+      message
+      overdue
+      waitTime
+    }
+  }
+`

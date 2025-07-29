@@ -1,4 +1,6 @@
 import { Link, Typography } from '@mui/material'
+import { useState } from 'react'
+import LoadWaitTime from '@/components/post-summaries/load-wait-time'
 import ViewPostSummaryCard from './card'
 
 interface Props {
@@ -10,6 +12,9 @@ export default function ListPostSummaries({
                           userProfileId,
                           postSummaries
                         }: Props) {
+
+  // State
+  const [waitTime, setWaitTime] = useState<any>(undefined)
 
   // Render
   return (
@@ -28,15 +33,49 @@ export default function ListPostSummaries({
             </Typography>
           </div>
 
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Link
               href='/interests'
               style={{ color: 'grey' }}
-              underline='hover'>
+              sx={{
+                textDecorationColor: 'grey',
+                textDecorationThickness: '1px',
+                '&:hover': {
+                  textDecorationThickness: '2px',
+                },
+              }}
+              underline='always'>
               <Typography variant='body1'>
-                Personalize to rank summaries just for you
+                Personalize interests
               </Typography>
             </Link>
+
+            {waitTime != null &&
+             (waitTime.waitTime != null || waitTime.overdue != null) ?
+              <Typography
+                style={{ color: 'grey', marginLeft: '10em' }}
+                variant='body1'>
+                {waitTime.overdue === true ?
+                  <Link
+                    href='/'
+                    style={{ color: 'grey' }}
+                    sx={{
+                      textDecorationColor: 'grey',
+                      textDecorationThickness: '1px',
+                      '&:hover': {
+                        textDecorationThickness: '2px',
+                      },
+                    }}
+                    underline='always'>
+                    Next listing is overdue
+                  </Link>
+                :
+                  <>Next listing in {waitTime.waitTime}</>
+                }
+              </Typography>
+            :
+              <></>
+            }
           </div>
 
           {postSummaries.length > 0 ?
@@ -59,6 +98,10 @@ export default function ListPostSummaries({
       :
         <></>
       }
+
+      <LoadWaitTime
+        siteTopicId={undefined}
+        setWaitTime={setWaitTime} />
     </div>
   )
 }

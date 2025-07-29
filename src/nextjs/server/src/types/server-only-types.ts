@@ -48,7 +48,8 @@ export class ServerOnlyTypes {
   // Site-independent site topics
   static allSiteTopic = 'all'
 
-  // Frequency to create listings
+  // Listing-related durations
+  static timeToGenListingInMins = 10
   static listingFreqInHours = 3
 
   // User interests

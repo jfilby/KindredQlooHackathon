@@ -142,6 +142,13 @@ export const typeDefs = `#graphql
     post: Post!
   }
 
+  type TimeToNextListingResults {
+    status: Boolean!
+    message: String
+    overdue: Boolean
+    waitTime: String
+  }
+
   type PostSummariesResults {
     status: Boolean!
     message: String
@@ -265,6 +272,8 @@ export const typeDefs = `#graphql
       id: String): PostSummaryResults!
     getPostSummaryInsightComments(
       postSummaryInsightId: String!): PostSummaryInsightCommentResults!
+    getTimeToNextListing(
+      siteTopicListId: String): TimeToNextListingResults!
 
     # Interests
     getUserInterests(userProfileId: String!): UserInterestsResults!

@@ -50,6 +50,31 @@ export class SiteTopicModel {
     }
   }
 
+  async filter(
+          prisma: PrismaClient,
+          siteId: string | undefined = undefined) {
+
+    // Debug
+    const fnName = `${this.clName}.getById()`
+
+    // Query
+    try {
+      return await prisma.siteTopic.findMany({
+        include: {
+          site: true
+        },
+        where: {
+          siteId: siteId
+        }
+      })
+    } catch(error: any) {
+      if (!(error instanceof error.NotFound)) {
+        console.error(`${fnName}: error: ${error}`)
+        throw 'Prisma error'
+      }
+    }
+  }
+
   async getById(
           prisma: PrismaClient,
           id: string) {
