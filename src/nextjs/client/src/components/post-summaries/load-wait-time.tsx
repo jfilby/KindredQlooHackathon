@@ -4,11 +4,13 @@ import { getTimeToNextListingQuery } from '@/apollo/post-summaries'
 
 interface Props {
   siteTopicId: string | undefined
+  setLoaded: any
   setWaitTime: any
 }
 
 export default function LoadWaitTime({
                           siteTopicId,
+                          setLoaded,
                           setWaitTime
                         }: Props) {
 
@@ -40,18 +42,27 @@ export default function LoadWaitTime({
     const results = fetchGetTimeToNextListingQueryData.data.getTimeToNextListing
 
     setWaitTime(results)
+    setLoaded(true)
   }
 
   // Effects
   useEffect(() => {
 
-    const fetchData = async () => {
-      await getTimeToNextListing()
-    }
+    // const fetchData = async () => {
+    //  await getTimeToNextListing()
+    // }
+    getTimeToNextListing()
 
     // Async call
-    const result = fetchData()
-      .catch(console.error)
+    // const result = fetchData()
+    //   .catch(console.error)
+
+    // Reload
+    const intervalId = setInterval(() => {
+      getTimeToNextListing()
+    }, 15 * 60 * 1000) // 15 minutes
+
+    return () => clearInterval(intervalId) // Cleanup on unmount
 
   }, [])
 

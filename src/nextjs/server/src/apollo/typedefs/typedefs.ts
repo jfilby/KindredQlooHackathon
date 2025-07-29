@@ -145,7 +145,7 @@ export const typeDefs = `#graphql
   type TimeToNextListingResults {
     status: Boolean!
     message: String
-    overdue: Boolean
+    overdueOrReady: String
     waitTime: String
   }
 

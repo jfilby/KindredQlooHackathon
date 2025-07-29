@@ -14,6 +14,7 @@ export default function ListPostSummaries({
                         }: Props) {
 
   // State
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [waitTime, setWaitTime] = useState<any>(undefined)
 
   // Render
@@ -51,11 +52,11 @@ export default function ListPostSummaries({
             </Link>
 
             {waitTime != null &&
-             (waitTime.waitTime != null || waitTime.overdue != null) ?
+             (waitTime.waitTime != null || waitTime.overdueOrReady != null) ?
               <Typography
                 style={{ color: 'grey', marginLeft: '10em' }}
                 variant='body1'>
-                {waitTime.overdue === true ?
+                {waitTime.overdueOrReady != null ?
                   <Link
                     href='/'
                     style={{ color: 'grey' }}
@@ -67,7 +68,7 @@ export default function ListPostSummaries({
                       },
                     }}
                     underline='always'>
-                    Next listing is overdue
+                    Next listing is {waitTime.overdueOrReady}
                   </Link>
                 :
                   <>Next listing in {waitTime.waitTime}</>
@@ -101,6 +102,7 @@ export default function ListPostSummaries({
 
       <LoadWaitTime
         siteTopicId={undefined}
+        setLoaded={setLoaded}
         setWaitTime={setWaitTime} />
     </div>
   )

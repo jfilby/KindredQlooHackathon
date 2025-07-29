@@ -88,7 +88,7 @@ export const getTimeToNextListingQuery = gql`
 
       status
       message
-      overdue
+      overdueOrReady
       waitTime
     }
   }

@@ -53,10 +53,13 @@ export class SummarizePostUtilsService {
         ? `${diffHours} hour${diffHours > 1 ? 's' : ''} and ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`
         : `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`;
 
+    // Overdue or ready?
+    var overdueOrReady = 'overdue'
+
     // Return
     return {
       status: true,
-      overdue: overdue,
+      overdueOrReady: overdueOrReady,
       waitTime: waitTime
     }
   }
