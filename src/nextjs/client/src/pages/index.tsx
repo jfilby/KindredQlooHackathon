@@ -17,7 +17,10 @@ export default function PostSummariesPage({
 
   // State
   const [siteTopicListId, setSiteTopicListId] = useState<string | undefined>(undefined)
+  const [userSiteTopic, setUserSiteTopic] = useState<any | undefined>(undefined)
   const [postSummaries, setPostSummaries] = useState<any[] | undefined>(undefined)
+  const [openRankBy, setOpenRankBy] = useState<boolean>(false)
+  const [loadListing, setLoadListing] = useState<boolean>(true)
 
   // Render
   return (
@@ -31,14 +34,20 @@ export default function PostSummariesPage({
         <Box
           style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
           sx={{ bgcolor: 'background.default' }}>
+          
+          {/* <p>loadListing: {JSON.stringify(loadListing)}</p> */}
 
           {siteTopicListId != null &&
            postSummaries != null ?
 
             <ListPostSummaries
               userProfileId={userProfile.id}
+              userSiteTopic={userSiteTopic}
               siteTopicListId={siteTopicListId}
-              postSummaries={postSummaries} />
+              postSummaries={postSummaries}
+              openRankBy={openRankBy}
+              setOpenRankBy={setOpenRankBy}
+              setLoadListing={setLoadListing} />
           :
             <Typography>
               Loading..
@@ -50,7 +59,10 @@ export default function PostSummariesPage({
       <LoadPostSummariesByFilter
         userProfileId={userProfile.id}
         setSiteTopicListId={setSiteTopicListId}
-        setPostSummaries={setPostSummaries} />
+        setUserSiteTopic={setUserSiteTopic}
+        setPostSummaries={setPostSummaries}
+        loadListing={loadListing}
+        setLoadListing={setLoadListing} />
     </>
   )
 }

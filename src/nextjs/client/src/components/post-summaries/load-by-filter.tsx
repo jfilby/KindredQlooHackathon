@@ -5,13 +5,19 @@ import { getPostSummariesQuery } from '@/apollo/post-summaries'
 interface Props {
   userProfileId: string
   setSiteTopicListId: any
+  setUserSiteTopic: any
   setPostSummaries: any
+  loadListing: boolean
+  setLoadListing: any
 }
 
 export default function LoadPostSummariesByFilter({
                           userProfileId,
                           setSiteTopicListId,
-                          setPostSummaries
+                          setUserSiteTopic,
+                          setPostSummaries,
+                          loadListing,
+                          setLoadListing
                         }: Props) {
 
   // GraphQL
@@ -42,11 +48,16 @@ export default function LoadPostSummariesByFilter({
     const results = fetchGetPostSummariesQueryData.data.getPostSummaries
 
     setSiteTopicListId(results.siteTopicListId)
+    setUserSiteTopic(results.userSiteTopic)
     setPostSummaries(results.postSummaries)
   }
 
   // Effects
   useEffect(() => {
+
+    if (loadListing === false) {
+      return
+    }
 
     const fetchData = async () => {
       await getPostSummaries()
@@ -56,7 +67,10 @@ export default function LoadPostSummariesByFilter({
     const result = fetchData()
       .catch(console.error)
 
-  }, [])
+    // Done
+    setLoadListing(false)
+
+  }, [loadListing])
 
   // Render
   return (

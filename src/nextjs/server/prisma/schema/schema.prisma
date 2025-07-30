@@ -239,6 +239,18 @@ model UserInterestsText {
   @@schema("public")
 }
 
+model UserSiteTopic {
+  id                           String               @id @default(cuid())
+  userProfileId                String               @map("user_profile_id") @unique
+  userProfile                  UserProfile          @relation(fields: [userProfileId], references: [id])
+  siteTopicId                  String               @map("site_topic_id")
+  siteTopic                    SiteTopic            @relation(fields: [siteTopicId], references: [id])
+  rankBy                       String               @map("rank_by")
+
+  @@map("user_site_topic")
+  @@schema("public")
+}
+
 // Kindred: social media
 
 model Comment {
@@ -329,6 +341,7 @@ model SiteTopic {
   ofPostTopics                    PostTopic[]
   ofSiteTopicLists                SiteTopicList[]
   ofSiteTopicEntityInterestGroup  SiteTopicEntityInterestGroup[]
+  ofUserSiteTopics                UserSiteTopic[]
 
   @@unique([siteId, name])
   @@map("site_topic")

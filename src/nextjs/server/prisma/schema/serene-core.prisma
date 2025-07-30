@@ -97,6 +97,7 @@ model UserProfile {
 
   ofPostSummaries             PostSummary[]
   ofPostUrlSummaries          PostUrlSummary[]
+  ofUserSiteTopics            UserSiteTopic[]
 
   @@map("user_profile")
   @@schema("public")

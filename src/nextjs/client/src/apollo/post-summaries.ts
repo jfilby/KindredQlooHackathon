@@ -11,6 +11,11 @@ export const getPostSummariesQuery = gql`
       status
       message
       siteTopicListId
+      userSiteTopic {
+        userProfileId
+        siteTopicId
+        rankBy
+      }
       postSummaries {
         id
         postId

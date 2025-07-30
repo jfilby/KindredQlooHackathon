@@ -9,6 +9,7 @@ import { SiteTopicListModel } from '@/models/social-media/site-topic-list-model'
 import { SiteTopicListPostModel } from '@/models/social-media/site-topic-list-post-model'
 import { SiteTopicModel } from '@/models/social-media/site-topic-model'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
+import { MutateUserSiteTopicService } from '../users/mutate-user-site-topic-service'
 
 // Models
 const postEntityInterestGroupModel = new PostEntityInterestGroupModel()
@@ -18,6 +19,9 @@ const siteTopicListModel = new SiteTopicListModel()
 const siteTopicListPostModel = new SiteTopicListPostModel()
 const siteTopicModel = new SiteTopicModel()
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
+
+// Services
+const mutateUserSiteTopicService = new MutateUserSiteTopicService()
 
 // Class
 export class SummarizePostQueryService {
@@ -57,7 +61,7 @@ export class SummarizePostQueryService {
   async filterLatest(
           prisma: PrismaClient,
           listingOfUserProfileId: string,
-          interstsOfUserProfileId: string,
+          interestsOfUserProfileId: string,
           inSiteTopicListId: string | undefined) {
 
     // Debug
@@ -76,10 +80,17 @@ export class SummarizePostQueryService {
 
     // Get siteTopicListId
     var siteTopicListId: string
+    var siteTopicList: any
 
     if (inSiteTopicListId != null) {
 
       siteTopicListId = inSiteTopicListId
+
+      // Get the SiteTopicList
+      siteTopicList = await
+        siteTopicListModel.getById(
+          prisma,
+          siteTopicListId)
     } else {
 
       // Get the default
@@ -100,12 +111,12 @@ export class SummarizePostQueryService {
       }
 
       // Get SiteTopicList
-      const siteTopicList = await
-              siteTopicListModel.getLatestBySiteTopicIdAndStatus(
-                prisma,
-                siteTopic.id,
-                ServerOnlyTypes.frontPageRankingType,
-                BaseDataTypes.activeStatus)
+      siteTopicList = await
+        siteTopicListModel.getLatestBySiteTopicIdAndStatus(
+          prisma,
+          siteTopic.id,
+          ServerOnlyTypes.frontPageRankingType,
+          BaseDataTypes.activeStatus)
 
       if (siteTopicList == null) {
 
@@ -119,6 +130,13 @@ export class SummarizePostQueryService {
       // Set siteTopicListId
       siteTopicListId = siteTopicList.id
     }
+
+    // Get/create UserSiteTopic
+    const userSiteTopic = await
+            mutateUserSiteTopicService.getOrCreate(
+              prisma,
+              interestsOfUserProfileId,
+              siteTopicList.siteTopicId)
 
     // Debug
     // console.log(`${fnName}: siteTopicListId: ${siteTopicListId}`)
@@ -220,11 +238,12 @@ export class SummarizePostQueryService {
     } */
 
     // Re-rank?
-    if (interstsOfUserProfileId != null) {
+    if (interestsOfUserProfileId != null &&
+        userSiteTopic.rankBy === 'interests') {
 
       await this.reRankByInterests(
               prisma,
-              interstsOfUserProfileId,
+              interestsOfUserProfileId,
               sortedPostIds,
               sortedPostSummaries)
     }
@@ -233,6 +252,7 @@ export class SummarizePostQueryService {
     return {
       status: true,
       siteTopicListId: siteTopicListId,
+      userSiteTopic: userSiteTopic,
       postSummaries: sortedPostSummaries
     }
   }

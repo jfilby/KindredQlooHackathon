@@ -19,7 +19,7 @@ export default function WaitTime({
       {waitTime != null &&
        (waitTime.waitTime != null || waitTime.overdueOrReady != null) ?
         <Typography
-          style={{ color: 'grey', marginLeft: '10em' }}
+          style={{ color: 'grey', marginLeft: '2em' }}
           variant='body1'>
 
           {waitTime.overdueOrReady != null ?

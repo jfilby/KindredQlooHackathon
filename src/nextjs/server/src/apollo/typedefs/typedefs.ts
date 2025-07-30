@@ -153,6 +153,7 @@ export const typeDefs = `#graphql
     status: Boolean!
     message: String
     siteTopicListId: String
+    userSiteTopic: UserSiteTopic!
     postSummaries: [PostSummary]
   }
 
@@ -208,6 +209,12 @@ export const typeDefs = `#graphql
     message: String
     userInterestsText: UserInterestsText
     recommendedInterests: [EntityInterest]
+  }
+
+  type UserSiteTopic {
+    userProfileId: String!
+    siteTopicId: String!
+    rankBy: String!
   }
 
   # Queries
@@ -336,5 +343,11 @@ export const typeDefs = `#graphql
     upsertUserInterestsByText(
       userProfileId: String!,
       text: String!): StatusAndMessage!
+
+    # Social media
+    upsertUserSiteTopic(
+      userProfileId: String!,
+      siteTopicId: String!,
+      rankBy: String!): StatusAndMessage!
   }
 `
