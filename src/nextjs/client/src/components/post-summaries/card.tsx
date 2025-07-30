@@ -87,29 +87,35 @@ export default function ViewPostSummaryCard({
           <>
             <Typography
               style={{
-                color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : undefined,
+                color: postSummary.status === BaseDataTypes.deletePendingStatus ? 'grey' : 'black',
                 display: 'inline-block',
                 textAlign: 'left'
               }}
               variant='h6'>
 
-              <Link
-                href={postSummary.post.postUrl.url}
-                style={{ color: 'black' }}
-                sx={{
-                  textDecorationColor: 'black',
-                  textDecorationThickness: '1px',
-                  '&:hover': {
-                    textDecorationThickness: '2px',
-                  },
-                }}
-                target='_new'
-                underline='always'>
+              {postSummary.post.postUrl?.url == null ?
+                <>{stringUtilsService.getSnippet(
+                     postSummary.post.title,
+                     120)}</>
+              :
+                <Link
+                  href={postSummary.post.postUrl.url}
+                  style={{ color: 'black' }}
+                  sx={{
+                    textDecorationColor: 'black',
+                    textDecorationThickness: '1px',
+                    '&:hover': {
+                      textDecorationThickness: '2px',
+                    },
+                  }}
+                  target='_new'
+                  underline='always'>
 
-                {stringUtilsService.getSnippet(
-                   postSummary.post.title,
-                   120)}
-              </Link>
+                  {stringUtilsService.getSnippet(
+                     postSummary.post.title,
+                     120)}
+                </Link>
+              }
             </Typography>
             <br/>
 

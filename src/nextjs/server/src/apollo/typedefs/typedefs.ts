@@ -114,7 +114,7 @@ export const typeDefs = `#graphql
     site: Site!
     title: String!
     posted: String!
-    postUrl: PostUrl!
+    postUrl: PostUrl
   }
 
   type PostSummaryInsight {
