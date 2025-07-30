@@ -108,10 +108,10 @@ export class SocialMediaBatchPipelineService {
             userProfileId,
             forUserProfileId)
 
-    // Summarize post URLs
+    /* Summarize post URLs
     await summarizePostUrlService.run(
             prisma,
             userProfileId,
-            forUserProfileId)
+            forUserProfileId) */
   }
 }
