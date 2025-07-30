@@ -4,13 +4,11 @@ import { getTimeToNextListingQuery } from '@/apollo/post-summaries'
 
 interface Props {
   siteTopicListId: string
-  setLoaded: any
   setWaitTime: any
 }
 
 export default function LoadWaitTime({
                           siteTopicListId,
-                          setLoaded,
                           setWaitTime
                         }: Props) {
 
@@ -42,7 +40,6 @@ export default function LoadWaitTime({
     const results = fetchGetTimeToNextListingQueryData.data.getTimeToNextListing
 
     setWaitTime(results)
-    setLoaded(true)
   }
 
   // Effects
