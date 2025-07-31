@@ -46,5 +46,5 @@ Integrations:
 
 ## Installing
 
-See the [install doc](docs/install).
+See the [install doc](docs/install.md).
 
