@@ -14,7 +14,13 @@ export default function LayoutBox({
   // Render
   return (
     <Box
-      style={{ margin: '0 auto', textAlign: 'center', verticalAlign: 'textTop', width: isMobile ? undefined : pageBodyWidthPlus }}
+      style={{
+        // Mobile: slight left/right margin, desktop: no margin
+        margin: isMobile ? '0 0.25em 0 0.25em' : '0 auto',
+        textAlign: 'center',
+        verticalAlign: 'textTop',
+        width: isMobile ? undefined : pageBodyWidthPlus
+      }}
       sx={{ bgcolor: 'background.default' }}>
 
       {children}
