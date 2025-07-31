@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add'
-import LabeledIconButton from '@/serene-core-client/components/buttons/labeled-icon-button'
+import { Link, Typography } from '@mui/material'
 
 interface Props {
   text: any
@@ -52,11 +52,20 @@ export default function ViewRecommendedInterestCard({
 
       {/* <p>recommendedInterest: {JSON.stringify(recommendedInterest)}</p> */}
 
-      <LabeledIconButton
-        icon={AddIcon}
-        label={label}
+      <Link
         onClick={(e: any) => addRecommendation()}
-        style={{ display: 'inline-block', marginRight: '2em' }} />
+        sx={{ color: 'black', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', marginRight: '2em' }}
+        underline='hover'>
+
+        <AddIcon
+          fontSize='small'
+          sx={{ mr: 0.5 }} />
+
+        <Typography
+          variant='body1'>
+          {label}
+        </Typography>
+      </Link>
 
     </span>
   )
