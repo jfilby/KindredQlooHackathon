@@ -1,14 +1,16 @@
 # Batch
 
+This is a broad overview of the batch, see the code in nextjs/batch/index.ts
+for full details.
+
+
 ## Events that spawn batch jobs
 
 - User text interests saved:
   - Text -> entity interests
 
-- Every 1h:
+- Every 15m:
   - Group and find similar interests
   - Get any missing Qloo entities
-
-- Every 6h:
-  - Social media pipeline per site
+  - Try the social media pipeline per site (only every 6h)
 
