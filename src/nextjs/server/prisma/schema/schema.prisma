@@ -307,11 +307,11 @@ model PostTopic {
 model PostUrl {
   id                           String               @id @default(cuid())
   url                          String               @unique
-  verified                     Boolean
+  status                       String               @db.Char(1)
   title                        String?
   text                         String?
-  created                      DateTime         @default(now())
-  updated                      DateTime         @updatedAt
+  created                      DateTime             @default(now())
+  updated                      DateTime             @updatedAt
 
   ofPosts                      Post[]
   ofPostUrlSummaries           PostUrlSummary[]

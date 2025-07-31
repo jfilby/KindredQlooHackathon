@@ -3,6 +3,7 @@ export class BaseDataTypes {
   // Statuses
   static activeStatus = 'A'
   static deletePendingStatus = 'P'
+  static failedStatus = 'F'
   static newStatus = 'N'
   static inactiveStatus = 'I'
 

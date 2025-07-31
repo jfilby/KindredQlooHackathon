@@ -34,9 +34,9 @@ export class SummarizePostUrlService {
 
     // Get all unsummarized post URLs
     const postUrls = await
-            postUrlModel.getUnsummarized(
+            postUrlModel.filter(
               prisma,
-              100)  // Max 100 at a time
+              BaseDataTypes.newStatus)
 
     // Validate
     if (postUrls == null) {

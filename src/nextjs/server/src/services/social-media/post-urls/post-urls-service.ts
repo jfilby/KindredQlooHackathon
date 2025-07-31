@@ -4,6 +4,7 @@ import puppeteer, { Browser } from 'puppeteer'
 import { Readability } from '@mozilla/readability'
 import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
+import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { PostUrlModel } from '@/models/social-media/post-url-model'
 
 // Models
@@ -105,7 +106,7 @@ export class PostUrlsService {
     const postUrls = await
             postUrlModel.filter(
               prisma,
-              false)  // verified
+              BaseDataTypes.newStatus)
 
     // Validate
     if (postUrls == null) {
@@ -132,11 +133,19 @@ export class PostUrlsService {
       }
 
       // Did the fetch fail, or were no title or text extracted?
+      var status: string = BaseDataTypes.activeStatus
+      var title: string | null = null
+      var content: string | null = null
+
       if (results == null ||
           (results.title == null &&
            results.content == null)) {
 
-        continue
+        // Failed
+        status = BaseDataTypes.failedStatus
+      } else {
+        title = results.title
+        content = results.content
       }
 
       // Save
@@ -144,9 +153,9 @@ export class PostUrlsService {
               prisma,
               postUrl.id,
               undefined,  // url
-              true,       // verified
-              results.title,
-              results.content)
+              status,
+              title,
+              content)
     }
   }
 }

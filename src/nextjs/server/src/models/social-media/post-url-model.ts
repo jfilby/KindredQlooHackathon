@@ -9,7 +9,7 @@ export class PostUrlModel {
   async create(
           prisma: PrismaClient,
           url: string,
-          verified: boolean,
+          status: string,
           title: string | null,
           text: string | null) {
 
@@ -21,7 +21,7 @@ export class PostUrlModel {
       return await prisma.postUrl.create({
         data: {
           url: url,
-          verified: verified,
+          status: status,
           title: title,
           text: text
         }
@@ -56,7 +56,7 @@ export class PostUrlModel {
 
   async filter(
           prisma: PrismaClient,
-          verified: boolean) {
+          status: string) {
 
     // Debug
     const fnName = `${this.clName}.filter()`
@@ -65,7 +65,7 @@ export class PostUrlModel {
     try {
       return await prisma.postUrl.findMany({
         where: {
-          verified: verified
+          status: status
         }
       })
     } catch(error: any) {
@@ -160,36 +160,11 @@ export class PostUrlModel {
     return postUrl
   }
 
-  async getUnsummarized(
-          prisma: PrismaClient,
-          limitBy: number) {
-
-    // Debug
-    const fnName = `${this.clName}.getUnsummarized()`
-
-    // Query
-    try {
-      return await prisma.postUrl.findMany({
-        take: limitBy,
-        where: {
-          ofPostUrlSummaries: {
-            none: {}
-          }
-        }
-      })
-    } catch(error: any) {
-      if (!(error instanceof error.NotFound)) {
-        console.error(`${fnName}: error: ${error}`)
-        throw 'Prisma error'
-      }
-    }
-  }
-
   async update(
           prisma: PrismaClient,
           id: string | undefined,
           url: string | undefined,
-          verified: boolean | undefined,
+          status: string | undefined,
           title: string | null | undefined,
           text: string | null | undefined) {
 
@@ -201,7 +176,7 @@ export class PostUrlModel {
       return await prisma.postUrl.update({
         data: {
           url: url,
-          verified: verified,
+          status: status,
           title: title,
           text: text
         },
@@ -219,7 +194,7 @@ export class PostUrlModel {
           prisma: PrismaClient,
           id: string | undefined,
           url: string | undefined,
-          verified: boolean | undefined,
+          status: string | undefined,
           title: string | null | undefined,
           text: string | null | undefined) {
 
@@ -251,8 +226,8 @@ export class PostUrlModel {
         throw 'Prisma error'
       }
 
-      if (verified == null) {
-        console.error(`${fnName}: id is null and verified is null`)
+      if (status == null) {
+        console.error(`${fnName}: id is null and status is null`)
         throw 'Prisma error'
       }
 
@@ -271,7 +246,7 @@ export class PostUrlModel {
                this.create(
                  prisma,
                  url,
-                 verified,
+                 status,
                  title,
                  text)
     } else {
@@ -282,7 +257,7 @@ export class PostUrlModel {
                  prisma,
                  id,
                  url,
-                 verified,
+                 status,
                  title,
                  text)
     }

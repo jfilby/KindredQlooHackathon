@@ -179,7 +179,7 @@ export class HackerNewAlgoliaService {
             postUrlModel.create(
               prisma,
               hit.url,
-              false,  // verified
+              BaseDataTypes.newStatus,
               null,   // title
               null)   // text
         }
