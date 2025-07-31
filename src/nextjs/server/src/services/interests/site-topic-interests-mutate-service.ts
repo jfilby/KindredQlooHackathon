@@ -45,6 +45,8 @@ export class SiteTopicInterestsMutateService {
     // Debug
     const fnName = `${this.clName}.createAllMissingStarterInterests()`
 
+    // console.log(`${fnName}: starting with userProfileId: ${userProfileId}`)
+
     // Get admin user if no userProfileId specified
     if (userProfileId == null) {
 

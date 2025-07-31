@@ -21,15 +21,25 @@ export class PostUrlsService {
     // Debug
     const fnName = `${this.clName}.extractArticle()`
 
+    console.log(`${fnName}: starting with url: ${url}`)
+
+    // Validate
+    if (url == null) {
+      return null
+    }
+
     // Get content with Puppeteer
     var browser: Browser | undefined = await
           puppeteer.launch({ headless: true })
+
+    // console.log(`${fnName}: browser launched`)
 
     // Wrapped in a try/catch block to prevent zombie processes left in case of
     // failure.
     var article: any = undefined
 
     try {
+      // Process the page
       const page = await browser.newPage()
 
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 })
@@ -39,35 +49,50 @@ export class PostUrlsService {
       await browser.close()
       browser = undefined
 
+      // Debug
+      // console.log(`${fnName}: browser closed OK`)
+
       const doc = new JSDOM(html, { url })
 
       // Parse with Readability
       const reader = new Readability(doc.window.document)
       article = reader.parse()
 
-    } catch(e) {
+      // Debug
+      // console.log(`${fnName}: page parsed OK`)
+
+    } catch(e: any) {
 
       // Gracefully handle the exception
-      console.error(`${fnName}: e: ` + JSON.stringify(e))
+      console.error(`${fnName}: e: `, e)
 
     } finally {
       // Always close the browser if not already closed
       if (browser != null) {
-        await browser?.close()
+        await browser.close()
       }
     }
 
-    // Remove redundant tab chars
-    if (article != null &&
-        article.textContent != null) {
+    // Handle a null article
+    if (article == null) {
+      return null
+    }
 
+    // Remove redundant tab chars and set nulls to blank strings
+    if (article.title == null) {
+      article.title = ''
+    }
+
+    if (article.textContent != null) {
       article.textContent = article.textContent.replace(/\t+/g, '\t')
+    } else {
+      article.textContent = ''
     }
 
     // Return
     return {
-      title: article?.title || '',
-      content: article?.textContent || '',
+      title: article.title,
+      content: article.textContent
     }
   }
 
@@ -94,6 +119,11 @@ export class PostUrlsService {
       var results: any = undefined
 
       try {
+
+        // Debug
+        // console.log(`${fnName}: postUrl: ` + JSON.stringify(postUrl))
+
+        // Extract title and content
         results = await
           this.extractArticle(postUrl.url)
       } catch (e: any) {

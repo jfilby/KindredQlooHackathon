@@ -7,6 +7,11 @@
 3. Enable the pgvector extension: `CREATE EXTENSION IF NOT EXISTS vector;`
 
 
+## Install packages required by Puppeteer
+
+This is OS and distro specific.
+
+
 ## App setup
 
 1. Go to the server path and run the env script, e.g. `. scripts/dev.sh`.
