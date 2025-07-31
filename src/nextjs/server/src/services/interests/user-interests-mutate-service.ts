@@ -44,7 +44,7 @@ export class UserInterestsMutateService {
     // Debug
     const fnName = `${this.clName}.processQueryResults()`
 
-    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+    // console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Upsert user interests
     var entityInterestIds: string[] = []

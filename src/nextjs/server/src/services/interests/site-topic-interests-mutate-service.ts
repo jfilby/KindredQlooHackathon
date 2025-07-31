@@ -268,7 +268,7 @@ export class SiteTopicInterestsMutateService {
     // Debug
     const fnName = `${this.clName}.createStarterInterestGroups()`
 
-    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+    // console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Validate
     if (queryResults.json == null) {

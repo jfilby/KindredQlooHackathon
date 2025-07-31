@@ -196,7 +196,7 @@ export class SummarizePostUrlService {
     }
 
     // Debug
-    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+    // console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Extract the summary text
     var text = ''

@@ -108,7 +108,7 @@ export class GenTestUsersMutateService {
     }
 
     // Debug
-    console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
+    // console.log(`${fnName}: queryResults: ` + JSON.stringify(queryResults))
 
     // Process
     for (const userDetails of queryResults.json) {

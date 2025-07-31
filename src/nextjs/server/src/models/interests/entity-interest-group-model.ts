@@ -242,7 +242,7 @@ export class EntityInterestGroupModel {
     // Debug
     const fnName = `${this.clName}.setEmbedding()`
 
-    console.log(`${fnName}: embedding: ` + JSON.stringify(embedding))
+    // console.log(`${fnName}: embedding: ` + JSON.stringify(embedding))
 
     // Handle blank embeddings as null (to leave out of search results)
     if (embedding.length === 0) {
