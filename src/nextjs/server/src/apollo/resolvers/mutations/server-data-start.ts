@@ -1,10 +1,11 @@
 import { prisma } from '@/db'
 import { CustomError } from '@/serene-core-server/types/errors'
-import { BaseDataTypes } from '@/shared/types/base-data-types'
 import { CreateChatSessionService } from '@/services/chats/create-chat-service'
+import { UserInterestsBatchService } from '@/services/interests/user-batch-service'
 
 // Services
 const createChatSessionService = new CreateChatSessionService()
+const userInterestsBatchService = new UserInterestsBatchService()
 
 // Code
 export async function loadServerStartData(
@@ -17,6 +18,12 @@ export async function loadServerStartData(
   const fnName = `loadServerStartData()`
 
   console.log(`${fnName}: args: ` + JSON.stringify(args))
+
+  // Get userInterestsStatus
+  const userInterestsStatus = await
+          userInterestsBatchService.getUserInterestsStatus(
+            prisma,
+            args.userProfileId)
 
   // Load chat session
   var chatSession: any = undefined
@@ -80,6 +87,7 @@ export async function loadServerStartData(
   // Return
   return {
     status: true,
+    userInterestsStatus: userInterestsStatus,
     chatSession: chatSession
   }
 }

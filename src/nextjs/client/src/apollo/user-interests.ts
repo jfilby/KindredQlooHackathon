@@ -24,6 +24,19 @@ export const getUserInterestsQuery = gql`
   }
 `
 
+export const getUserInterestsStatusQuery = gql`
+  query getUserInterestsStatus(
+          $userProfileId: String!) {
+    getUserInterestsStatus(
+      userProfileId: $userProfileId) {
+
+      status
+      message
+      userInterestsStatus
+    }
+  }
+`
+
 export const upsertUserInterestsTextMutation = gql`
   mutation upsertUserInterestsByText(
              $userProfileId: String!,

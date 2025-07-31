@@ -18,6 +18,7 @@ export const loadServerStartDataMutation = gql`
 
       status
       message
+      userInterestsStatus
       chatSession {
         id
         status

@@ -3,10 +3,14 @@ import { CustomError } from '@/serene-core-server/types/errors'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { UserEntityInterestGroupModel } from '@/models/interests/user-entity-interest-group-model'
 import { UserInterestsTextModel } from '@/models/interests/user-interests-text-model'
+import { UserInterestsBatchService } from '@/services/interests/user-batch-service'
 
 // Models
 const userEntityInterestGroupModel = new UserEntityInterestGroupModel()
 const userInterestsTextModel = new UserInterestsTextModel()
+
+// Services
+const userInterestsBatchService = new UserInterestsBatchService()
 
 // Code
 export async function getUserInterests(
@@ -61,5 +65,32 @@ export async function getUserInterests(
     status: true,
     userInterestsText: userInterestsText,
     recommendedInterests: entityInterests
+  }
+}
+
+export async function getUserInterestsStatus(
+                        parent: any,
+                        args: any,
+                        context: any,
+                        info: any) {
+
+  // Debug
+  const fnName = `getUserInterests()`
+
+  // Validate
+  if (args.userProfileId == null) {
+    throw new CustomError(`${fnName}: args.userProfileId == null`)
+  }
+
+  // Get user interests status
+  const userInterestsStatus = await
+          userInterestsBatchService.getUserInterestsStatus(
+            prisma,
+            args.userProfileId)
+
+  // Return
+  return {
+    status: true,
+    userInterestsStatus: userInterestsStatus
   }
 }

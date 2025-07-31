@@ -192,7 +192,8 @@ export class BatchJobModel {
           statuses: string[],
           jobType: string,
           refModel: string,
-          refId: string) {
+          refId: string | undefined,
+          userProfileId: string | undefined = undefined) {
 
     // Debug
     const fnName = `${this.clName}.getByStatusesAndJobTypeAndRefModelAndRefId()`
@@ -204,6 +205,7 @@ export class BatchJobModel {
       batchJobs = await prisma.batchJob.findMany({
         where: {
           instanceId: instanceId,
+          userProfileId: userProfileId,
           status: {
             in: statuses
           },

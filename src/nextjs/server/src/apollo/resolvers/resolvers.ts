@@ -15,7 +15,7 @@ import { upsertUserPreference } from '@/serene-core-server/apollo/resolvers/muta
 // Kindred queries imports
 import { getPostSummaries, getPostSummary, getTimeToNextListing } from './queries/post-summaries'
 import { getPostSummaryInsightComments } from './queries/post-summary-insight-comments'
-import { getUserInterests } from './queries/user-interests'
+import { getUserInterests, getUserInterestsStatus } from './queries/user-interests'
 
 // Kindred mutations imports
 import { loadServerStartData } from './mutations/server-data-start'
@@ -58,6 +58,7 @@ const Query = {
   // ---
 
   getUserInterests,
+  getUserInterestsStatus,
   getPostSummaries,
   getPostSummary,
   getPostSummaryInsightComments,

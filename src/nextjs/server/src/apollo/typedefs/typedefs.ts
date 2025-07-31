@@ -185,6 +185,7 @@ export const typeDefs = `#graphql
   type ServerStartData {
     status: Boolean!
     message: String
+    userInterestsStatus: String
     chatSession: ChatSession
   }
 
@@ -209,6 +210,12 @@ export const typeDefs = `#graphql
     message: String
     userInterestsText: UserInterestsText
     recommendedInterests: [EntityInterest]
+  }
+
+  type UserInterestsStatusResults {
+    status: Boolean!
+    message: String
+    userInterestsStatus: String!
   }
 
   type UserSiteTopic {
@@ -285,6 +292,7 @@ export const typeDefs = `#graphql
 
     # Interests
     getUserInterests(userProfileId: String!): UserInterestsResults!
+    getUserInterestsStatus(userProfileId: String!): UserInterestsStatusResults!
   }
 
   type Mutation {
