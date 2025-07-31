@@ -36,8 +36,10 @@ The tech stack consists of:
 - Apollo GraphQL and Prisma (Node libraries)
 - Serene Core (Node/TS basics library I wrote myself)
 - Serene AI (Node/TS AI library I wrote myself)
-- PostgrSQL (+pgvector)
+- PostgreSQL (+pgvector)
 
 Integrations:
+- Algolia HN API
 - Qloo (Tastes AI platform)
 - LLMs (configurable)
+
