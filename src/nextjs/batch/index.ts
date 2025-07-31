@@ -29,7 +29,7 @@ const sleepSeconds = 1
 // Consts
 const seconds20InMs = 20 * 1000
 const minutes5InMs = 5 * 60 * 1000
-const minutes15InMs = 5 * 60 * 1000 * 15
+const minutes15InMs = 15 * 60 * 1000
 const hours1InMs = 1000 * 60 * 60
 
 // Functions
