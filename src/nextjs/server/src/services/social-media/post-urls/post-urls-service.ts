@@ -1,6 +1,6 @@
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
-import puppeteer from 'puppeteer'
+import puppeteer, { Browser } from 'puppeteer'
 import { Readability } from '@mozilla/readability'
 import { PrismaClient } from '@prisma/client'
 import { CustomError } from '@/serene-core-server/types/errors'
@@ -22,7 +22,8 @@ export class PostUrlsService {
     const fnName = `${this.clName}.extractArticle()`
 
     // Get content with Puppeteer
-    const browser = await puppeteer.launch({ headless: true })
+    var browser: Browser | undefined = await
+          puppeteer.launch({ headless: true })
 
     // Wrapped in a try/catch block to prevent zombie processes left in case of
     // failure.
@@ -34,7 +35,9 @@ export class PostUrlsService {
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 })
 
       const html = await page.content()
+
       await browser.close()
+      browser = undefined
 
       const doc = new JSDOM(html, { url })
 
@@ -48,8 +51,10 @@ export class PostUrlsService {
       console.error(`${fnName}: e: ` + JSON.stringify(e))
 
     } finally {
-      // Always close the browser
-      await browser?.close()
+      // Always close the browser if not already closed
+      if (browser != null) {
+        await browser?.close()
+      }
     }
 
     // Remove redundant tab chars
