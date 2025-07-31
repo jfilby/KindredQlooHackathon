@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { isMobile } from 'react-device-detect'
 import Grid from '@mui/material/Grid'
 import { HeaderBrowser } from './header-browser'
 import { HeaderMobile } from './header-mobile'
@@ -10,19 +9,23 @@ import { HeaderMobile } from './header-mobile'
 // rendering, and avoids any flash incorrect content on initial page load.
 interface Props {
   userProfile: any | undefined
+  isMobile: boolean
 }
 
-export default function PageHeader({ userProfile }: Props) {
+export default function PageHeader({
+                          userProfile,
+                          isMobile
+                        }: Props) {
   /* const { data: session, status } = useSession()
   const loading = status === "loading" */
 
   // Consts
   const index = 'index'
 
-  // isMobile can't be used directly, see: https://stackoverflow.com/a/66421155
-  const [_isMobile, setMobile] = useState<boolean|undefined>(undefined)
+  // State
   const [highLevelLink, setHighLevelLink] = useState<string|undefined>(undefined)
 
+  // Functions
   function setMenuLink() {
 
     const paths = window.location.pathname.split('/')
@@ -38,12 +41,9 @@ export default function PageHeader({ userProfile }: Props) {
 
   useEffect(() => {
 
-    // Set isMobile
-    setMobile(isMobile)
-
     // Set current menu link
     setMenuLink()
-  }, [setMobile])
+  }, [])
 
   return (
     <>
@@ -53,17 +53,16 @@ export default function PageHeader({ userProfile }: Props) {
             <style>{`.nojs-show { opacity: 1; top: 0; }`}</style>
           </noscript> */}
 
-        {_isMobile == null ||
-         highLevelLink == null ?
-          <></>
-        :
+        {highLevelLink != null ?
           <>
-            {_isMobile === false ?
-              <HeaderBrowser highLevelLink={highLevelLink} />
-            :
-              <HeaderMobile highLevelLink={highLevelLink} />
-            }
+          {isMobile === false ?
+            <HeaderBrowser highLevelLink={highLevelLink} />
+          :
+             <HeaderMobile highLevelLink={highLevelLink} />
+          }
           </>
+        :
+          <></>
         }
 
         </header>

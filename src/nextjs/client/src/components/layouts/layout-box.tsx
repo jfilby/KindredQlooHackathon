@@ -3,18 +3,18 @@ import { Box } from '@mui/material'
 
 interface Props {
   children: React.ReactNode
-  _isMobile: boolean
+  isMobile: boolean
 }
 
 export default function LayoutBox({
                           children,
-                          _isMobile
+                          isMobile
                         }: Props) {
 
   // Render
   return (
     <Box
-      style={{ margin: '0 auto', textAlign: 'center', verticalAlign: 'textTop', width: _isMobile ? undefined : pageBodyWidthPlus }}
+      style={{ margin: '0 auto', textAlign: 'center', verticalAlign: 'textTop', width: isMobile ? undefined : pageBodyWidthPlus }}
       sx={{ bgcolor: 'background.default' }}>
 
       {children}

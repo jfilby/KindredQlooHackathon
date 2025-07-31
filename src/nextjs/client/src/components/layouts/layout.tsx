@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { isMobile } from 'react-device-detect'
+import { useMediaQuery } from '@mui/material'
 import PageHeader from './header'
 import Footer from './footer'
 import LayoutBox from './layout-box'
@@ -21,25 +20,15 @@ export default function Layout({
                           userProfile
                         }: Props) {
 
-  // State
-  const [_isMobile, setMobile] = useState<boolean|undefined>(undefined)
-
-  // Effects
-  useEffect(() => {
-
-    // Set isMobile
-    setMobile(isMobile)
-  }, [setMobile])
+  // Consts
+  const isMobile = useMediaQuery('(max-width:768px)')
 
   // Render
   return (
     <>
-      {_isMobile != null ?
-        <PageHeader
-          userProfile={userProfile} />
-      :
-        <></>
-      }
+      <PageHeader
+        userProfile={userProfile}
+        isMobile={isMobile} />
 
       {projectName != null ?
         <div style={{ textAlign: 'center' }}>
@@ -61,13 +50,9 @@ export default function Layout({
 
       <div style={{ marginBottom: '2.5em' }} />
         <main>
-          {_isMobile != null ?
-            <LayoutBox _isMobile={_isMobile}>
-              {children}
-            </LayoutBox>
-          :
-            <></>
-          }
+          <LayoutBox isMobile={isMobile}>
+            {children}
+          </LayoutBox>
         </main>
       <Footer />
     </>
