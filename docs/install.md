@@ -1,5 +1,12 @@
 # Install
 
+## Requirements
+
+Install required software:
+- PostgreSQL v17+
+- Node.js v22+
+
+
 ## Enable pgvector for the kindred db
 
 1. Switch to the postgres user.
@@ -18,4 +25,29 @@ This is OS and distro specific.
 2. Run the general setup: `npm run ts-script setup`
 3. Load API keys for LLMs: `npm run ts-script load-tech-provider-api-keys`
    When prompted enter the directory containing the JSON containing API keys.
+   The expected format of the key JSON files is in the next section.
+
+
+### Example JSON API keys file format
+
+```json
+[
+  {
+    "techProviderName": "Google Gemini",
+    "status": "A",
+    "name": "Gemini free-tier API key",
+    "accountEmail": "..",
+    "apiKey": "..",
+    "pricingTier": "free"
+  },
+  {
+    "techProviderName": "Google Gemini",
+    "status": "A",
+    "name": "Gemini paid-tier API key",
+    "accountEmail": "..",
+    "apiKey": "..",
+    "pricingTier": "paid"
+  }
+]
+```
 
