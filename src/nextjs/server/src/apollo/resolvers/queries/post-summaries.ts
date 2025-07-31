@@ -43,13 +43,6 @@ export async function getPostSummaries(
             prisma,
             ServerTestTypes.anonUserEmail)
 
-  // Set for anonymous user if the given user isn't signed-in
-  if (userProfile == null ||
-      userProfile.userId == null) {
-
-    userProfile = anonUserProfile
-  }
-
   // Validate
   if (userProfile == null) {
     throw new CustomError(`${fnName}: userProfile == null`)

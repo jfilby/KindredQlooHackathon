@@ -139,7 +139,7 @@ export class SummarizePostQueryService {
               siteTopicList.siteTopicId)
 
     // Debug
-    // console.log(`${fnName}: siteTopicListId: ${siteTopicListId}`)
+    // console.log(`${fnName}: userSiteTopic: ` + JSON.stringify(userSiteTopic))
 
     // Get posts for the site topic list
     const siteTopicListPosts = await
