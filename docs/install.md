@@ -19,6 +19,19 @@ Install required software:
 This is OS and distro specific.
 
 
+## Env file setup
+
+Tempalte env files are available:
+src/client/config/template.env.development
+src/server/config/template.env.development
+
+Copy these to the required env files, e.g.:
+src/client/.env.development
+src/server/.env.development
+
+Then configure them as desired.
+
+
 ## App setup
 
 1. Go to the server path and run the env script, e.g. `. scripts/dev.sh`.
