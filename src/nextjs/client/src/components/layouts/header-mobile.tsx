@@ -80,10 +80,10 @@ export function HeaderMobile({ highLevelLink }: Props) {
               name='My interests'
               linkName='interests'
               highLevelLink={highLevelLink} />
-            <HeaderMobileLink
+            {/* <HeaderMobileLink
               name='Docs'
               linkName='docs'
-              highLevelLink={highLevelLink} />
+              highLevelLink={highLevelLink} /> */}
             <HeaderMobileLink
               name='About'
               linkName='about'
