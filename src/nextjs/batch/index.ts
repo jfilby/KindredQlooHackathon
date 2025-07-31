@@ -8,6 +8,7 @@ import { FeatureFlagModel } from '@/serene-core-server/models/feature-flags/feat
 import { BatchTypes } from '@/types/batch-types'
 import { ServerOnlyTypes } from '@/types/server-only-types'
 import { BatchJobModel } from '@/models/batch/batch-job-model'
+import { BatchMutateService } from '@/services/batch/mutate-service'
 import { InterestsBatchService } from '@/services/interests/batch-service'
 import { SiteTopicInterestsMutateService } from '@/services/interests/site-topic-interests-mutate-service'
 import { SocialMediaBatchPipelineService } from '@/services/social-media/pipeline/service'
@@ -18,6 +19,7 @@ const prisma = new PrismaClient()
 const featureFlagModel = new FeatureFlagModel()
 
 // Services
+const batchMutateService = new BatchMutateService()
 const interestsBatchService = new InterestsBatchService()
 const siteTopicInterestsMutateService = new SiteTopicInterestsMutateService()
 const socialMediaBatchPipelineService = new SocialMediaBatchPipelineService()
@@ -128,6 +130,9 @@ async function interval15m(prisma: any) {
 
     await socialMediaBatchPipelineService.runForAllSites(prisma)
   }
+
+  // Housekeeping
+  await batchMutateService.housekeeping(prisma)
 }
 
 function sleep(ms: number) {

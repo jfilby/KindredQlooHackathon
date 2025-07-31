@@ -51,6 +51,26 @@ export class BatchJobModel {
     }
   }
 
+  async deleteById(
+          prisma: any,
+          id: string) {
+
+    // Debug
+    const fnName = `${this.clName}.deleteById()`
+
+    // Delete record
+    try {
+      return await prisma.batchJob.delete({
+        where: {
+          id: id
+        }
+      })
+    } catch(error) {
+      console.error(`${fnName}: error: ${error}`)
+      throw 'Prisma error'
+    }
+  }
+
   async deleteByInstanceId(
           prisma: any,
           instanceId: string) {
