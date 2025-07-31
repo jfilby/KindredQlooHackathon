@@ -30,6 +30,8 @@ export class PostUrlsService {
     }
 
     // Get content with Puppeteer
+    // Note: empty exceptions could occur if any necessary OS packages are not
+    // installed.
     var browser: Browser | undefined = await
           puppeteer.launch({ headless: true })
 
