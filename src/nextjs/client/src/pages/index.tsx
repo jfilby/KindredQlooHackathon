@@ -1,9 +1,8 @@
 import Head from 'next/head'
 import { useState } from 'react'
-import { Alert, Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
-import { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
 import LoadPostSummariesByFilter from '@/components/post-summaries/load-by-filter'
 import ListPostSummaries from '@/components/post-summaries/list'
 import UpdatingInterestsNotification from '@/components/post-summaries/updating-interests'
@@ -35,39 +34,34 @@ export default function PostSummariesPage({
 
       <Layout userProfile={userProfile}>
 
-        <Box
-          style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
-          sx={{ bgcolor: 'background.default' }}>
+        {/* <p>userInterestsStatus: {JSON.stringify(userInterestsStatus)}</p> */}
+        {/* <p>loadListing: {JSON.stringify(loadListing)}</p> */}
 
-          {/* <p>userInterestsStatus: {JSON.stringify(userInterestsStatus)}</p> */}
-          {/* <p>loadListing: {JSON.stringify(loadListing)}</p> */}
+        {userInterestsStatus === BaseDataTypes.newStatus ?
 
-          {userInterestsStatus === BaseDataTypes.newStatus ?
+          <UpdatingInterestsNotification
+            userProfileId={userProfile.id}
+            initialUserInterestsStatus={userInterestsStatus} />
+        :
+          <></>
+        }
 
-            <UpdatingInterestsNotification
-              userProfileId={userProfile.id}
-              initialUserInterestsStatus={userInterestsStatus} />
-          :
-            <></>
-          }
+        {siteTopicListId != null &&
+         postSummaries != null ?
 
-          {siteTopicListId != null &&
-           postSummaries != null ?
-
-            <ListPostSummaries
-              userProfileId={userProfile.id}
-              userSiteTopic={userSiteTopic}
-              siteTopicListId={siteTopicListId}
-              postSummaries={postSummaries}
-              openRankBy={openRankBy}
-              setOpenRankBy={setOpenRankBy}
-              setLoadListing={setLoadListing} />
-          :
-            <Typography>
-              Loading..
-            </Typography>
-          }
-        </Box>
+          <ListPostSummaries
+            userProfileId={userProfile.id}
+            userSiteTopic={userSiteTopic}
+            siteTopicListId={siteTopicListId}
+            postSummaries={postSummaries}
+            openRankBy={openRankBy}
+            setOpenRankBy={setOpenRankBy}
+            setLoadListing={setLoadListing} />
+        :
+          <Typography>
+            Loading..
+          </Typography>
+        }
       </Layout>
 
       <LoadPostSummariesByFilter

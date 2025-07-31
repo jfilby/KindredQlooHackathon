@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import PageHeader from './header'
 import Footer from './footer'
+import LayoutBox from './layout-box'
 
 interface Props {
   children: React.ReactNode
@@ -18,10 +21,25 @@ export default function Layout({
                           userProfile
                         }: Props) {
 
+  // State
+  const [_isMobile, setMobile] = useState<boolean|undefined>(undefined)
+
+  // Effects
+  useEffect(() => {
+
+    // Set isMobile
+    setMobile(isMobile)
+  }, [setMobile])
+
   // Render
   return (
     <>
-      <PageHeader userProfile={userProfile} />
+      {_isMobile != null ?
+        <PageHeader
+          userProfile={userProfile} />
+      :
+        <></>
+      }
 
       {projectName != null ?
         <div style={{ textAlign: 'center' }}>
@@ -42,7 +60,15 @@ export default function Layout({
       }
 
       <div style={{ marginBottom: '2.5em' }} />
-      <main>{children}</main>
+        <main>
+          {_isMobile != null ?
+            <LayoutBox _isMobile={_isMobile}>
+              {children}
+            </LayoutBox>
+          :
+            <></>
+          }
+        </main>
       <Footer />
     </>
   )

@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import PageHeader from './header'
 import Footer from './footer'
+import LayoutBox from './layout-box'
 
 interface Props {
   children: React.ReactNode
@@ -22,13 +25,32 @@ export default function FullHeightLayout({
                           userProfile
                         }: Props) {
 
+  // State
+  const [_isMobile, setMobile] = useState<boolean|undefined>(undefined)
+
+  // Effects
+  // Note: this must be done in the file (too), instead of passing_isMobile as
+  // a parameter, or the mobile header doesn't render.
+  useEffect(() => {
+
+    // Set isMobile
+    setMobile(isMobile)
+  }, [setMobile])
+
   // Render
   return (
     <div style={{ display: 'flex' }}>
       <div style={{ width: '100%' }}>
 
         {withHeader === true ?
-          <PageHeader userProfile={userProfile} />
+          <>
+            {_isMobile != null ?
+              <PageHeader
+                userProfile={userProfile} />
+            :
+              <></>
+            }
+          </>
         :
           <></>
         }
@@ -53,7 +75,15 @@ export default function FullHeightLayout({
 
         <div style={{ marginTop: '1em' }}>
           <div style={{ display: 'inline-block' }}>
-            <main>{children}</main>
+            <main>
+              {_isMobile != null ?
+                <LayoutBox _isMobile={_isMobile}>
+                  {children}
+                </LayoutBox>
+              :
+                <></>
+              }
+            </main>
           </div>
         </div>
       

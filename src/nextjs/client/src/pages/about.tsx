@@ -1,8 +1,7 @@
 import Head from 'next/head'
-import { Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
-import { pageBodyWidthPlus } from '@/components/layouts/full-height-layout'
 
 interface Props {
   userProfile: any
@@ -21,38 +20,37 @@ export default function AboutPage({
 
       <Layout userProfile={userProfile}>
 
-        <Box
-          style={{ margin: '0 auto', width: pageBodyWidthPlus, textAlign: 'center', verticalAlign: 'textTop' }}
-          sx={{ bgcolor: 'background.default' }}>
+        <Typography variant='h4'>
+          About
+        </Typography>
 
-          <Typography variant='h4'>
-            About
-          </Typography>
-
-          <Typography
-            style={{ textAlign: 'left' }}
-            variant='body1'>
+        <Typography
+          style={{ textAlign: 'left' }}
+          variant='body1'>
             
-            <p>Kindred summaries HackerNews posts and their related information. These
-            summaries are then displayed on a web page, make it fast and easy to stay
-            up-to-date with the latest HN posts.</p>
+          Kindred summaries HackerNews posts and their related information. These
+          summaries are then displayed on a web page, make it fast and easy to stay
+          up-to-date with the latest HN posts.
+          <br/><br/>
 
-            <p>Each post summary includes links to both the story's URL if present and the
-            original post on HN. A list of key insights is presented per post. Clicking an
-            insight shows its most relevant comments in-line, each clickable to view the
-            original on HN.</p>
+          Each post summary includes links to both the story's URL if present and the
+          original post on HN. A list of key insights is presented per post. Clicking an
+          insight shows its most relevant comments in-line, each clickable to view the
+          original on HN.
+          <br/><br/>
 
-            <p>You can also chat with Kindred about a post summary to ask any questions you
-            may have about the story, the post and its comments.</p>
+          You can also chat with Kindred about a post summary to ask any questions you
+          may have about the story, the post and its comments.
+          <br/>
 
-            <p>Easily specify your interests and tastes, which can be related to or
-            independent of the social media site summarized. The system uses this
-            information to rerank the post summaries according to each user's interests.</p>
+          Easily specify your interests and tastes, which can be related to or
+          independent of the social media site summarized. The system uses this
+          information to rerank the post summaries according to each user's interests.
+          <br/><br/>
 
-            <p>Tastes include books, movies, podcasts and more. Recommendedations for tastes
-            are also sourced once any tastes are initially added, via Qloo's insights API.</p>
-          </Typography>
-        </Box>
+          Tastes include books, movies, podcasts and more. Recommendedations for tastes
+          are also sourced once any tastes are initially added, via Qloo's insights API.
+        </Typography>
       </Layout>
     </>
   )
