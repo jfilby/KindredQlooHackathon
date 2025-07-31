@@ -34,6 +34,7 @@ export default function App({
   return (
     <>
       <Head>
+        <link rel='icon' href='/favicon.svg' type='image/svg+xml' />
         <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
         <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
         <meta name='description' content={siteDescription} key='desc' />
