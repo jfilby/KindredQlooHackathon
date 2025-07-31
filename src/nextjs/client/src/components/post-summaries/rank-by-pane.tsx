@@ -77,8 +77,8 @@ export default function RankByPane({
           <Link
             onClick={(e) => {
               setSaveRankBy('interests')
-              setSaveAction(true)}
-            }
+              setSaveAction(true)
+            }}
             style={{ color: 'grey', cursor: 'pointer' }}
             sx={{
               textDecorationColor: 'grey',
