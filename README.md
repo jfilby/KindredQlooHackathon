@@ -43,3 +43,8 @@ Integrations:
 - Qloo (Tastes AI platform)
 - LLMs (configurable)
 
+
+## Installing
+
+See the [install doc](docs/install).
+
