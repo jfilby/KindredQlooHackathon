@@ -85,7 +85,8 @@ export default function InterestsPage({
             style={{ marginTop: '2em' }}
             variant='body1'>
             You&apos;re not signed in, but changes to your interests will
-            persist for this session.
+            persist until you clear cookies for this site.
+
           </Typography>
         :
           <></>

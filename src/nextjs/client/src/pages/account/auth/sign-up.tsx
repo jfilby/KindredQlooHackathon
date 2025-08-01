@@ -55,7 +55,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
           <Typography
             variant='body1'>
             .. or you can test this project as a signed-out user. You can still
-            personalize your experience for this session.
+            personalize your experience until you clear cookies for this site.
           </Typography>
         </div>
 
@@ -92,7 +92,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
         </center>
       </div> */}
 
-      <div style={{ width: '100%' }}>
+      {/* <div style={{ width: '100%' }}>
         <center>
           <div style={{ width: '50%' }}>
             <Typography
@@ -107,7 +107,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
             </Typography>
           </div>
         </center>
-      </div>
+      </div> */}
 
     </Layout>
   )
