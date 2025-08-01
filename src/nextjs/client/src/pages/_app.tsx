@@ -7,7 +7,7 @@ import { SessionProvider } from 'next-auth/react'
 import Head from 'next/head'
 import './styles.css'
 import { CssBaseline, ThemeProvider } from '@mui/material'
-import { slateTheme } from '@/components/layouts/themes/slate'
+import { blackAndWhiteTheme } from '@/components/layouts/themes/black-and-white'
 
 interface Props {
   Component: any
@@ -41,7 +41,7 @@ export default function App({
       </Head>
       <SessionProvider session={pageProps.session}>
         <ApolloProvider client={apolloClient}>
-          <ThemeProvider theme={slateTheme}>
+          <ThemeProvider theme={blackAndWhiteTheme}>
             <CssBaseline />
             <Component {...pageProps} />
           </ThemeProvider>
