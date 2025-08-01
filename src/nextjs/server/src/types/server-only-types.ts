@@ -50,7 +50,7 @@ export class ServerOnlyTypes {
 
   // Listing-related durations
   static timeToGenListingInMins = 20
-  static listingFreqInHours = 12
+  static listingFreqInHours = 8
 
   // User interests
   static actualUserInterestType = 'A'
