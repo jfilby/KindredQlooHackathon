@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { Typography } from '@mui/material'
 import { loadServerPage } from '@/services/page/load-server-page'
 import Layout from '@/components/layouts/layout'
-import LayoutBox from '@/components/layouts/layout-box'
 import LoadUserEntityInterestsByFilter from '@/components/user-interests/load-by-filter'
 import RecommendedInterests from '@/components/user-interests/recommended-list'
 import TextEditUserInterests from '@/components/user-interests/text-edit'
@@ -34,14 +33,14 @@ export default function InterestsPage({
   const [userInterestsText, setUserInterestsText] = useState<any | undefined>(undefined)
   const [recommendedInterests, setRecommendedInterests] = useState<any[] | undefined>(undefined)
 
-  const [text, setText] = useState<string | undefined>(starterText)
+  const [text, setText] = useState<string | undefined>(undefined)
   const [loadedUserInterests, setLoadedUserInterests] = useState(false)
 
   // Effects
   useEffect(() => {
 
     setText(userInterestsText?.text ?? '')
-  }, [loadedUserInterests])
+  }, [userInterestsText])
 
   // Render
   return (
@@ -67,6 +66,8 @@ export default function InterestsPage({
           artist, book, brand, destination, movie,
           person, place, podcast, tv_show, videogame
         </Typography>
+
+        {/* <p>text: {JSON.stringify(text)}</p> */}
 
         {text !== undefined ?
 

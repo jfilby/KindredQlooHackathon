@@ -34,6 +34,9 @@ export default function LoadUserInterestsByFilter({
   // Functions
   async function getUserInterests() {
 
+    // Debug
+    const fnName = `getUserInterests()`
+
     // Query
     const fetchGetUserInterestsQueryData =
       await fetchGetUserInterestsQuery(
@@ -45,15 +48,24 @@ export default function LoadUserInterestsByFilter({
 
     const results = fetchGetUserInterestsQueryData.data.getUserInterests
 
+    // Debug
+    // console.log(`${fnName}: results: ` + JSON.stringify(results))
+
+    // Set fields
     if (setUserInterestsText != null) {
 
-      if (results.userInterestsText.text == null ||
-          results.userInterestsText.text.trim() === '') {
+      const text = results.userInterestsText?.text
 
-        results.userInterestsText.text = starterText
+      if (text == null ||
+          typeof text !== 'string' ||
+          text.trim() === '') {
+
+        setUserInterestsText({
+            text: starterText
+          })
+      } else {
+        setUserInterestsText(results.userInterestsText)
       }
-
-      setUserInterestsText(results.userInterestsText)
     }
 
     if (setRecommendedInterests != null &&
