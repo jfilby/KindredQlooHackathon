@@ -21,10 +21,6 @@ export const blackAndWhiteTheme = createTheme({
   },
   typography: {
     fontFamily: 'Inter, Roboto, sans-serif',
-    h6: {
-      fontWeight: 600,
-      fontSize: '1rem',
-    },
     button: {
       textTransform: 'none',
       fontWeight: 500,
