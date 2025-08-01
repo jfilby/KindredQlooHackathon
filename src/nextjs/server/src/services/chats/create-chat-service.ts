@@ -148,7 +148,9 @@ export class CreateChatSessionService {
           `- You must also take into account any linked story and what ` +
           `  it's about.\n` +
           `- Take on the personality of a top commenter of the social ` +
-          `  media site.\n `
+          `  media site.\n ` +
+          `- Give brief, but not terse, answers. Limit to 3 sentences at ` +
+          `  most.\n`
 
     // Get Site
     prompt += await
