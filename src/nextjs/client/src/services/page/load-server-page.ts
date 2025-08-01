@@ -169,20 +169,17 @@ export async function loadServerPage(
         defaultUserPreferences)
 
   // Get/create server-start data
-  if (session != null) {
+  const data = await
+          loadServerStartData(
+            apolloClient,
+            pageContext,
+            queryParams)
 
-    const data = await
-            loadServerStartData(
-              apolloClient,
-              pageContext,
-              queryParams)
+  // Debug
+  // console.log(`${fnName}: data: ` + JSON.stringify(data))
 
-    // Debug
-    // console.log(`${fnName}: data: ` + JSON.stringify(data))
-
-    // Set data results to queryParam entries
-    Object.assign(queryParams, data)
-  }
+  // Set data results to queryParam entries
+  Object.assign(queryParams, data)
 
   // Set additional queryParams
   queryParams.clientUrl = process.env.CLIENT_URL
