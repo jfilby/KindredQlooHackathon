@@ -135,7 +135,7 @@ export class GetQlooInsightsService {
               qlooEntityIds)
 
     // Debug
-    console.log(`${fnName}: getResults: ` + JSON.stringify(getResults))
+    // console.log(`${fnName}: getResults: ` + JSON.stringify(getResults))
 
     // Validate
     if (getResults.results == null ||
