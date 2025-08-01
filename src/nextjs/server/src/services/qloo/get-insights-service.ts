@@ -47,6 +47,11 @@ export class GetQlooInsightsService {
       throw new CustomError(`${fnName}: take <= 1`)
     }
 
+    // Get a random selection of 10 entityIds
+    if (qlooEntityIds != null) {
+      qlooEntityIds = this.randomLimited(qlooEntityIds)
+    }
+
     // Initial URL
     var uri = `/v2/insights?`
 
@@ -356,5 +361,13 @@ export class GetQlooInsightsService {
     }
 
     return qlooEntityIds
+  }
+
+  randomLimited(qlooEntityIds: string[]) {
+
+    if (!Array.isArray(qlooEntityIds)) return []
+
+    const shuffled = [...qlooEntityIds].sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, 10)
   }
 }
