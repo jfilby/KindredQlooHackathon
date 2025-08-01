@@ -223,7 +223,7 @@ export class GetQlooInsightsService {
     // Debug
     const fnName = `${this.clName}.getRecommendedInterests()`
 
-    console.log(`${fnName}: userProfileId: ${userProfileId}`)
+    // console.log(`${fnName}: userProfileId: ${userProfileId}`)
 
     // Check the recommended UserEntityInterestGroup
     var userEntityInterestGroup = await
@@ -251,8 +251,8 @@ export class GetQlooInsightsService {
                 type)
 
       // Debug
-      console.log(`${fnName}: qlooEntityIds: ` +
-                  JSON.stringify(qlooEntityIds))
+      // console.log(`${fnName}: qlooEntityIds: ` +
+      //             JSON.stringify(qlooEntityIds))
 
       if (qlooEntityIds.length === 0) {
         continue
@@ -291,8 +291,8 @@ export class GetQlooInsightsService {
     }
 
     // Debug
-    console.log(`${fnName}: allEntityInterestIds: ` +
-                JSON.stringify(allEntityInterestIds))
+    // console.log(`${fnName}: allEntityInterestIds: ` +
+    //             JSON.stringify(allEntityInterestIds))
 
     // Get/create the EntityInterestGroup
     const entityInterestGroup = await
@@ -311,7 +311,7 @@ export class GetQlooInsightsService {
         false)      // reset
 
     // Debug
-    console.log(`${fnName}: returning..`)
+    // console.log(`${fnName}: returning..`)
   }
 
   async getUserEntityInterestsByQlooEntityType(
