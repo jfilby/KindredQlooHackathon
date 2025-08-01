@@ -32,16 +32,18 @@ export class PostUrlsService {
     // Get content with Puppeteer
     // Note: empty exceptions could occur if any necessary OS packages are not
     // installed.
-    var browser: Browser | undefined = await
-          puppeteer.launch({ headless: true })
-
-    // console.log(`${fnName}: browser launched`)
+    var browser: Browser | undefined = undefined
+    var article: any = undefined
 
     // Wrapped in a try/catch block to prevent zombie processes left in case of
     // failure.
-    var article: any = undefined
-
     try {
+      browser = await
+        puppeteer.launch({ headless: true })
+
+      // Debug
+      // console.log(`${fnName}: browser launched`)
+
       // Process the page
       const page = await browser.newPage()
 
